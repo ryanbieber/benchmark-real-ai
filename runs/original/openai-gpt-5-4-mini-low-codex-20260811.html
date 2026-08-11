@@ -1,0 +1,1323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>S&P 500 Forecast Dashboard</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg2: #0c1728;
+      --panel: rgba(11, 20, 35, 0.86);
+      --panel-strong: #0e1a2d;
+      --panel-soft: rgba(255, 255, 255, 0.04);
+      --text: #eef4ff;
+      --muted: #8ea2c0;
+      --muted-2: #627894;
+      --line: rgba(255, 255, 255, 0.08);
+      --grid: rgba(255, 255, 255, 0.06);
+      --accent: #75e6ff;
+      --accent-2: #f6c453;
+      --accent-3: #9cffb1;
+      --danger: #ff8da1;
+      --shadow: 0 22px 80px rgba(0, 0, 0, 0.35);
+      --radius: 22px;
+      --radius-sm: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Avenir Next", "Avenir", "Trebuchet MS", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(117, 230, 255, 0.20), transparent 32%),
+        radial-gradient(circle at top right, rgba(246, 196, 83, 0.14), transparent 26%),
+        linear-gradient(180deg, #050c16 0%, var(--bg) 46%, #09111e 100%);
+    }
+
+    .shell {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px 22px 40px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.9fr);
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .title-block {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      padding: 26px 26px 22px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+        rgba(8, 15, 27, 0.80);
+      box-shadow: var(--shadow);
+      min-height: 220px;
+    }
+
+    .title-block::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(117, 230, 255, 0.16), transparent 28%),
+        radial-gradient(circle at 82% 10%, rgba(246, 196, 83, 0.12), transparent 25%),
+        linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 45%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(117, 230, 255, 0.10);
+      border: 1px solid rgba(117, 230, 255, 0.20);
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-3);
+      box-shadow: 0 0 18px rgba(156, 255, 177, 0.8);
+    }
+
+    h1 {
+      margin: 16px 0 10px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      max-width: 12ch;
+    }
+
+    .lede {
+      margin: 0;
+      max-width: 75ch;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .hero-side {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)), rgba(9, 16, 29, 0.85);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-side .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+    }
+
+    .stat .value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .stat .sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .controls {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin: 18px 0;
+    }
+
+    .control {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 14px 13px;
+      background: rgba(8, 15, 27, 0.72);
+      box-shadow: var(--shadow);
+    }
+
+    .control label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    select, input[type="range"] {
+      width: 100%;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 12px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    select option {
+      background: #0c1422;
+      color: var(--text);
+    }
+
+    input[type="range"] {
+      accent-color: var(--accent);
+      margin: 6px 0 0;
+    }
+
+    .range-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .range-row .readout {
+      color: var(--accent);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(330px, 0.95fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)), var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 20px 0;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(156, 255, 177, 0.18);
+      background: rgba(156, 255, 177, 0.08);
+      color: #c4ffd0;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .status.busy {
+      border-color: rgba(117, 230, 255, 0.18);
+      background: rgba(117, 230, 255, 0.08);
+      color: var(--accent);
+    }
+
+    .chart-wrap {
+      position: relative;
+      padding: 12px 14px 16px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 520px;
+      display: block;
+      overflow: visible;
+    }
+
+    .tooltip {
+      position: absolute;
+      z-index: 5;
+      min-width: 180px;
+      max-width: 240px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(7, 13, 24, 0.96);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.38);
+      color: var(--text);
+      pointer-events: none;
+      opacity: 0;
+      transform: translate3d(0, 0, 0);
+      transition: opacity 0.12s ease;
+    }
+
+    .tooltip .date {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .tooltip .value {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .tooltip .kind {
+      color: var(--accent);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .side {
+      display: grid;
+      gap: 18px;
+    }
+
+    .metrics {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .metric {
+      padding: 15px 14px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+
+    .metric .value {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric .sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .insight {
+      padding: 18px;
+    }
+
+    .insight h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .insight p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .table-wrap {
+      padding: 0 18px 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 10px 0 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    tbody td {
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    tbody td:last-child {
+      text-align: right;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 0 18px 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swatch {
+      width: 14px;
+      height: 3px;
+      border-radius: 99px;
+      background: var(--accent);
+    }
+
+    .swatch.forecast { background: var(--accent-2); }
+    .swatch.band {
+      background: linear-gradient(90deg, rgba(246,196,83,0.10), rgba(246,196,83,0.55), rgba(246,196,83,0.10));
+    }
+    .swatch.ma { background: var(--accent-3); }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted-2);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .axis-label {
+      font-size: 11px;
+      fill: var(--muted);
+      font-family: inherit;
+    }
+
+    .grid-line {
+      stroke: var(--grid);
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+    }
+
+    .axis-line {
+      stroke: rgba(255,255,255,0.13);
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+    }
+
+    .actual-line {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 2.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 10px rgba(117, 230, 255, 0.12));
+    }
+
+    .forecast-line {
+      fill: none;
+      stroke: var(--accent-2);
+      stroke-width: 2.4;
+      stroke-dasharray: 7 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 8px rgba(246, 196, 83, 0.10));
+    }
+
+    .ma-line {
+      fill: none;
+      stroke: var(--accent-3);
+      stroke-width: 1.8;
+      stroke-dasharray: 4 6;
+      opacity: 0.88;
+    }
+
+    .band-path {
+      fill: rgba(246, 196, 83, 0.10);
+      stroke: none;
+    }
+
+    .hover-line {
+      stroke: rgba(255,255,255,0.32);
+      stroke-width: 1;
+      stroke-dasharray: 5 5;
+      pointer-events: none;
+    }
+
+    .hover-dot {
+      fill: var(--bg);
+      stroke-width: 3;
+      pointer-events: none;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1120px) {
+      .hero,
+      .layout,
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .chart {
+        height: 460px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell { padding: 18px 14px 28px; }
+      .title-block { padding: 20px 18px 18px; min-height: auto; }
+      h1 { max-width: none; }
+      .metrics { grid-template-columns: 1fr; }
+      .panel-head { flex-direction: column; align-items: flex-start; }
+      .chart { height: 380px; }
+      .stat .value { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero fade-in">
+      <div class="title-block">
+        <div class="eyebrow"><span class="dot"></span> S&P 500 Scenario Forecast</div>
+        <h1>Interactive dashboard for forecasting the S&P 500.</h1>
+        <p class="lede">
+          This dashboard loads daily S&P 500 closes from FRED, fits a simple statistical model in the browser,
+          and projects a forward path with confidence bands. Use it to test horizon, model, and lookback assumptions.
+        </p>
+      </div>
+      <div class="hero-side">
+        <div class="stat">
+          <div class="label">Data source</div>
+          <div class="value">FRED SP500</div>
+          <div class="sub">Daily close series. Latest available observation is used automatically.</div>
+        </div>
+        <div class="stat">
+          <div class="label">Forecast style</div>
+          <div class="value" id="hero-model">Log Trend</div>
+          <div class="sub" id="hero-model-desc">Regression on log prices with a widening prediction band.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls fade-in" aria-label="Forecast controls">
+      <div class="control">
+        <label for="historyRange">History window</label>
+        <select id="historyRange">
+          <option value="180">6 months</option>
+          <option value="252">1 year</option>
+          <option value="756" selected>3 years</option>
+          <option value="1260">5 years</option>
+          <option value="99999">All available</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="modelSelect">Forecast model</label>
+        <select id="modelSelect">
+          <option value="trend" selected>Log Trend</option>
+          <option value="momentum">Momentum</option>
+          <option value="meanreversion">Mean Reversion</option>
+        </select>
+      </div>
+      <div class="control">
+        <div class="range-row">
+          <label for="lookback">Model lookback</label>
+          <div class="readout"><span id="lookbackValue">252</span> days</div>
+        </div>
+        <input id="lookback" type="range" min="60" max="1260" step="5" value="252" />
+      </div>
+      <div class="control">
+        <div class="range-row">
+          <label for="horizon">Forecast horizon</label>
+          <div class="readout"><span id="horizonValue">60</span> days</div>
+        </div>
+        <input id="horizon" type="range" min="5" max="180" step="1" value="60" />
+      </div>
+    </section>
+
+    <section class="layout fade-in">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Price action and forecast</h2>
+          <div class="status" id="statusPill"><span class="dot"></span><span>Loading data...</span></div>
+        </div>
+        <div class="legend">
+          <span><i class="swatch"></i> Actual close</span>
+          <span><i class="swatch forecast"></i> Forecast path</span>
+          <span><i class="swatch band"></i> Prediction band</span>
+          <span><i class="swatch ma"></i> 50-day moving average</span>
+        </div>
+        <div class="chart-wrap" id="chartWrap">
+          <svg class="chart" id="chart" role="img" aria-label="S&P 500 chart"></svg>
+          <div class="tooltip" id="tooltip"></div>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Snapshot</h2>
+          </div>
+          <div class="metrics" id="metrics"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Forecast checkpoints</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Date</th>
+                  <th>Mid</th>
+                  <th>Band</th>
+                </tr>
+              </thead>
+              <tbody id="forecastTable"></tbody>
+            </table>
+            <div class="footer-note">
+              Prediction bands are simple log-normal ranges, not guarantees. Treat this as scenario analysis, not trading advice.
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>How to read it</h2>
+          </div>
+          <div class="insight">
+            <h3>Model choices</h3>
+            <p id="modelExplanation">
+              Log Trend extrapolates the fitted growth rate of the selected history window. It is easy to interpret and works well as a baseline.
+            </p>
+            <div class="pill-row" id="pillRow"></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    const FRED_URL = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500';
+    const FALLBACK_CSV = `observation_date,SP500
+2026-05-19,7353.61
+2026-05-20,7432.97
+2026-05-21,7445.72
+2026-05-22,7473.47
+2026-05-26,7519.12
+2026-05-27,7520.36
+2026-05-28,7563.63
+2026-05-29,7580.06
+2026-06-01,7599.96
+2026-06-02,7609.78
+2026-06-03,7553.68
+2026-06-04,7584.31
+2026-06-05,7383.74
+2026-06-08,7405.73
+2026-06-09,7386.65
+2026-06-10,7266.99
+2026-06-11,7394.30
+2026-06-12,7431.46
+2026-06-15,7554.29
+2026-06-16,7511.35
+2026-06-17,7420.10
+2026-06-18,7500.58
+2026-06-22,7472.79
+2026-06-23,7365.46
+2026-06-24,7358.22
+2026-06-25,7357.49
+2026-06-26,7354.02
+2026-06-29,7440.43
+2026-06-30,7499.36
+2026-07-01,7483.23
+2026-07-02,7483.24
+2026-07-06,7537.43
+2026-07-07,7503.85
+2026-07-08,7482.71
+2026-07-09,7543.64
+2026-07-10,7575.39
+2026-07-13,7515.34
+2026-07-14,7543.59
+2026-07-15,7572.40
+2026-07-16,7533.77
+2026-07-17,7457.69
+2026-07-20,7443.28
+2026-07-21,7509.20
+2026-07-22,7498.96
+2026-07-23,7408.30
+2026-07-24,7411.98
+2026-07-27,7413.18
+2026-07-28,7428.78
+2026-07-29,7316.15
+2026-07-30,7437.63
+2026-07-31,7489.72
+2026-08-03,7600.50
+2026-08-04,7736.52
+2026-08-05,7723.55
+2026-08-06,7709.96
+2026-08-07,7757.64
+2026-08-10,7753.11`;
+
+    const els = {
+      chart: document.getElementById('chart'),
+      chartWrap: document.getElementById('chartWrap'),
+      tooltip: document.getElementById('tooltip'),
+      metrics: document.getElementById('metrics'),
+      forecastTable: document.getElementById('forecastTable'),
+      historyRange: document.getElementById('historyRange'),
+      modelSelect: document.getElementById('modelSelect'),
+      lookback: document.getElementById('lookback'),
+      lookbackValue: document.getElementById('lookbackValue'),
+      horizon: document.getElementById('horizon'),
+      horizonValue: document.getElementById('horizonValue'),
+      statusPill: document.getElementById('statusPill'),
+      modelExplanation: document.getElementById('modelExplanation'),
+      pillRow: document.getElementById('pillRow'),
+      heroModel: document.getElementById('hero-model'),
+      heroModelDesc: document.getElementById('hero-model-desc'),
+    };
+
+    const fmt = {
+      price: new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }),
+      pct: new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      int: new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }),
+      short: new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 }),
+    };
+
+    const COLORS = {
+      accent: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),
+      accent2: getComputedStyle(document.documentElement).getPropertyValue('--accent-2').trim(),
+      accent3: getComputedStyle(document.documentElement).getPropertyValue('--accent-3').trim(),
+      muted: getComputedStyle(document.documentElement).getPropertyValue('--muted').trim(),
+    };
+
+    let allSeries = [];
+    let currentModel = null;
+    let hoverState = null;
+
+    function parseCsv(text) {
+      const rows = text.trim().split(/\r?\n/);
+      const out = [];
+      for (const row of rows.slice(1)) {
+        const [date, raw] = row.split(',');
+        if (!date || !raw || raw === '.') continue;
+        const close = Number(raw);
+        if (!Number.isFinite(close)) continue;
+        const time = Date.parse(`${date}T00:00:00Z`);
+        if (!Number.isFinite(time)) continue;
+        out.push({ date, time, close });
+      }
+      out.sort((a, b) => a.time - b.time);
+      return out;
+    }
+
+    function mean(values) {
+      if (!values.length) return 0;
+      return values.reduce((sum, v) => sum + v, 0) / values.length;
+    }
+
+    function stddev(values) {
+      if (values.length < 2) return 0;
+      const m = mean(values);
+      const variance = values.reduce((sum, v) => sum + (v - m) ** 2, 0) / (values.length - 1);
+      return Math.sqrt(Math.max(0, variance));
+    }
+
+    function linearRegression(xs, ys) {
+      const n = xs.length;
+      const xMean = mean(xs);
+      const yMean = mean(ys);
+      let numerator = 0;
+      let denominator = 0;
+      for (let i = 0; i < n; i++) {
+        numerator += (xs[i] - xMean) * (ys[i] - yMean);
+        denominator += (xs[i] - xMean) ** 2;
+      }
+      const slope = denominator === 0 ? 0 : numerator / denominator;
+      const intercept = yMean - slope * xMean;
+      const fitted = xs.map(x => intercept + slope * x);
+      const residuals = ys.map((y, i) => y - fitted[i]);
+      const ssRes = residuals.reduce((sum, v) => sum + v * v, 0);
+      const ssTot = ys.reduce((sum, y) => sum + (y - yMean) ** 2, 0);
+      const r2 = ssTot === 0 ? 1 : 1 - (ssRes / ssTot);
+      return { slope, intercept, residuals, r2 };
+    }
+
+    function addBusinessDays(startTime, days) {
+      const date = new Date(startTime);
+      let added = 0;
+      while (added < days) {
+        date.setUTCDate(date.getUTCDate() + 1);
+        const day = date.getUTCDay();
+        if (day !== 0 && day !== 6) added++;
+      }
+      return date.getTime();
+    }
+
+    function formatDateISO(time) {
+      return new Date(time).toISOString().slice(0, 10);
+    }
+
+    function formatDatePretty(time) {
+      return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(time));
+    }
+
+    function buildMovingAverage(series, window) {
+      const out = [];
+      for (let i = 0; i < series.length; i++) {
+        const start = Math.max(0, i - window + 1);
+        const slice = series.slice(start, i + 1);
+        out.push(mean(slice.map(d => d.close)));
+      }
+      return out;
+    }
+
+    function fitModel(series, horizon, lookback, model) {
+      const window = series.slice(-Math.max(5, Math.min(lookback, series.length)));
+      const closes = window.map(d => d.close);
+      const xs = window.map((_, i) => i);
+      const logPrices = closes.map(v => Math.log(v));
+      const reg = linearRegression(xs, logPrices);
+      const logResidualVol = Math.max(stddev(reg.residuals), 0.0015);
+      const returns = [];
+      for (let i = 1; i < closes.length; i++) {
+        returns.push(Math.log(closes[i] / closes[i - 1]));
+      }
+      const returnVol = Math.max(stddev(returns), 0.006);
+      const recentMeanReturn = mean(returns.slice(-Math.min(20, returns.length)));
+      const longMean = mean(closes.slice(-Math.min(200, closes.length)));
+      const lastClose = closes[closes.length - 1];
+      const actualTrend = Math.exp(reg.slope * 252) - 1;
+      const trendStrength = Math.min(1, Math.max(0, Math.abs(reg.slope) * 3500));
+      const forecast = [];
+      const checkpoints = [];
+      const z = 1.96;
+      const bandVol = Math.max(logResidualVol, returnVol);
+
+      for (let step = 1; step <= horizon; step++) {
+        const idx = window.length - 1 + step;
+        let predicted;
+        if (model === 'trend') {
+          predicted = Math.exp(reg.intercept + reg.slope * idx);
+        } else if (model === 'momentum') {
+          predicted = lastClose * Math.exp(recentMeanReturn * step);
+        } else {
+          const tau = Math.max(10, Math.min(45, lookback / 12));
+          predicted = longMean + (lastClose - longMean) * Math.exp(-step / tau);
+        }
+
+        const horizonVol = bandVol * Math.sqrt(step);
+        const lower = predicted * Math.exp(-z * horizonVol);
+        const upper = predicted * Math.exp(z * horizonVol);
+        const time = addBusinessDays(window[window.length - 1].time, step);
+        forecast.push({
+          step,
+          time,
+          predicted,
+          lower,
+          upper,
+          kind: 'forecast',
+        });
+      }
+
+      for (const point of forecast.slice(0, 10)) {
+        checkpoints.push(point);
+      }
+
+      const latest = closes[closes.length - 1];
+      const lastYear = series.findIndex(d => d.time >= addBusinessDays(series[series.length - 1].time, -252));
+      const yearSlice = lastYear >= 0 ? series.slice(Math.max(0, lastYear)) : series.slice(0);
+      const yearReturn = yearSlice.length > 1 ? (latest / yearSlice[0].close) - 1 : 0;
+
+      return {
+        model,
+        lookback: window.length,
+        closeSeries: series,
+        actualWindow: window,
+        closes,
+        forecast,
+        checkpoints,
+        lastClose: latest,
+        longMean,
+        recentMeanReturn,
+        logResidualVol,
+        returnVol,
+        annualTrend: actualTrend,
+        trendStrength,
+        r2: reg.r2,
+        yearReturn,
+        lastDate: series[series.length - 1].time,
+      };
+    }
+
+    function chooseHistory(series, maxDays) {
+      if (maxDays >= 99999) return series.slice();
+      const cutoff = addBusinessDays(series[series.length - 1].time, -maxDays);
+      return series.filter(d => d.time >= cutoff);
+    }
+
+    function businessDayLabel(time, index) {
+      const date = new Date(time);
+      const month = date.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+      const day = date.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'UTC' });
+      return index === 0 ? `${month} ${day}` : day;
+    }
+
+    function createSvgEl(tag) {
+      return document.createElementNS('http://www.w3.org/2000/svg', tag);
+    }
+
+    function setStatus(text, busy = false) {
+      els.statusPill.classList.toggle('busy', busy);
+      els.statusPill.innerHTML = busy
+        ? '<span class="dot"></span><span>' + text + '</span>'
+        : '<span class="dot"></span><span>' + text + '</span>';
+    }
+
+    function renderMetrics(model) {
+      const cards = [
+        {
+          label: 'Latest close',
+          value: fmt.price.format(model.lastClose),
+          sub: formatDatePretty(model.lastDate),
+        },
+        {
+          label: '1Y return',
+          value: fmt.pct.format(model.yearReturn),
+          sub: 'Trailing 252 trading days',
+        },
+        {
+          label: 'Log-trend drift',
+          value: fmt.pct.format(model.annualTrend),
+          sub: 'Annualized growth rate from selected window',
+        },
+        {
+          label: 'Realized vol',
+          value: fmt.pct.format(model.returnVol * Math.sqrt(252)),
+          sub: 'Annualized from daily log returns',
+        },
+        {
+          label: 'Model fit',
+          value: fmt.pct.format(model.r2),
+          sub: 'R² on the chosen lookback window',
+        },
+        {
+          label: 'Mean level',
+          value: fmt.price.format(model.longMean),
+          sub: 'Approximate long-run anchor',
+        },
+      ];
+
+      els.metrics.innerHTML = cards.map(card => `
+        <div class="metric">
+          <div class="label">${card.label}</div>
+          <div class="value">${card.value}</div>
+          <div class="sub">${card.sub}</div>
+        </div>
+      `).join('');
+    }
+
+    function updateModelCopy(model) {
+      const meta = {
+        trend: {
+          name: 'Log Trend',
+          desc: 'Regression on log prices with a widening prediction band.',
+          text: 'Log Trend extrapolates the fitted growth rate of the selected history window. It is the cleanest baseline if you want a simple drift-based scenario.',
+          pills: ['Uses log prices', 'Best for simple drift', 'Band widens with horizon'],
+        },
+        momentum: {
+          name: 'Momentum',
+          desc: 'Projects forward from recent average log returns.',
+          text: 'Momentum anchors the forecast to the recent average return. It responds faster to short-term accelerations or pullbacks than the trend model.',
+          pills: ['Anchored to recent returns', 'Sensitive to short swings', 'Useful for regime shifts'],
+        },
+        meanreversion: {
+          name: 'Mean Reversion',
+          desc: 'Gently pulls prices back toward the longer-run mean.',
+          text: 'Mean Reversion fades the current price toward the recent long-run average. It is a useful counterpoint when you want a conservative scenario.',
+          pills: ['Pulls toward the mean', 'Conservative scenario', 'Good stress test'],
+        },
+      }[model.model];
+
+      els.heroModel.textContent = meta.name;
+      els.heroModelDesc.textContent = meta.desc;
+      els.modelExplanation.textContent = meta.text;
+      els.pillRow.innerHTML = meta.pills.map(p => `<span class="pill">${p}</span>`).join('');
+    }
+
+    function buildForecastTable(model) {
+      els.forecastTable.innerHTML = model.checkpoints.map(point => {
+        const bandWidth = ((point.upper / point.predicted) - 1) * 100;
+        return `
+          <tr>
+            <td>Day ${point.step}</td>
+            <td>${formatDatePretty(point.time)}</td>
+            <td>${fmt.price.format(point.predicted)}</td>
+            <td>±${bandWidth.toFixed(1)}%</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function buildPaths(points, yScale, xScale) {
+      return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i).toFixed(2)} ${yScale(p).toFixed(2)}`).join(' ');
+    }
+
+    function renderChart(model) {
+      const svg = els.chart;
+      svg.innerHTML = '';
+
+      const actual = model.actualWindow.map((d, idx) => ({
+        kind: 'actual',
+        date: d.date,
+        time: d.time,
+        value: d.close,
+        index: idx,
+      }));
+      const ma50 = buildMovingAverage(model.actualWindow, Math.min(50, model.actualWindow.length)).map((value, idx) => ({
+        kind: 'ma',
+        time: model.actualWindow[idx].time,
+        value,
+        index: idx,
+      }));
+      const forecast = model.forecast.map((d, idx) => ({
+        kind: 'forecast',
+        time: d.time,
+        value: d.predicted,
+        lower: d.lower,
+        upper: d.upper,
+        index: actual.length + idx,
+      }));
+
+      const allPoints = actual.concat(forecast);
+      const allValues = [];
+      for (const p of actual) allValues.push(p.value);
+      for (const p of forecast) {
+        allValues.push(p.lower, p.upper);
+      }
+      for (const p of ma50) allValues.push(p.value);
+
+      const width = 1100;
+      const height = 500;
+      const margin = { top: 18, right: 26, bottom: 42, left: 68 };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = height - margin.top - margin.bottom;
+      const minY = Math.min(...allValues);
+      const maxY = Math.max(...allValues);
+      const pad = (maxY - minY) * 0.06 || 1;
+      const yMin = minY - pad;
+      const yMax = maxY + pad;
+      const xCount = Math.max(1, allPoints.length - 1);
+
+      const xScale = index => margin.left + (index / xCount) * plotWidth;
+      const yScale = value => margin.top + (1 - ((value - yMin) / (yMax - yMin))) * plotHeight;
+
+      function add(el) {
+        svg.appendChild(el);
+        return el;
+      }
+
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('preserveAspectRatio', 'none');
+
+      const gridCount = 5;
+      for (let i = 0; i <= gridCount; i++) {
+        const y = margin.top + (i / gridCount) * plotHeight;
+        const val = yMax - ((y / height) * (yMax - yMin) / (plotHeight / height));
+        const line = createSvgEl('line');
+        line.setAttribute('x1', margin.left);
+        line.setAttribute('x2', width - margin.right);
+        line.setAttribute('y1', y);
+        line.setAttribute('y2', y);
+        line.setAttribute('class', 'grid-line');
+        add(line);
+
+        const label = createSvgEl('text');
+        label.setAttribute('x', margin.left - 10);
+        label.setAttribute('y', y + 4);
+        label.setAttribute('text-anchor', 'end');
+        label.setAttribute('class', 'axis-label');
+        label.textContent = fmt.price.format(val);
+        add(label);
+      }
+
+      const xTicks = 6;
+      for (let i = 0; i <= xTicks; i++) {
+        const idx = Math.round((i / xTicks) * xCount);
+        const point = allPoints[idx];
+        if (!point) continue;
+        const x = xScale(idx);
+        const line = createSvgEl('line');
+        line.setAttribute('x1', x);
+        line.setAttribute('x2', x);
+        line.setAttribute('y1', margin.top);
+        line.setAttribute('y2', height - margin.bottom);
+        line.setAttribute('class', 'grid-line');
+        add(line);
+
+        const label = createSvgEl('text');
+        label.setAttribute('x', x);
+        label.setAttribute('y', height - 14);
+        label.setAttribute('text-anchor', i === 0 ? 'start' : i === xTicks ? 'end' : 'middle');
+        label.setAttribute('class', 'axis-label');
+        label.textContent = businessDayLabel(point.time, i);
+        add(label);
+      }
+
+      const axisBottom = createSvgEl('line');
+      axisBottom.setAttribute('x1', margin.left);
+      axisBottom.setAttribute('x2', width - margin.right);
+      axisBottom.setAttribute('y1', height - margin.bottom);
+      axisBottom.setAttribute('y2', height - margin.bottom);
+      axisBottom.setAttribute('class', 'axis-line');
+      add(axisBottom);
+
+      const axisLeft = createSvgEl('line');
+      axisLeft.setAttribute('x1', margin.left);
+      axisLeft.setAttribute('x2', margin.left);
+      axisLeft.setAttribute('y1', margin.top);
+      axisLeft.setAttribute('y2', height - margin.bottom);
+      axisLeft.setAttribute('class', 'axis-line');
+      add(axisLeft);
+
+      const bandPath = (() => {
+        const upper = forecast.map(p => ({ value: p.upper }));
+        const lower = forecast.map(p => ({ value: p.lower })).reverse();
+        const upperPoints = actual.map(p => ({ value: p.value })).concat(upper);
+        const lowerPoints = lower.concat(actual.slice().reverse().map(p => ({ value: p.value })));
+        const upperLine = upperPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i).toFixed(2)} ${yScale(p.value).toFixed(2)}`).join(' ');
+        const lowerLine = lowerPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${xScale(upperPoints.length - 1 - i).toFixed(2)} ${yScale(p.value).toFixed(2)}`).join(' ');
+        return `${upperLine} ${lowerLine} Z`;
+      })();
+
+      const band = createSvgEl('path');
+      band.setAttribute('d', bandPath);
+      band.setAttribute('class', 'band-path');
+      add(band);
+
+      const actualLine = createSvgEl('path');
+      actualLine.setAttribute('d', buildPaths(actual.map(p => p.value), yScale, xScale));
+      actualLine.setAttribute('class', 'actual-line');
+      add(actualLine);
+
+      const maLine = createSvgEl('path');
+      maLine.setAttribute('d', buildPaths(ma50.map(p => p.value), yScale, index => xScale(index)));
+      maLine.setAttribute('class', 'ma-line');
+      add(maLine);
+
+      const forecastLine = createSvgEl('path');
+      forecastLine.setAttribute('d', buildPaths(forecast.map(p => p.value), yScale, index => xScale(actual.length - 1 + index)));
+      forecastLine.setAttribute('class', 'forecast-line');
+      add(forecastLine);
+
+      const hoverLine = createSvgEl('line');
+      hoverLine.setAttribute('class', 'hover-line');
+      hoverLine.setAttribute('y1', margin.top);
+      hoverLine.setAttribute('y2', height - margin.bottom);
+      hoverLine.setAttribute('visibility', 'hidden');
+      add(hoverLine);
+
+      const hoverDot = createSvgEl('circle');
+      hoverDot.setAttribute('r', 5.5);
+      hoverDot.setAttribute('class', 'hover-dot');
+      hoverDot.setAttribute('stroke', COLORS.accent);
+      hoverDot.setAttribute('visibility', 'hidden');
+      add(hoverDot);
+
+      const overlay = createSvgEl('rect');
+      overlay.setAttribute('x', margin.left);
+      overlay.setAttribute('y', margin.top);
+      overlay.setAttribute('width', plotWidth);
+      overlay.setAttribute('height', plotHeight);
+      overlay.setAttribute('fill', 'transparent');
+      overlay.style.cursor = 'crosshair';
+      add(overlay);
+
+      const points = allPoints.map((p, idx) => ({
+        ...p,
+        index: idx,
+        x: xScale(idx),
+        y: yScale(p.value),
+      }));
+
+      function showTooltip(evt, point) {
+        if (!point) {
+          els.tooltip.style.opacity = 0;
+          hoverLine.setAttribute('visibility', 'hidden');
+          hoverDot.setAttribute('visibility', 'hidden');
+          return;
+        }
+        const left = Math.min(evt.clientX - els.chartWrap.getBoundingClientRect().left + 18, els.chartWrap.clientWidth - 250);
+        const top = Math.max(8, evt.clientY - els.chartWrap.getBoundingClientRect().top - 84);
+        els.tooltip.style.left = `${left}px`;
+        els.tooltip.style.top = `${top}px`;
+        els.tooltip.style.opacity = 1;
+        els.tooltip.innerHTML = `
+          <div class="date">${formatDatePretty(point.time)}</div>
+          <div class="value">${fmt.price.format(point.value)}</div>
+          <div class="kind">${point.kind === 'forecast' ? 'Forecast' : point.kind === 'ma' ? '50-day MA' : 'Actual close'}</div>
+        `;
+        hoverLine.setAttribute('visibility', 'visible');
+        hoverLine.setAttribute('x1', point.x);
+        hoverLine.setAttribute('x2', point.x);
+        hoverDot.setAttribute('visibility', 'visible');
+        hoverDot.setAttribute('cx', point.x);
+        hoverDot.setAttribute('cy', point.y);
+      }
+
+      function nearestPoint(x) {
+        const idx = Math.max(0, Math.min(points.length - 1, Math.round((x - margin.left) / plotWidth * xCount)));
+        return points[idx];
+      }
+
+      overlay.addEventListener('mousemove', evt => {
+        const rect = svg.getBoundingClientRect();
+        const x = evt.clientX - rect.left;
+        showTooltip(evt, nearestPoint(x));
+      });
+      overlay.addEventListener('mouseleave', () => {
+        els.tooltip.style.opacity = 0;
+        hoverLine.setAttribute('visibility', 'hidden');
+        hoverDot.setAttribute('visibility', 'hidden');
+      });
+    }
+
+    function renderApp() {
+      if (!allSeries.length) return;
+      const historyDays = Number(els.historyRange.value);
+      const modelName = els.modelSelect.value;
+      const lookback = Number(els.lookback.value);
+      const horizon = Number(els.horizon.value);
+
+      els.lookbackValue.textContent = fmt.int.format(lookback);
+      els.horizonValue.textContent = fmt.int.format(horizon);
+
+      const history = chooseHistory(allSeries, historyDays);
+      const actualWindow = history.length > 10 ? history : allSeries.slice();
+      currentModel = fitModel(actualWindow, horizon, lookback, modelName);
+      renderMetrics(currentModel);
+      updateModelCopy(currentModel);
+      buildForecastTable(currentModel);
+      renderChart(currentModel);
+
+      const sourceText = allSeries.length > actualWindow.length ? 'Live FRED data loaded' : 'Fallback sample loaded';
+      setStatus(`${sourceText} · ${formatDatePretty(currentModel.lastDate)}`, false);
+    }
+
+    async function loadData() {
+      setStatus('Loading live FRED series...', true);
+      try {
+        const response = await fetch(FRED_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const text = await response.text();
+        const parsed = parseCsv(text);
+        if (!parsed.length) throw new Error('Empty series');
+        allSeries = parsed;
+        setStatus(`Live data loaded · ${formatDatePretty(parsed[parsed.length - 1].time)}`, false);
+      } catch (err) {
+        console.warn('FRED fetch failed, using fallback data:', err);
+        allSeries = parseCsv(FALLBACK_CSV);
+        setStatus(`Fallback sample loaded · ${formatDatePretty(allSeries[allSeries.length - 1].time)}`, false);
+      }
+      renderApp();
+    }
+
+    function bindEvents() {
+      for (const el of [els.historyRange, els.modelSelect, els.lookback, els.horizon]) {
+        el.addEventListener('input', () => {
+          if (el === els.modelSelect) {
+            const name = el.value;
+            if (name === 'trend') {
+              els.lookback.value = 252;
+            } else if (name === 'momentum') {
+              els.lookback.value = 120;
+            } else if (name === 'meanreversion') {
+              els.lookback.value = 252;
+            }
+          }
+          renderApp();
+        });
+      }
+
+      window.addEventListener('resize', () => {
+        if (currentModel) renderChart(currentModel);
+      });
+    }
+
+    bindEvents();
+    loadData();
+  </script>
+</body>
+</html>

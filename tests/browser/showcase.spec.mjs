@@ -13,7 +13,7 @@ const testRun = {
   validation: { passed: true }
 };
 
-test('landing page is a facet table with no synthetic samples', async ({ page, isMobile }) => {
+test('landing page renders the published run index', async ({ page, isMobile }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Same task/i })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Run index' })).toBeVisible();
@@ -21,8 +21,9 @@ test('landing page is a facet table with no synthetic samples', async ({ page, i
   for (const heading of headings) {
     await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
   }
-  await expect(page.locator('.run-row')).toHaveCount(0);
-  await expect(page.getByText('The index is ready for its first genuine model run.')).toBeVisible();
+  await expect(page.locator('.run-row')).toHaveCount(1);
+  await expect(page.locator('.run-row')).toContainText('gpt-5.4-mini');
+  await expect(page.locator('.run-row')).toContainText('openai');
 });
 
 test('a populated table exposes facets and opens the standalone artifact', async ({ page }) => {
@@ -39,7 +40,7 @@ test('a populated table exposes facets and opens the standalone artifact', async
   await expect(page.getByRole('heading', { name: 'Standalone test artifact' })).toBeVisible();
 });
 
-test('mobile table page does not overflow when the index is empty', async ({ page, isMobile }) => {
+test('mobile table page does not overflow when the index is populated', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'mobile project only');
   await page.goto('/');
   const dimensions = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
