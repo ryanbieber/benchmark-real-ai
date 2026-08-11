@@ -1,6 +1,5 @@
 const state = {
   runs: [],
-  selected: new Set(),
   filters: { provider: 'all', model: 'all', harness: 'all', reasoning: 'all' }
 };
 
@@ -8,18 +7,8 @@ const $ = (selector) => document.querySelector(selector);
 const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 const titleCase = (value) => String(value).replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 
-async function loadRuns() {
-  const response = await fetch('data/runs.json');
-  if (!response.ok) throw new Error(`Could not load runs (${response.status})`);
-  const data = await response.json();
-  state.runs = data.runs;
-  populateFilters();
-  updateStats();
-  render();
-}
-
 function unique(field) {
-  return [...new Set(state.runs.map((run) => field(run)))].sort((a, b) => a.localeCompare(b));
+  return [...new Set(state.runs.map(field))].sort((a, b) => a.localeCompare(b));
 }
 
 function fillSelect(selector, values) {
@@ -39,14 +28,6 @@ function populateFilters() {
   fillSelect('#filter-reasoning', unique((run) => run.reasoning.normalized));
 }
 
-function updateStats() {
-  const benchmarkRuns = state.runs.filter((run) => run.status === 'benchmark');
-  const source = benchmarkRuns.length ? benchmarkRuns : state.runs;
-  $('#stat-runs').textContent = benchmarkRuns.length || `${state.runs.length} demo`;
-  $('#stat-models').textContent = new Set(source.map((run) => run.model.id)).size;
-  $('#stat-harnesses').textContent = new Set(source.map((run) => run.harness.name)).size;
-}
-
 function filteredRuns() {
   return state.runs.filter((run) =>
     (state.filters.provider === 'all' || run.provider === state.filters.provider) &&
@@ -56,52 +37,45 @@ function filteredRuns() {
   );
 }
 
-function cardTemplate(run, index) {
-  const selected = state.selected.has(run.id);
-  const repaired = run.artifacts.repaired ? '<span class="tag">Repaired</span>' : '';
+function formatDate(value) {
+  if (!value) return 'Not reported';
+  return new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
+}
+
+function rowTemplate(run) {
+  const artifact = escapeHtml(run.artifacts.displayHtml);
   return `
-    <article class="run-card${selected ? ' selected' : ''}" data-run-id="${escapeHtml(run.id)}">
-      <div class="run-card-head">
-        <span class="status-pill">${run.status === 'demo' ? 'UI DEMO · NOT BENCHMARK' : 'BENCHMARK RUN'}</span>
-        <span class="run-card-index">${String(index + 1).padStart(2, '0')}</span>
-      </div>
-      <h3>${escapeHtml(run.model.name)}</h3>
-      <div class="model-id">${escapeHtml(run.model.id)} · ${escapeHtml(run.provider)}</div>
-      <p class="run-card-summary">${escapeHtml(run.summary)}</p>
-      <div class="tag-row"><span class="tag">${escapeHtml(run.reasoning.normalized)} reasoning</span>${repaired}</div>
-      <div class="run-meta-grid">
-        <div><small>Harness</small><strong title="${escapeHtml(run.harness.name)}">${escapeHtml(run.harness.name)}</strong></div>
-        <div><small>Data</small><strong>${escapeHtml(titleCase(run.dataSource.type))}</strong></div>
-        <div><small>Validated</small><strong>${run.validation.passed ? 'Yes' : 'No'}</strong></div>
-      </div>
-      <div class="run-card-actions">
-        <span class="run-score">${run.evaluation.total}/25</span>
-        <button class="select-run" type="button" aria-pressed="${selected}">${selected ? 'Selected' : 'Add to walkthrough'} <span>${selected ? '✓' : '+'}</span></button>
-      </div>
-    </article>`;
+    <tr class="run-row" data-artifact="${artifact}" tabindex="0" aria-label="Open ${escapeHtml(run.model.name)} dashboard">
+      <td class="model-cell"><a href="${artifact}"><strong>${escapeHtml(run.model.name)}</strong><small>${escapeHtml(run.model.id)}</small></a></td>
+      <td>${escapeHtml(run.provider)}</td>
+      <td><strong>${escapeHtml(run.harness.name)}</strong><small>${escapeHtml(run.harness.version)}</small></td>
+      <td><span class="reasoning-badge">${escapeHtml(titleCase(run.reasoning.normalized))}</span><small>${escapeHtml(run.reasoning.native)}</small></td>
+      <td>${escapeHtml(titleCase(run.dataSource.type))}</td>
+      <td><span class="validation-mark ${run.validation.passed ? 'passed' : 'failed'}">${run.validation.passed ? 'Passed' : 'Failed'}</span></td>
+      <td>${escapeHtml(formatDate(run.run.completedAt))}</td>
+      <td class="open-cell"><a href="${artifact}" aria-label="Open ${escapeHtml(run.model.name)} artifact">↗</a></td>
+    </tr>`;
 }
 
 function render() {
   const runs = filteredRuns();
-  $('#result-count').textContent = runs.length;
-  $('#run-grid').innerHTML = runs.map(cardTemplate).join('');
-  $('#empty-state').hidden = runs.length > 0;
-  $('#run-grid').hidden = runs.length === 0;
-  document.querySelectorAll('.select-run').forEach((button) => button.addEventListener('click', () => {
-    const id = button.closest('.run-card').dataset.runId;
-    state.selected.has(id) ? state.selected.delete(id) : state.selected.add(id);
-    render();
-  }));
-  renderSelectionTray();
+  $('#run-table-body').innerHTML = runs.map(rowTemplate).join('');
+  $('#table-empty').hidden = runs.length > 0;
+  $('#result-count').textContent = `${runs.length} ${runs.length === 1 ? 'run' : 'runs'} shown`;
+
+  document.querySelectorAll('.run-row').forEach((row) => {
+    const open = () => { window.location.href = row.dataset.artifact; };
+    row.addEventListener('click', (event) => { if (!event.target.closest('a')) open(); });
+    row.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); }
+    });
+  });
 }
 
-function renderSelectionTray() {
-  const tray = $('#selection-tray');
-  const selectedRuns = state.runs.filter((run) => state.selected.has(run.id));
-  tray.hidden = selectedRuns.length === 0;
-  $('#selection-count').textContent = selectedRuns.length;
-  $('#selection-names').textContent = selectedRuns.map((run) => `${run.model.name} / ${run.reasoning.normalized}`).join(' · ');
-  $('#start-walkthrough').href = `compare.html?runs=${selectedRuns.map((run) => encodeURIComponent(run.id)).join(',')}`;
+function updateStats() {
+  $('#stat-runs').textContent = state.runs.length;
+  $('#stat-models').textContent = new Set(state.runs.map((run) => run.model.id)).size;
+  $('#stat-harnesses').textContent = new Set(state.runs.map((run) => run.harness.name)).size;
 }
 
 function clearFilters() {
@@ -109,6 +83,16 @@ function clearFilters() {
     state.filters[key] = 'all';
     $(`#filter-${key}`).value = 'all';
   });
+  render();
+}
+
+async function loadRuns() {
+  const response = await fetch('data/runs.json');
+  if (!response.ok) throw new Error(`Could not load runs (${response.status})`);
+  const data = await response.json();
+  state.runs = data.runs.filter((run) => run.status === 'benchmark');
+  populateFilters();
+  updateStats();
   render();
 }
 
@@ -120,15 +104,13 @@ function clearFilters() {
 });
 
 $('#clear-filters').addEventListener('click', clearFilters);
-$('#empty-clear').addEventListener('click', clearFilters);
-$('#clear-selection').addEventListener('click', () => { state.selected.clear(); render(); });
 $('#copy-prompt').addEventListener('click', async () => {
-  const prompt = $('#benchmark-prompt').textContent.replace(/^“|”$/g, '');
-  await navigator.clipboard.writeText(prompt);
+  await navigator.clipboard.writeText($('#benchmark-prompt').textContent.trim());
   $('#copy-prompt').textContent = 'Copied';
   window.setTimeout(() => { $('#copy-prompt').textContent = 'Copy'; }, 1400);
 });
 
 loadRuns().catch((error) => {
-  $('#run-grid').innerHTML = `<div class="notice"><span>ERROR</span><p>${escapeHtml(error.message)}</p></div>`;
+  $('#table-empty').hidden = false;
+  $('#table-empty h3').textContent = error.message;
 });

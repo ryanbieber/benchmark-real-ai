@@ -20,7 +20,7 @@ The project compares the complete model-plus-harness experience. A model used th
 - Not a test of future market accuracy.
 - Not financial or investment advice.
 
-Starter entries are clearly marked UI demos and never count as benchmark evidence.
+The index intentionally contains no synthetic samples. It remains empty until genuine, validated runs are contributed.
 
 ## Run locally
 

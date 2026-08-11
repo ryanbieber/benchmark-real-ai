@@ -31,7 +31,7 @@ export function validateManifest(manifest) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(run.id || '')) errors.push(`${label}: id must be lowercase kebab-case`);
     if (ids.has(run.id)) errors.push(`${label}: duplicate id`);
     ids.add(run.id);
-    if (!['demo', 'benchmark'].includes(run.status)) errors.push(`${label}: status must be demo or benchmark`);
+    if (run.status !== 'benchmark') errors.push(`${label}: status must be benchmark`);
     if (!run.provider || !run.model?.id || !run.model?.name || !run.model?.version) errors.push(`${label}: complete provider and model identity are required`);
     if (!run.harness?.name || !run.harness?.version || !run.harness?.interface || !run.harness?.configuration) errors.push(`${label}: complete harness metadata is required`);
     if (!Array.isArray(run.harness?.capabilities) || !run.harness.capabilities.length) errors.push(`${label}: at least one harness capability is required`);
@@ -53,8 +53,6 @@ export function validateManifest(manifest) {
       const repairPath = safePath(artifacts.repairLog);
       if (!repairPath || !existsSync(repairPath)) errors.push(`${label}: repair log does not exist`);
     }
-    if (run.status === 'demo' && run.dataSource?.type !== 'synthetic') errors.push(`${label}: demo fixtures must be classified as synthetic`);
-
     const scores = run.evaluation?.scores || {};
     let total = 0;
     scoreKeys.forEach((key) => {

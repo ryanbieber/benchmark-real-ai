@@ -24,7 +24,7 @@ A run is one model + reasoning setting + harness combination. The harness is par
 
 ## Required evidence
 
-Each non-demo run must add all of the following:
+Each run must add all of the following:
 
 1. The original, unmodified HTML produced by the run.
 2. The HTML displayed by the showcase.
@@ -63,7 +63,7 @@ Score the original result from 0–5 in each category:
 - `uncertaintyHonesty`
 - `technicalRobustness`
 
-The total must equal the five scores added together. Scores describe observable behavior and must include a short reviewer note. Demo fixtures are never counted as benchmark evidence.
+The total must equal the five scores added together. Scores describe observable behavior and must include a short reviewer note.
 
 ## Addition checklist
 
@@ -73,8 +73,8 @@ Before opening a pull request:
 2. Add or update the manifest entry without changing existing run records.
 3. Run `npm run validate`.
 4. Run `npm test`.
-5. Confirm the dashboard works inside the sandboxed showcase iframe.
-6. Confirm demo, synthetic, repaired, and failed states are visibly disclosed.
+5. Confirm the standalone dashboard opens directly from its table row.
+6. Confirm synthetic, repaired, and failed states are visibly disclosed.
 7. Describe the model, reasoning setting, harness, validation outcome, and any repairs in the pull request.
 
 Do not reorder results to manufacture a winner, silently replace an artifact, or describe an S&P 500 forecast as financial advice.
