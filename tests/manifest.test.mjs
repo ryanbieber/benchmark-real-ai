@@ -7,8 +7,8 @@ test('published manifest passes repository validation', () => {
   assert.deepEqual(validateManifest(readManifest()), []);
 });
 
-test('the repository contains no sample runs', () => {
-  assert.deepEqual(readManifest().runs, []);
+test('the repository contains at least one published run', () => {
+  assert.ok(readManifest().runs.length >= 1);
 });
 
 test('governance contains the exact goal and model-harness rule', () => {

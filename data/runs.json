@@ -6,5 +6,101 @@
     "normalizedReasoningBands": ["default", "low", "medium", "high", "max"],
     "updatedAt": "2026-08-11T00:00:00Z"
   },
-  "runs": []
+  "runs": [
+    {
+      "id": "openai-gpt-5-4-mini-low-codex-20260811",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.4-mini",
+        "name": "gpt-5.4-mini",
+        "version": "gpt-5.4-mini"
+      },
+      "reasoning": {
+        "native": "low",
+        "normalized": "low"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai.DI25SN",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.4-mini",
+          "reasoningLevelConfigAttempt": "low",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "outputLastMessage": false
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-11T22:08:42.869392Z",
+        "finishedAt": "2026-08-11T22:15:42.200067Z",
+        "durationSeconds": 419.331
+      },
+      "run": {
+        "completedAt": "2026-08-11T22:15:42.200067Z"
+      },
+      "usage": {
+        "tokens": 66075,
+        "latencyMs": null,
+        "cost": null
+      },
+      "dataSource": {
+        "type": "live",
+        "notes": "S&P 500 daily close data fetched from FRED during the benchmark run."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-4-mini-low-codex-20260811.md",
+        "originalHtml": "runs/original/openai-gpt-5-4-mini-low-codex-20260811.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-4-mini-low-codex-20260811.html",
+        "validationEvidence": "validation/openai-gpt-5-4-mini-low-codex-20260811.json",
+        "sha256": {
+          "rawResponse": "12f3b30fdb69ce7b2f7b9e9960418ede2e2b052fe325d5fa1f90598e8495f738",
+          "originalHtml": "d53206c798ad977232b1a8c21b79133d4a803319c6be61bb713b8ef6f5b8c1cf",
+          "displayHtml": "d53206c798ad977232b1a8c21b79133d4a803319c6be61bb713b8ef6f5b8c1cf",
+          "validationEvidence": "79f1ae7ed86f41b8a204c104fb0427039ffef6b1d1a87d56a87486246cc8e6cf"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 3,
+          "technicalRobustness": 4
+        },
+        "total": 18,
+        "reviewer": "Codex",
+        "notes": "The dashboard is complete and interactive, but the methodology remains intentionally simple and the uncertainty framing is basic rather than statistically rigorous."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML hashes matched exactly; no repair was required."
+          },
+          {
+            "name": "browser-dump",
+            "passed": true,
+            "details": "Headless Chrome loaded the standalone dashboard and the DOM dump showed the fallback sample state and the latest close."
+          }
+        ]
+      },
+      "summary": "Codex CLI completed a standalone HTML S&P 500 scenario dashboard in an empty temp workspace, validated it in headless Chrome, and produced identical original and displayed artifacts without requiring a repair."
+    }
+  ]
 }
