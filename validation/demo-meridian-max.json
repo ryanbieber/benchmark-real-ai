@@ -1,0 +1,1 @@
+{"fixture":true,"passed":true,"checks":[{"name":"standalone HTML","passed":true},{"name":"interactive scenario and horizon controls","passed":true},{"name":"synthetic data disclosure","passed":true}],"note":"UI fixture validation only; not benchmark evidence."}

@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "benchmark": {
+    "name": "Benchmark Real AI",
+    "goal": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+    "normalizedReasoningBands": ["default", "low", "medium", "high", "max"],
+    "updatedAt": "2026-08-11T00:00:00Z"
+  },
+  "runs": [
+    {
+      "id": "demo-atlas-low",
+      "status": "demo",
+      "provider": "Fictional Labs",
+      "model": { "id": "fixture/atlas-demo", "name": "Atlas Demo", "version": "fixture-1" },
+      "harness": {
+        "name": "Fixture CLI",
+        "version": "fixture-1",
+        "interface": "demo-cli",
+        "configuration": "Synthetic interface fixture",
+        "capabilities": ["file editing", "local validation"]
+      },
+      "reasoning": { "native": "low", "normalized": "low" },
+      "run": {
+        "startedAt": "2026-08-11T00:00:00Z",
+        "completedAt": "2026-08-11T00:00:00Z",
+        "durationMs": null,
+        "inputTokens": null,
+        "outputTokens": null,
+        "costUsd": null
+      },
+      "dataSource": { "type": "synthetic", "label": "Invented values for UI demonstration" },
+      "summary": "A compact point-forecast dashboard with selectable three, six, and twelve-month horizons.",
+      "artifacts": {
+        "rawResponse": "responses/demo-atlas-low.md",
+        "originalHtml": "runs/original/demo-atlas-low.html",
+        "displayHtml": "runs/original/demo-atlas-low.html",
+        "validationEvidence": "validation/demo-atlas-low.json",
+        "screenshot": null,
+        "repairLog": null,
+        "repaired": false,
+        "sha256": {
+          "rawResponse": "9a10efd33afde9a47a59995af1f35b7aedcadf25e417e10ad0e695df893fc988",
+          "originalHtml": "c537337ad9fabe5c1ed207d803696368ccacfddab003a11f009f9348a7ca3c26",
+          "displayHtml": "c537337ad9fabe5c1ed207d803696368ccacfddab003a11f009f9348a7ca3c26",
+          "validationEvidence": "6418ac65ba2e2863792844d2e3c0ed617f70361b64c206767cd30f04243ffcdf"
+        }
+      },
+      "validation": { "passed": true, "consoleErrors": 0, "checks": ["standalone HTML", "horizon controls", "disclosure"] },
+      "evaluation": {
+        "scores": { "taskFulfillment": 3, "interactivityUsability": 3, "forecastingMethodology": 2, "uncertaintyHonesty": 3, "technicalRobustness": 4 },
+        "total": 15,
+        "reviewer": "Fixture author",
+        "notes": "Illustrative scores used only to exercise the interface. This is not a model assessment."
+      }
+    },
+    {
+      "id": "demo-atlas-high",
+      "status": "demo",
+      "provider": "Fictional Labs",
+      "model": { "id": "fixture/atlas-demo", "name": "Atlas Demo", "version": "fixture-1" },
+      "harness": {
+        "name": "Fixture CLI",
+        "version": "fixture-1",
+        "interface": "demo-cli",
+        "configuration": "Synthetic interface fixture",
+        "capabilities": ["file editing", "local validation"]
+      },
+      "reasoning": { "native": "high", "normalized": "high" },
+      "run": {
+        "startedAt": "2026-08-11T00:00:00Z",
+        "completedAt": "2026-08-11T00:00:00Z",
+        "durationMs": null,
+        "inputTokens": null,
+        "outputTokens": null,
+        "costUsd": null
+      },
+      "dataSource": { "type": "synthetic", "label": "Invented values for UI demonstration" },
+      "summary": "A dark scenario lab that foregrounds forecast distributions, diagnostics, and three macro paths.",
+      "artifacts": {
+        "rawResponse": "responses/demo-atlas-high.md",
+        "originalHtml": "runs/original/demo-atlas-high.html",
+        "displayHtml": "runs/original/demo-atlas-high.html",
+        "validationEvidence": "validation/demo-atlas-high.json",
+        "screenshot": null,
+        "repairLog": null,
+        "repaired": false,
+        "sha256": {
+          "rawResponse": "30e48700300cd71fe66a65d69fa6c084b7c4c42efc9d7ab394a2334859879350",
+          "originalHtml": "5ce3e779b7e6c7e34517a9374d298d82f24cc970b8a7ecc8aa9669ea2b6cc458",
+          "displayHtml": "5ce3e779b7e6c7e34517a9374d298d82f24cc970b8a7ecc8aa9669ea2b6cc458",
+          "validationEvidence": "157318adcda999a48b008a10d2c6b137b3946755a98e88de527120309cd1e6e9"
+        }
+      },
+      "validation": { "passed": true, "consoleErrors": 0, "checks": ["standalone HTML", "scenario controls", "disclosure"] },
+      "evaluation": {
+        "scores": { "taskFulfillment": 4, "interactivityUsability": 4, "forecastingMethodology": 4, "uncertaintyHonesty": 4, "technicalRobustness": 5 },
+        "total": 21,
+        "reviewer": "Fixture author",
+        "notes": "Illustrative scores used only to exercise the interface. This is not a model assessment."
+      }
+    },
+    {
+      "id": "demo-meridian-default",
+      "status": "demo",
+      "provider": "Sample Systems",
+      "model": { "id": "fixture/meridian-demo", "name": "Meridian Demo", "version": "fixture-1" },
+      "harness": {
+        "name": "Fixture Studio",
+        "version": "fixture-1",
+        "interface": "demo-app",
+        "configuration": "Synthetic interface fixture",
+        "capabilities": ["file editing", "browser preview"]
+      },
+      "reasoning": { "native": "default", "normalized": "default" },
+      "run": {
+        "startedAt": "2026-08-11T00:00:00Z",
+        "completedAt": "2026-08-11T00:00:00Z",
+        "durationMs": null,
+        "inputTokens": null,
+        "outputTokens": null,
+        "costUsd": null
+      },
+      "dataSource": { "type": "synthetic", "label": "Invented values for UI demonstration" },
+      "summary": "An editorial market map that switches between a base path, forecast range, and historical context.",
+      "artifacts": {
+        "rawResponse": "responses/demo-meridian-default.md",
+        "originalHtml": "runs/original/demo-meridian-default.html",
+        "displayHtml": "runs/original/demo-meridian-default.html",
+        "validationEvidence": "validation/demo-meridian-default.json",
+        "screenshot": null,
+        "repairLog": null,
+        "repaired": false,
+        "sha256": {
+          "rawResponse": "848d5b3390153fa8b9b05f62948b25f17100994cb94c82d5ace282983b0e42de",
+          "originalHtml": "9f8e4b39ca3acdce40a33a9a09e40eb19f9c3057aa5e1fb68c06e71b0729c475",
+          "displayHtml": "9f8e4b39ca3acdce40a33a9a09e40eb19f9c3057aa5e1fb68c06e71b0729c475",
+          "validationEvidence": "eb780d7908d59251ce5e9d8702cd6383d6b216af26c7d1adad0d2718d856d708"
+        }
+      },
+      "validation": { "passed": true, "consoleErrors": 0, "checks": ["standalone HTML", "view controls", "disclosure"] },
+      "evaluation": {
+        "scores": { "taskFulfillment": 3, "interactivityUsability": 4, "forecastingMethodology": 3, "uncertaintyHonesty": 4, "technicalRobustness": 3 },
+        "total": 17,
+        "reviewer": "Fixture author",
+        "notes": "Illustrative scores used only to exercise the interface. This is not a model assessment."
+      }
+    },
+    {
+      "id": "demo-meridian-max",
+      "status": "demo",
+      "provider": "Sample Systems",
+      "model": { "id": "fixture/meridian-demo", "name": "Meridian Demo", "version": "fixture-1" },
+      "harness": {
+        "name": "Fixture Studio",
+        "version": "fixture-1",
+        "interface": "demo-app",
+        "configuration": "Synthetic interface fixture",
+        "capabilities": ["file editing", "browser preview"]
+      },
+      "reasoning": { "native": "maximum", "normalized": "max" },
+      "run": {
+        "startedAt": "2026-08-11T00:00:00Z",
+        "completedAt": "2026-08-11T00:00:00Z",
+        "durationMs": null,
+        "inputTokens": null,
+        "outputTokens": null,
+        "costUsd": null
+      },
+      "dataSource": { "type": "synthetic", "label": "Invented values for UI demonstration" },
+      "summary": "A scenario workbench with adjustable horizon, optional signals, uncertainty bands, and diagnostics.",
+      "artifacts": {
+        "rawResponse": "responses/demo-meridian-max.md",
+        "originalHtml": "runs/original/demo-meridian-max.html",
+        "displayHtml": "runs/original/demo-meridian-max.html",
+        "validationEvidence": "validation/demo-meridian-max.json",
+        "screenshot": null,
+        "repairLog": null,
+        "repaired": false,
+        "sha256": {
+          "rawResponse": "21c6eec05dd0e4d9d101ffa0cbb08083b992a9b1536af8b4349070d6c024998c",
+          "originalHtml": "f39d27e1b72a3b95e6652e73eab6e9600a8661990fa467a715590f7662deb167",
+          "displayHtml": "f39d27e1b72a3b95e6652e73eab6e9600a8661990fa467a715590f7662deb167",
+          "validationEvidence": "cfca26983fadcc964002f704bf443d12c411447d3a7e69c352c1c74faef7e463"
+        }
+      },
+      "validation": { "passed": true, "consoleErrors": 0, "checks": ["standalone HTML", "scenario controls", "horizon control", "disclosure"] },
+      "evaluation": {
+        "scores": { "taskFulfillment": 5, "interactivityUsability": 5, "forecastingMethodology": 4, "uncertaintyHonesty": 4, "technicalRobustness": 5 },
+        "total": 23,
+        "reviewer": "Fixture author",
+        "notes": "Illustrative scores used only to exercise the interface. This is not a model assessment."
+      }
+    }
+  ]
+}

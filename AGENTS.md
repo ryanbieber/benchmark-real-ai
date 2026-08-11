@@ -1,0 +1,80 @@
+# Benchmark Real AI — Agent Instructions
+
+These instructions apply to the entire repository. They are the source of truth for every future benchmark addition.
+
+## Goal
+
+Show how a specific AI model, reasoning setting, and harness combination completes the same practical task. This is an observational showcase, not a scientific leaderboard and not investment advice.
+
+Every benchmark run must use this exact prompt, including capitalization and punctuation:
+
+> I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.
+
+Do not add instructions to the benchmark prompt. Do not follow up with implementation help after the run begins.
+
+## What counts as a run
+
+A run is one model + reasoning setting + harness combination. The harness is part of the result. The same model used in two harnesses is two separate runs.
+
+- Start in a fresh workspace with no files from a previous run.
+- Let the model use the normal capabilities of the recorded harness, including file editing, commands, browsing, and browser validation.
+- Do not manually implement, repair, or steer the dashboard while the run is active.
+- End only when the harness reports completion or reaches an unrecoverable limit.
+- Never publish hidden chain-of-thought. Preserve only user-visible responses, tool summaries, commands, and validation evidence.
+
+## Required evidence
+
+Each non-demo run must add all of the following:
+
+1. The original, unmodified HTML produced by the run.
+2. The HTML displayed by the showcase.
+3. A Markdown run record containing the final visible response and a concise tool/command summary.
+4. Validation evidence, including commands, outcomes, and any unresolved failures.
+5. A `data/runs.json` entry with:
+   - Full provider and model identifiers.
+   - Native reasoning setting and normalized reasoning band.
+   - Harness name, version, interface, relevant configuration, and enabled capabilities.
+   - UTC timestamps, duration, token usage, and cost when available; use `null` when unavailable.
+   - Data-source classification: `live`, `historical-snapshot`, `synthetic`, or `undocumented`.
+   - Artifact paths and SHA-256 hashes.
+   - Manual rubric scores and reviewer notes.
+
+Do not guess unavailable metadata.
+
+## Repairs
+
+The showcase may repair an artifact only enough to make it render. A repair must not improve the forecast, data, explanation, visual design, or interaction model.
+
+- Preserve the original file unchanged.
+- Put the minimally repaired file in `runs/rendered/`.
+- Add a Markdown repair log describing every change.
+- Score technical robustness from the original result, not the repaired display.
+- Set `repaired: true` in the manifest.
+
+If no repair is required, the original and displayed files may contain identical bytes and `repairLog` must be `null`.
+
+## Evaluation
+
+Score the original result from 0–5 in each category:
+
+- `taskFulfillment`
+- `interactivityUsability`
+- `forecastingMethodology`
+- `uncertaintyHonesty`
+- `technicalRobustness`
+
+The total must equal the five scores added together. Scores describe observable behavior and must include a short reviewer note. Demo fixtures are never counted as benchmark evidence.
+
+## Addition checklist
+
+Before opening a pull request:
+
+1. Add the response, original artifact, displayed artifact, and validation evidence.
+2. Add or update the manifest entry without changing existing run records.
+3. Run `npm run validate`.
+4. Run `npm test`.
+5. Confirm the dashboard works inside the sandboxed showcase iframe.
+6. Confirm demo, synthetic, repaired, and failed states are visibly disclosed.
+7. Describe the model, reasoning setting, harness, validation outcome, and any repairs in the pull request.
+
+Do not reorder results to manufacture a winner, silently replace an artifact, or describe an S&P 500 forecast as financial advice.

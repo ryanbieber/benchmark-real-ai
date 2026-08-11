@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Walk through selected Benchmark Real AI model runs.">
+    <title>Run walkthrough — Benchmark Real AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="compare.js"></script>
+  </head>
+  <body class="compare-page">
+    <a class="skip-link" href="#artifact-frame">Skip to artifact</a>
+    <header class="site-header compare-header">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Benchmark <em>Real</em> AI</span></a>
+      <a class="back-link" href="index.html#explorer">← Change selection</a>
+    </header>
+
+    <main class="walkthrough-shell">
+      <div class="walkthrough-topline">
+        <div>
+          <p class="eyebrow">Guided walkthrough</p>
+          <h1 id="run-title">Loading run…</h1>
+        </div>
+        <div class="walkthrough-actions">
+          <button id="compare-toggle" class="button button-ghost compact" type="button" hidden>Compare two</button>
+          <button id="fullscreen-toggle" class="button button-ghost compact" type="button">Focus view</button>
+        </div>
+      </div>
+
+      <div class="progress-row">
+        <span id="progress-label">Run 1 of 1</span>
+        <div class="progress-track"><i id="progress-bar"></i></div>
+        <span id="progress-name">—</span>
+      </div>
+
+      <section class="viewer-layout">
+        <div class="artifact-panel" id="artifact-panel">
+          <div class="artifact-toolbar">
+            <div><span class="status-pill" id="status-pill">DEMO</span><strong id="artifact-label">Interactive artifact</strong></div>
+            <div class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          </div>
+          <div class="frame-grid" id="frame-grid">
+            <div class="frame-wrap"><iframe id="artifact-frame" title="Selected model dashboard" sandbox="allow-scripts allow-forms allow-modals"></iframe></div>
+            <div class="frame-wrap secondary-frame" id="secondary-frame-wrap" hidden>
+              <div class="secondary-label" id="secondary-label">Comparison run</div>
+              <iframe id="secondary-frame" title="Comparison model dashboard" sandbox="allow-scripts allow-forms allow-modals"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <aside class="run-panel" id="run-panel" aria-label="Run details">
+          <div class="run-panel-section identity-section">
+            <span class="panel-label">Run identity</span>
+            <h2 id="panel-model">—</h2>
+            <p id="panel-summary">—</p>
+            <div class="tag-row" id="panel-tags"></div>
+          </div>
+          <div class="run-panel-section">
+            <span class="panel-label">Model + harness</span>
+            <dl class="metadata-list" id="metadata-list"></dl>
+          </div>
+          <div class="run-panel-section">
+            <div class="panel-heading"><span class="panel-label">Assessment of original</span><strong id="score-total">—/25</strong></div>
+            <div class="score-list" id="score-list"></div>
+            <p class="review-note" id="review-note"></p>
+          </div>
+          <div class="run-panel-section">
+            <span class="panel-label">Evidence</span>
+            <div class="evidence-list" id="evidence-list"></div>
+          </div>
+        </aside>
+      </section>
+
+      <nav class="run-navigation" aria-label="Walkthrough navigation">
+        <button id="previous-run" type="button">← <span>Previous run</span></button>
+        <div id="run-dots" class="run-dots"></div>
+        <button id="next-run" type="button"><span>Next run</span> →</button>
+      </nav>
+    </main>
+
+    <dialog id="raw-dialog" class="raw-dialog">
+      <div class="dialog-head"><h2>Visible run response</h2><button id="close-dialog" type="button" aria-label="Close response">×</button></div>
+      <pre id="raw-response"></pre>
+    </dialog>
+  </body>
+</html>

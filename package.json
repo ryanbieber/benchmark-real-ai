@@ -1,0 +1,17 @@
+{
+  "name": "benchmark-real-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A public showcase of model, reasoning, and harness combinations completing the same practical task.",
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 4173 --bind 127.0.0.1",
+    "validate": "node scripts/validate.mjs",
+    "test:unit": "node --test tests/manifest.test.mjs",
+    "test:browser": "playwright test",
+    "test": "npm run validate && npm run test:unit && npm run test:browser"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2"
+  }
+}

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="An inspectable showcase of how AI models and agent harnesses tackle the same S&P 500 dashboard task.">
+    <title>Benchmark Real AI — Same task. See the work.</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#explorer">Skip to run explorer</a>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Benchmark Real AI home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Benchmark <em>Real</em> AI</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#premise">The premise</a>
+        <a href="#protocol">Protocol</a>
+        <a href="#explorer">Explore runs</a>
+        <a class="nav-github" href="https://github.com/ryanbieber/benchmark-real-ai">GitHub ↗</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="live-dot"></span> An open model field test</p>
+          <h1 id="hero-title">Claims are cheap.<br><span>Show the work.</span></h1>
+          <p class="hero-lede">The same real-world task, handed to different AI models through real agent harnesses. Browse what they built, how they reasoned, and whether it actually worked.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#explorer">Explore the runs <span>↓</span></a>
+            <a class="button button-ghost" href="#protocol">Read the protocol</a>
+          </div>
+          <dl class="hero-stats" aria-label="Benchmark statistics">
+            <div><dt id="stat-runs">—</dt><dd>Published runs</dd></div>
+            <div><dt id="stat-models">—</dt><dd>Models tested</dd></div>
+            <div><dt id="stat-harnesses">—</dt><dd>Harnesses</dd></div>
+          </dl>
+        </div>
+
+        <aside class="prompt-card" aria-label="Benchmark prompt">
+          <div class="prompt-card-head">
+            <span>THE EXACT PROMPT</span>
+            <button class="copy-button" id="copy-prompt" type="button" aria-label="Copy benchmark prompt">Copy</button>
+          </div>
+          <blockquote id="benchmark-prompt">“I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.”</blockquote>
+          <div class="prompt-rule"></div>
+          <ul class="prompt-facts">
+            <li><span>01</span> One prompt. No human follow-up.</li>
+            <li><span>02</span> Normal harness tools are allowed.</li>
+            <li><span>03</span> Output and validation are preserved.</li>
+          </ul>
+          <div class="prompt-stamp">PUBLIC &amp; INSPECTABLE</div>
+        </aside>
+      </section>
+
+      <section class="ticker" aria-label="Benchmark principles">
+        <div>
+          <span>MODEL + HARNESS</span><b>◆</b><span>VISIBLE OUTPUTS</span><b>◆</b><span>REASONING SETTINGS</span><b>◆</b><span>VALIDATED RESULTS</span><b>◆</b><span>NO HIDDEN FIXES</span><b>◆</b><span>MODEL + HARNESS</span><b>◆</b><span>VISIBLE OUTPUTS</span>
+        </div>
+      </section>
+
+      <section class="premise section-shell" id="premise" aria-labelledby="premise-title">
+        <div class="section-kicker">01 / The premise</div>
+        <div class="premise-grid">
+          <h2 id="premise-title">A practical benchmark for the models we actually use.</h2>
+          <div class="premise-copy">
+            <p>New models arrive with sweeping claims. Benchmarks compress them into a number. But the real question is simpler: <strong>what happens when you ask the model to make something useful?</strong></p>
+            <p>This project keeps the task constant and exposes the conditions around it. The model, reasoning setting, and harness all matter—so all three stay visible.</p>
+          </div>
+        </div>
+        <div class="principle-grid">
+          <article><span class="principle-number">01</span><h3>Same goal</h3><p>Every run starts from the exact same S&amp;P 500 dashboard request.</p></article>
+          <article><span class="principle-number">02</span><h3>Real harnesses</h3><p>Codex and other agent environments are recorded as part of the result.</p></article>
+          <article><span class="principle-number">03</span><h3>Inspect the artifact</h3><p>Use the dashboard, read the metadata, and see validation evidence yourself.</p></article>
+          <article><span class="principle-number">04</span><h3>Honest limitations</h3><p>Repairs, synthetic data, missing facts, and failures are disclosed—not hidden.</p></article>
+        </div>
+      </section>
+
+      <section class="protocol" id="protocol" aria-labelledby="protocol-title">
+        <div class="section-shell">
+          <div class="section-kicker light">02 / The protocol</div>
+          <div class="protocol-head">
+            <h2 id="protocol-title">What each run records</h2>
+            <p>This is a showcase, not a universal leaderboard. Scores help you inspect the work; they do not crown a winner.</p>
+          </div>
+          <div class="protocol-grid">
+            <article><span>MODEL</span><h3>Exact identity</h3><p>Provider, model ID, version, and run date.</p></article>
+            <article><span>EFFORT</span><h3>Reasoning setting</h3><p>Native value plus a disclosed normalized band.</p></article>
+            <article><span>HARNESS</span><h3>Agent environment</h3><p>Name, version, interface, configuration, and tools.</p></article>
+            <article><span>EVIDENCE</span><h3>Validation trail</h3><p>Commands, outcomes, source classification, and repairs.</p></article>
+          </div>
+          <a class="text-link light" href="https://github.com/ryanbieber/benchmark-real-ai/blob/main/AGENTS.md">Read the full collection rules <span>↗</span></a>
+        </div>
+      </section>
+
+      <section class="explorer section-shell" id="explorer" aria-labelledby="explorer-title">
+        <div class="section-kicker">03 / Explore the runs</div>
+        <div class="explorer-head">
+          <div>
+            <h2 id="explorer-title">Pick the work you want to inspect.</h2>
+            <p>Select any runs, then walk through them one by one or compare two side by side.</p>
+          </div>
+          <div class="result-count" aria-live="polite"><strong id="result-count">0</strong><span>runs shown</span></div>
+        </div>
+
+        <div class="filter-bar" aria-label="Filter benchmark runs">
+          <label>Provider<select id="filter-provider"><option value="all">All providers</option></select></label>
+          <label>Model<select id="filter-model"><option value="all">All models</option></select></label>
+          <label>Harness<select id="filter-harness"><option value="all">All harnesses</option></select></label>
+          <label>Reasoning<select id="filter-reasoning"><option value="all">All levels</option></select></label>
+          <button id="clear-filters" class="clear-button" type="button">Clear</button>
+        </div>
+
+        <div class="notice demo-notice">
+          <span>DEMO DATA</span>
+          <p>The initial artifacts below are interface fixtures, not genuine benchmark runs. They are excluded from benchmark claims.</p>
+        </div>
+
+        <div class="run-grid" id="run-grid" aria-live="polite"></div>
+        <div class="empty-state" id="empty-state" hidden><span>∅</span><h3>No runs match those filters.</h3><button type="button" id="empty-clear">Reset filters</button></div>
+      </section>
+    </main>
+
+    <div class="selection-tray" id="selection-tray" aria-live="polite" hidden>
+      <div><span class="selection-count" id="selection-count">0</span><p><strong>Runs selected</strong><small id="selection-names"></small></p></div>
+      <button id="clear-selection" class="tray-clear" type="button">Clear</button>
+      <a id="start-walkthrough" class="button button-primary" href="compare.html">Start walkthrough <span>→</span></a>
+    </div>
+
+    <footer>
+      <div class="footer-brand">Benchmark <em>Real</em> AI</div>
+      <p>Built in public. Judge the work, not the launch post.</p>
+      <div><a href="https://github.com/ryanbieber/benchmark-real-ai">GitHub</a><a href="https://github.com/ryanbieber/benchmark-real-ai/blob/main/CONTRIBUTING.md">Contribute a run</a><a href="#hero-title">Back to top ↑</a></div>
+    </footer>
+  </body>
+</html>
