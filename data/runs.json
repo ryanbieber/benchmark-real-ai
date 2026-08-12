@@ -11,7 +11,7 @@
       "xhigh",
       "max"
     ],
-    "updatedAt": "2026-08-12T11:35:30Z",
+    "updatedAt": "2026-08-12T13:24:54Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -1639,6 +1639,122 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-terra at medium reasoning in a fresh temporary workspace, produced and browser-validated a self-contained S&P 500 forecasting dashboard with deterministic synthetic demo data and local CSV import, and imported byte-identical original and display artifacts without a repair."
+    },
+    {
+      "id": "openai-gpt-5-6-terra-low-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-terra",
+        "name": "gpt-5.6-terra",
+        "version": "gpt-5.6-terra"
+      },
+      "reasoning": {
+        "native": "low",
+        "normalized": "low"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-6-terra-low-euoeg0",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-terra",
+          "reasoningLevelConfigAttempt": "low",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": null,
+          "webSearch": null,
+          "jsonEvents": true,
+          "outputLastMessage": false,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T13:22:50.780Z",
+        "finishedAt": "2026-08-12T13:24:54.594Z",
+        "durationSeconds": 123.814
+      },
+      "run": {
+        "threadId": "019ff623-d91c-7302-8396-750bb7ccddf5",
+        "completedAt": "2026-08-12T13:24:54.594Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": 123814
+      },
+      "usage": {
+        "inputTokens": 125096,
+        "cachedInputTokens": 106752,
+        "outputTokens": 5910,
+        "reasoningOutputTokens": 457,
+        "totalTokens": 131006,
+        "source": "turn.completed usage event in validation/openai-gpt-5-6-terra-low-codex-20260812.session.jsonl",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The default dashboard creates offline synthetic demonstration history. It offers local CSV import for user-supplied Date and Close data; the benchmark run did not fetch or embed external market data."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-terra-low-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-terra-low-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-terra-low-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-6-terra-low-codex-20260812.json",
+        "eventStream": "validation/openai-gpt-5-6-terra-low-codex-20260812.session.jsonl",
+        "sha256": {
+          "rawResponse": "abf3757190dd22c1940001271157e46542dfdaa84d0ddeb319ab0a708c61c67b",
+          "originalHtml": "8946710da77c3f43d32e1cc2ae64dc1ccc01c2e399fd1e4d111dcb2f4ae54ce5",
+          "displayHtml": "8946710da77c3f43d32e1cc2ae64dc1ccc01c2e399fd1e4d111dcb2f4ae54ce5",
+          "validationEvidence": "a8d1cb3c5e3e3c5e8a37f983d2204450b799de6f82aebfcda2535438a3fdad1f",
+          "eventStream": "888be5c884affa2cab13d86c20b52f54d412f68cc787bd161568ef9169f2518f"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 3
+        },
+        "total": 18,
+        "reviewer": "Codex",
+        "notes": "The untouched artifact provides a clear standalone dashboard with interactive controls, a forecast cone, CSV import, an explanation, and an explicit financial-risk disclosure. Its default data are synthetic and its trend/volatility extrapolation is intentionally simple. Chrome rendered it successfully, while its first HTML-level Node syntax command was unsuitable; later embedded-script parsing and serving checks passed."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML SHA-256 hashes match; no rendering repair was required."
+          },
+          {
+            "name": "headless-chrome-screenshot",
+            "passed": true,
+            "details": "The benchmark run created a 444142-byte Chrome screenshot and exited successfully."
+          },
+          {
+            "name": "embedded-javascript-and-local-http",
+            "passed": true,
+            "details": "The benchmark run parsed the inline script with Node's Function constructor and served the dashboard successfully over local HTTP."
+          },
+          {
+            "name": "published-artifact-smoke-test",
+            "passed": true,
+            "details": "Confirmed during import after the standalone rendered artifact returned HTTP 200 and the homepage exposed its row."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-terra at low reasoning in a fresh temporary workspace, produced and browser-validated a self-contained S&P 500 forecasting dashboard with offline synthetic demo data and local CSV import, and imported byte-identical original and display artifacts without a repair."
     },
     {
       "id": "openai-gpt-5-6-luna-high-codex-20260812",
