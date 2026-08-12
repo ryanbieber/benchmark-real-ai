@@ -29,6 +29,8 @@ test('landing page renders the published run index', async ({ page, isMobile }) 
   await expect(page.locator('#result-count')).toContainText(`${publishedRuns.length}`);
   await expect(page.locator('.run-row').first()).toContainText(publishedRuns[0].model.name);
   await expect(page.locator('#run-table-body')).toContainText(publishedRuns.at(-1).model.name);
+  await expect(page.locator('th', { hasText: 'Tokens' })).toHaveCount(1);
+  await expect(page.locator('th', { hasText: 'Time taken' })).toHaveCount(1);
 });
 
 test('a populated table exposes facets and opens the standalone artifact', async ({ page }) => {

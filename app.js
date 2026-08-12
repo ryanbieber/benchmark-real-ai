@@ -42,6 +42,20 @@ function formatDate(value) {
   return new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
 }
 
+function formatTokens(value) {
+  if (value == null) return 'Not reported';
+  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+}
+
+function formatDuration(seconds) {
+  if (seconds == null) return 'Not reported';
+  const rounded = Math.round(seconds);
+  if (rounded < 60) return `${rounded}s`;
+  const minutes = Math.floor(rounded / 60);
+  const remainder = rounded % 60;
+  return `${minutes}m ${remainder}s`;
+}
+
 function rowTemplate(run) {
   const artifact = escapeHtml(run.artifacts.displayHtml);
   return `
@@ -52,6 +66,8 @@ function rowTemplate(run) {
       <td><span class="reasoning-badge">${escapeHtml(titleCase(run.reasoning.normalized))}</span><small>${escapeHtml(run.reasoning.native)}</small></td>
       <td>${escapeHtml(titleCase(run.dataSource.type))}</td>
       <td><span class="validation-mark ${run.validation.passed ? 'passed' : 'failed'}">${run.validation.passed ? 'Passed' : 'Failed'}</span></td>
+      <td><strong>${escapeHtml(formatTokens(run.usage?.tokens))}</strong><small>total tokens</small></td>
+      <td><strong>${escapeHtml(formatDuration(run.timestamps?.durationSeconds))}</strong><small>wall time</small></td>
       <td>${escapeHtml(formatDate(run.run.completedAt))}</td>
       <td class="open-cell"><a href="${artifact}" aria-label="Open ${escapeHtml(run.model.name)} artifact">↗</a></td>
     </tr>`;
