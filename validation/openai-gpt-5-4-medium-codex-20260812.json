@@ -103,7 +103,7 @@
         "name": "manifest-validate",
         "command": "npm run validate",
         "exitCode": 0,
-        "result": "Manifest valid: 4 runs checked."
+        "result": "Manifest valid: 5 runs checked."
       },
       {
         "name": "full-test-suite",
@@ -118,7 +118,7 @@
         "result": "Opened `http://127.0.0.1:4173/runs/rendered/openai-gpt-5-4-medium-codex-20260812/index.html` with title `S&P 500 Forecast Dashboard`, latest close `7,753.11`, and source chip `Source: FRED SP500`."
       }
     ],
-    "result": "Repository validation passed on the final rebased branch with four published runs, and the new August 12, 2026 row opened the imported standalone dashboard directly from the table."
+    "result": "Repository validation passed on the final rebased branch with five published runs, and the new August 12, 2026 row opened the imported standalone dashboard directly from the table."
   },
   "artifacts": {
     "originalHtml": "runs/original/openai-gpt-5-4-medium-codex-20260812/index.html",
