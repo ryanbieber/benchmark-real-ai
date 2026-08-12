@@ -1,0 +1,17 @@
+{
+  "runId": "openai-gpt-5-4-mini-medium-codex-20260811",
+  "passed": true,
+  "checks": [
+    {
+      "name": "artifact-bytes",
+      "command": "sha256sum runs/original/openai-gpt-5-4-mini-medium-codex-20260811.html runs/rendered/openai-gpt-5-4-mini-medium-codex-20260811.html runs/original/openai-gpt-5-4-mini-medium-codex-20260811.csv runs/rendered/openai-gpt-5-4-mini-medium-codex-20260811.csv",
+      "result": "original and rendered HTML matched exactly; original and rendered CSV snapshot matched exactly"
+    },
+    {
+      "name": "browser-dump",
+      "command": "google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=30000 --dump-dom http://127.0.0.1:8000/index.html > /tmp/benchdom3.html && rg -n \"Snapshot loaded|Latest close|Forecast end|Expected move|Validation RMSE|NaN\" /tmp/benchdom3.html",
+      "result": "completed successfully; DOM showed the snapshot-loaded dashboard with concrete forecast metrics and no NaN values"
+    }
+  ],
+  "notes": "Headless Chrome reported expected GCM registration warnings, but the dump completed successfully and the dashboard rendered with the same-origin snapshot."
+}

@@ -4,7 +4,7 @@
     "name": "Benchmark Real AI",
     "goal": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
     "normalizedReasoningBands": ["default", "low", "medium", "high", "max"],
-    "updatedAt": "2026-08-11T00:00:00Z"
+    "updatedAt": "2026-08-12T00:00:00Z"
   },
   "runs": [
     {
@@ -197,6 +197,105 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.4 at low reasoning in an empty temp workspace, built a standalone S&P 500 forecast dashboard from live FRED data, caught a NaN bug during browser validation, self-fixed the source-data handling, and finished with identical original and rendered artifacts."
+    },
+    {
+      "id": "openai-gpt-5-4-mini-medium-codex-20260811",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.4-mini",
+        "name": "gpt-5.4-mini",
+        "version": "gpt-5.4-mini"
+      },
+      "reasoning": {
+        "native": "medium",
+        "normalized": "medium"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai.qz910e",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.4-mini",
+          "reasoningLevelConfigAttempt": "medium",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "outputLastMessage": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-11T23:49:50.259Z",
+        "finishedAt": "2026-08-11T23:58:45.978Z",
+        "durationSeconds": 535.719
+      },
+      "run": {
+        "completedAt": "2026-08-11T23:58:45.978Z"
+      },
+      "usage": {
+        "tokens": 93141,
+        "latencyMs": 8657,
+        "cost": null
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "The validated dashboard loaded a same-origin FRED historical CSV snapshot saved as sp500.csv (2,512 rows). During the run, the dashboard briefly fell back from a cross-origin fetch to the local snapshot and then passed browser validation."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-4-mini-medium-codex-20260811.md",
+        "originalHtml": "runs/original/openai-gpt-5-4-mini-medium-codex-20260811.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-4-mini-medium-codex-20260811.html",
+        "validationEvidence": "validation/openai-gpt-5-4-mini-medium-codex-20260811.json",
+        "snapshotCsv": "runs/original/openai-gpt-5-4-mini-medium-codex-20260811.csv",
+        "displaySnapshotCsv": "runs/rendered/openai-gpt-5-4-mini-medium-codex-20260811.csv",
+        "sha256": {
+          "rawResponse": "a274a3cce30595a892a8db16199a934f18755c189a66751beb1940cffa80b676",
+          "originalHtml": "e27a39f2aa8bcdd7fd7441ce22c670469c9847831c47b1c79b9a4bc7c24328c1",
+          "displayHtml": "e27a39f2aa8bcdd7fd7441ce22c670469c9847831c47b1c79b9a4bc7c24328c1",
+          "validationEvidence": "ef42488002eae3ecf8fa4c8db12f9fd73827b9914c80ec02ec87b45769351e56",
+          "snapshotCsv": "46798d1b434df99d95b7b85e2bb03fe547d69409ac4ff068834ac8a5d90c98c5",
+          "displaySnapshotCsv": "46798d1b434df99d95b7b85e2bb03fe547d69409ac4ff068834ac8a5d90c98c5"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 20,
+        "reviewer": "Codex",
+        "notes": "The dashboard fully satisfies the task with interactive controls and browser validation. Methodology remains intentionally simple, but the implementation is robust, uses a local snapshot for same-origin loading, and explicitly surfaces validation metrics and forecast bands."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML hashes matched exactly; original and rendered CSV snapshot matched exactly"
+          },
+          {
+            "name": "browser-dump",
+            "passed": true,
+            "details": "Completed successfully; DOM showed the snapshot-loaded dashboard with concrete forecast metrics and no NaN values"
+          }
+        ]
+      },
+      "summary": "Codex CLI completed a standalone HTML S&P 500 dashboard in a fresh temp workspace, repaired the data path to use a same-origin FRED snapshot CSV and fixed NaN-producing forecast math, validated the final result in headless Chrome, and preserved matching original/display HTML plus the snapshot CSV without any extra import-time repair."
     }
   ]
 }
