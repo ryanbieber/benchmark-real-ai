@@ -1,0 +1,46 @@
+{
+  "runId": "openai-gpt-5-6-terra-low-codex-20260812",
+  "source": {
+    "eventFile": "validation/openai-gpt-5-6-terra-low-codex-20260812.session.jsonl",
+    "threadId": "019ff623-d91c-7302-8396-750bb7ccddf5",
+    "finalUsageEvent": "turn.completed usage event in validation/openai-gpt-5-6-terra-low-codex-20260812.session.jsonl",
+    "note": "This evidence records visible messages, commands, outputs, and usage only; hidden reasoning was not copied."
+  },
+  "timestamps": {
+    "startedAt": "2026-08-12T13:22:50.780Z",
+    "finishedAt": "2026-08-12T13:24:54.594Z",
+    "durationSeconds": 123.814,
+    "timeToFirstTokenMs": null
+  },
+  "usage": {
+    "inputTokens": 125096,
+    "cachedInputTokens": 106752,
+    "outputTokens": 5910,
+    "reasoningOutputTokens": 457,
+    "totalTokens": 131006,
+    "actualCostUsd": null
+  },
+  "checks": [
+    {
+      "name": "node-check-on-html",
+      "command": "node --check index.html 2>&1 || true",
+      "result": "completed-with-expected-limitation",
+      "output": "Node reported ERR_UNKNOWN_FILE_EXTENSION for index.html; this did not parse the embedded script."
+    },
+    {
+      "name": "headless-chrome-screenshot",
+      "command": "python3 -m http.server 8000; google-chrome --headless --no-sandbox --disable-gpu --screenshot=/tmp/sp500-dashboard.png --window-size=1440,1000 http://127.0.0.1:8000/index.html",
+      "result": "passed",
+      "output": "Screenshot created (444142 bytes); Chrome exited 0."
+    },
+    {
+      "name": "embedded-javascript-syntax-and-http-serve",
+      "command": "node -e \"const fs=require('fs'); const h=fs.readFileSync('index.html','utf8'); const s=h.match(/<script>([\\s\\S]*?)<\\/script>/)[1]; new Function(s); console.log('inline-script: parsed successfully')\"; python3 -m http.server 8001; curl -fsS http://127.0.0.1:8001/index.html | rg -q 'S&P 500 Forecast Lab'",
+      "result": "passed",
+      "output": "The local HTTP page served successfully. The retained command event records the embedded-script parse command; its captured output only includes the successful HTTP assertion."
+    }
+  ],
+  "unresolvedFailures": [
+    "The benchmark run's initial node --check command cannot validate an HTML file directly; later embedded-script parsing and browser rendering passed."
+  ]
+}
