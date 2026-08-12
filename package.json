@@ -5,7 +5,7 @@
   "description": "A public showcase of model, reasoning, and harness combinations completing the same practical task.",
   "type": "module",
   "scripts": {
-    "dev": "python3 -m http.server 4174 --bind 127.0.0.1",
+    "dev": "python3 -m http.server 4321 --bind 127.0.0.1",
     "validate": "node scripts/validate.mjs",
     "test:unit": "node --test tests/manifest.test.mjs",
     "test:browser": "playwright test",
