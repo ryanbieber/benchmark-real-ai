@@ -1,0 +1,145 @@
+{
+  "id": "openai-gpt-5-5-low-codex-20260812",
+  "benchmarkPrompt": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+  "collection": {
+    "workspace": "/tmp/benchmark-real-ai-codex-gpt-5-5-low-clean-rgCK52",
+    "startedAt": "2026-08-12T01:29:53.733892Z",
+    "finishedAt": "2026-08-12T01:33:42.023766Z",
+    "durationSeconds": 228.29,
+    "codexThreadId": "019ff397-1933-7832-a100-5992fdb8000c",
+    "abortedPriorAttempt": {
+      "occurred": true,
+      "reason": "A prior CLI invocation wrote codex-events.jsonl inside the fresh workspace before the model inspected files. It was stopped and excluded before publication."
+    }
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "command": "codex --ask-for-approval never -s danger-full-access --search exec --json --skip-git-repo-check -C /tmp/benchmark-real-ai-codex-gpt-5-5-low-clean-rgCK52 -m gpt-5.5 -c model_reasoning_effort=\"low\" -o /tmp/benchmark-real-ai-logs/gpt-5-5-low-final-response.md [prompt]",
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "mcp-tools",
+      "local-browser-validation"
+    ],
+    "unavailableCapabilitiesObserved": [
+      "in-app-browser"
+    ]
+  },
+  "usage": {
+    "input_tokens": 411462,
+    "cached_input_tokens": 350720,
+    "output_tokens": 9337,
+    "reasoning_output_tokens": 471
+  },
+  "commands": [
+    {
+      "command": "/bin/bash -lc 'test -s index.html && wc -c index.html && rg -n \"Chart|Run forecast|forecastRows|Monte Carlo|status\" index.html'",
+      "exitCode": 0,
+      "status": "completed",
+      "output": "15019 index.html\n118:    <div class=\"pill\" id=\"status\">Ready</div>\n142:          <button id=\"run\">Run forecast</button>\n148:        <div class=\"note\">The dashboard combines drift, dividends, volatility and a one-time macro shock in a Monte Carlo model. The shaded range shows the 10th to 90th percentile forecast band.</div>\n168:          <tbody id=\"forecastRows\"></tbody>\n238:      updateChart(history, forecast);\n239:      document.getElementById(\"status\").textContent = `Ran ${fmt.format(paths)} paths`;\n262:      document.getElementById(\"forecastRows\").innerHTML = forecast.filter((_, i) => i > 0 && (i === 1 || i % 3 === 0 || i === forecast.length - 1)).map(row => `\n272:    function updateChart(history, forecast) {\n285:      chart = new Chart(document.getElementById(\"chart\"), {\n"
+    },
+    {
+      "command": "/bin/bash -lc 'which chromium || which chromium-browser || which google-chrome || which npx'",
+      "exitCode": 0,
+      "status": "completed",
+      "output": "/usr/bin/google-chrome\n"
+    },
+    {
+      "command": "/bin/bash -lc 'node --version && npm --version'",
+      "exitCode": 0,
+      "status": "completed",
+      "output": "v22.22.2\n10.9.7\n"
+    },
+    {
+      "command": "/bin/bash -lc 'npm init -y && npm install puppeteer-core@24.15.0'",
+      "exitCode": 0,
+      "status": "completed",
+      "output": "Wrote to /tmp/benchmark-real-ai-codex-gpt-5-5-low-clean-rgCK52/package.json:\n\n{\n  \"name\": \"benchmark-real-ai-codex-gpt-5-5-low-clean-rgck52\",\n  \"version\": \"1.0.0\",\n  \"description\": \"\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"\n  },\n  \"keywords\": [],\n  \"author\": \"\",\n  \"license\": \"ISC\"\n}\n\n\n\n\nadded 79 packages, and audited 80 packages in 12s\n\n4 packages are looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities\n"
+    },
+    {
+      "command": "/bin/bash -lc \"node - <<'NODE'\nconst puppeteer = require('puppeteer-core');\n(async () => {\n  const browser = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox'] });\n  const page = await browser.newPage();\n  await page.setViewport({ width: 1366, height: 900 });\n  const logs = [];\n  page.on('console', msg => logs.push(\"'`${msg.type()}: ${msg.text()}`));\n  page.on('\"'pageerror', err => logs.push(\"'`pageerror: ${err.message}`));\n  await page.goto('\"'http://127.0.0.1:8000/index.html', { waitUntil: 'networkidle2', timeout: 30000 });\n  await page.waitForSelector('canvas', { timeout: 10000 });\n  const before = await page.\"'$eval('\"'#medianOut', el => el.textContent.trim());\n  await page.\"'$eval('\"'#returnRate', el => { el.value = '12'; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.\"'$eval('\"'#volatility', el => { el.value = '24'; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.select('#horizon', '24');\n  await page.click('#run');\n  await new Promise(r => setTimeout(r, 600));\n  const result = await page.evaluate(() => ({\n    title: document.querySelector('h1').textContent.trim(),\n    before: window.__before,\n    median: document.querySelector('#medianOut').textContent.trim(),\n    returnOut: document.querySelector('#returnOut').textContent.trim(),\n    rows: document.querySelectorAll('#forecastRows tr').length,\n    status: document.querySelector('#status').textContent.trim(),\n    chartPresent: \"'!!window.Chart,\n    canvas: (() => { const r = document.querySelector('\"'canvas').getBoundingClientRect(); return { width: r.width, height: r.height }; })()\n  }));\n  result.before = before;\n  result.changed = before \"'!== result.median;\n  await page.screenshot({ path: '\"'dashboard-validation.png', fullPage: true });\n  await browser.close();\n  if (logs.some(l => l.startsWith('pageerror'))) throw new Error(logs.join('\\\\n'));\n  if (\"'!result.chartPresent || !result.rows || !result.changed || result.canvas.width < 300 || result.canvas.height < 300) {\n    throw new Error(`Validation failed: ${JSON.stringify(result)} logs=${logs.join('\"'\\\\n')}\"'`);\n  }\n  console.log(JSON.stringify({ ok: true, ...result, logs }, null, 2));\n})();\nNODE'",
+      "exitCode": 0,
+      "status": "completed",
+      "output": "{\n  \"ok\": true,\n  \"title\": \"S&P 500 Forecast Lab\",\n  \"median\": \"6,236\",\n  \"returnOut\": \"11.4%\",\n  \"rows\": 9,\n  \"status\": \"Ran 1,000 paths\",\n  \"chartPresent\": true,\n  \"canvas\": {\n    \"width\": 958,\n    \"height\": 450\n  },\n  \"before\": \"5,572\",\n  \"changed\": true,\n  \"logs\": [\n    \"error: Failed to load resource: the server responded with a status of 404 (File not found)\"\n  ]\n}\n"
+    },
+    {
+      "command": "/bin/bash -lc \"node - <<'NODE'\nconst puppeteer = require('puppeteer-core');\nasync function check(width, height) {\n  const browser = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox'] });\n  const page = await browser.newPage();\n  await page.setViewport({ width, height });\n  const logs = [];\n  page.on('console', msg => logs.push(\"'`${msg.type()}: ${msg.text()}`));\n  page.on('\"'pageerror', err => logs.push(\"'`pageerror: ${err.message}`));\n  await page.goto('\"'http://127.0.0.1:8000/index.html', { waitUntil: 'networkidle2', timeout: 30000 });\n  await page.waitForSelector('canvas', { timeout: 10000 });\n  const before = await page.\"'$eval('\"'#medianOut', el => el.textContent.trim());\n  await page.\"'$eval('\"'#returnRate', el => { el.value = '10'; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.\"'$eval('\"'#paths', el => { el.value = '1500'; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.click('#run');\n  await new Promise(r => setTimeout(r, 400));\n  const result = await page.evaluate(() => {\n    const body = document.body.getBoundingClientRect();\n    const canvas = document.querySelector('canvas').getBoundingClientRect();\n    return {\n      median: document.querySelector('#medianOut').textContent.trim(),\n      rows: document.querySelectorAll('#forecastRows tr').length,\n      status: document.querySelector('#status').textContent.trim(),\n      chartPresent: \"'!!window.Chart,\n      canvas: { width: canvas.width, height: canvas.height },\n      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 2,\n      bodyHeight: body.height\n    };\n  });\n  await page.screenshot({ path: `dashboard-${width}.png`, fullPage: true });\n  await browser.close();\n  const pageErrors = logs.filter(l => l.startsWith('\"'pageerror'));\n  const ok = pageErrors.length === 0 && result.chartPresent && result.rows > 0 && before \"'!== result.median && result.canvas.width > 280 && result.canvas.height > 300 && !result.horizontalOverflow;\n  return { viewport: `${width}x${height}`, ok, before, ...result, logs };\n}\n(async () => {\n  const results = [await check(1366, 900), await check(390, 900)];\n  const failed = results.filter(r => !r.ok);\n  console.log(JSON.stringify(results, null, 2));\n  if (failed.length) process.exit(1);\n})();\nNODE'",
+      "exitCode": 0,
+      "status": "completed",
+      "output": "[\n  {\n    \"viewport\": \"1366x900\",\n    \"ok\": true,\n    \"before\": \"5,553\",\n    \"median\": \"5,679\",\n    \"rows\": 5,\n    \"status\": \"Ran 1,500 paths\",\n    \"chartPresent\": true,\n    \"canvas\": {\n      \"width\": 958,\n      \"height\": 450\n    },\n    \"horizontalOverflow\": false,\n    \"bodyHeight\": 1020.234375,\n    \"logs\": [\n      \"error: Failed to load resource: the server responded with a status of 404 (File not found)\"\n    ]\n  },\n  {\n    \"viewport\": \"390x900\",\n    \"ok\": true,\n    \"before\": \"5,515\",\n    \"median\": \"5,659\",\n    \"rows\": 5,\n    \"status\": \"Ran 1,500 paths\",\n    \"chartPresent\": true,\n    \"canvas\": {\n      \"width\": 332,\n      \"height\": 390\n    },\n    \"horizontalOverflow\": false,\n    \"bodyHeight\": 1860.765625,\n    \"logs\": [\n      \"error: Failed to load resource: the server responded with a status of 404 (File not found)\"\n    ]\n  }\n]\n"
+    },
+    {
+      "command": "/bin/bash -lc 'ls -lh index.html package.json package-lock.json dashboard-1366.png dashboard-390.png dashboard-validation.png 2>/dev/null'",
+      "exitCode": 0,
+      "status": "completed",
+      "output": "-rw-rw-r-- 1 carnufex carnufex 146K Aug 12 01:33 dashboard-1366.png\n-rw-rw-r-- 1 carnufex carnufex 114K Aug 12 01:33 dashboard-390.png\n-rw-rw-r-- 1 carnufex carnufex 161K Aug 12 01:32 dashboard-validation.png\n-rw-rw-r-- 1 carnufex carnufex  15K Aug 12 01:32 index.html\n-rw-rw-r-- 1 carnufex carnufex  33K Aug 12 01:32 package-lock.json\n-rw-rw-r-- 1 carnufex carnufex  320 Aug 12 01:32 package.json\n"
+    },
+    {
+      "command": "/bin/bash -lc 'ls -lh index.html dashboard-1366.png dashboard-390.png dashboard-validation.png 2>/dev/null'",
+      "exitCode": 0,
+      "status": "completed",
+      "output": "-rw-rw-r-- 1 carnufex carnufex 146K Aug 12 01:33 dashboard-1366.png\n-rw-rw-r-- 1 carnufex carnufex 114K Aug 12 01:33 dashboard-390.png\n-rw-rw-r-- 1 carnufex carnufex 161K Aug 12 01:32 dashboard-validation.png\n-rw-rw-r-- 1 carnufex carnufex  15K Aug 12 01:32 index.html\n"
+    }
+  ],
+  "browserValidation": {
+    "passed": true,
+    "desktop": {
+      "viewport": "1366x900",
+      "ok": true,
+      "canvas": {
+        "width": 958,
+        "height": 450
+      },
+      "rows": 5,
+      "status": "Ran 1,500 paths",
+      "horizontalOverflow": false,
+      "screenshot": "validation/openai-gpt-5-5-low-codex-20260812-desktop.png"
+    },
+    "mobile": {
+      "viewport": "390x900",
+      "ok": true,
+      "canvas": {
+        "width": 332,
+        "height": 390
+      },
+      "rows": 5,
+      "status": "Ran 1,500 paths",
+      "horizontalOverflow": false,
+      "screenshot": "validation/openai-gpt-5-5-low-codex-20260812-mobile.png"
+    },
+    "consoleLogs": [
+      "error: Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "consoleLogAssessment": "Only favicon-style 404 resource messages were recorded; the validation script reported no pageerror events and passed."
+  },
+  "renderingRepair": null,
+  "hashes": {
+    "rawResponse": "00d3c7f2a8af57dd681884045c3c5db2b5b6a2664b080f151d7a236add8647a6",
+    "originalHtml": "42bbeaa21183770597da1e0c844cce4fda640bd7d45095c8d189f97ee30ffba7",
+    "displayHtml": "42bbeaa21183770597da1e0c844cce4fda640bd7d45095c8d189f97ee30ffba7",
+    "desktopScreenshot": "2669a6e7c03e4c119685a246242a0a3d01c819f0889986f0738ee1b54e0842e8",
+    "mobileScreenshot": "014e3a039b10efa1bedb7f944400c1bc4e991092b6483d65283886197917fb07",
+    "initialDesktopScreenshot": "e1131f57bc30ecd12f29f623a766a6b5d28b32fd51ba7d4dba2b01bfd6bac904"
+  },
+  "repositoryChecks": {
+    "validate": {
+      "command": "npm run validate",
+      "passed": true,
+      "outputSummary": "Manifest valid: 8 runs checked."
+    },
+    "test": {
+      "command": "npm test",
+      "passed": true,
+      "outputSummary": "Manifest, unit, and browser tests passed: 5 passed, 1 skipped in Playwright; 3 unit tests passed."
+    },
+    "tableRowOpen": {
+      "command": "Playwright script opening link named Open gpt-5.5 artifact",
+      "passed": true,
+      "title": "S&P 500 Forecast Lab",
+      "urlPath": "/runs/rendered/openai-gpt-5-5-low-codex-20260812.html"
+    }
+  }
+}

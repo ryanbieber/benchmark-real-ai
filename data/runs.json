@@ -10,7 +10,7 @@
       "high",
       "max"
     ],
-    "updatedAt": "2026-08-12T00:00:00Z"
+    "updatedAt": "2026-08-12T01:33:42Z"
   },
   "runs": [
     {
@@ -753,10 +753,16 @@
           "sandbox": "danger-full-access",
           "approvalPolicy": "never",
           "webSearch": null,
-          "enabledFeatures": ["js_repl: false"],
+          "enabledFeatures": [
+            "js_repl: false"
+          ],
           "outputLastMessage": "/tmp/benchmark-real-ai-run-lGtKOE/final-response.txt"
         },
-        "capabilities": ["shell", "file-editing", "browser-validation"]
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "browser-validation"
+        ]
       },
       "timestamps": {
         "startedAt": "2026-08-12T01:31:13.422146Z",
@@ -831,6 +837,129 @@
         ]
       },
       "summary": "Codex CLI completed an interactive S&P 500 forecast dashboard in a fresh temporary workspace, preserved the original and displayed HTML byte-for-byte, and recorded successful HTTP, JavaScript, and control checks with browser automation unavailable."
+    },
+    {
+      "id": "openai-gpt-5-5-low-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.5",
+        "name": "gpt-5.5",
+        "version": "gpt-5.5"
+      },
+      "reasoning": {
+        "native": "low",
+        "normalized": "low"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-codex-gpt-5-5-low-clean-rgCK52",
+          "ignoreUserConfig": false,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.5",
+          "reasoningLevelConfigAttempt": "low",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "outputLastMessage": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "mcp-tools",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T01:29:53.733892Z",
+        "finishedAt": "2026-08-12T01:33:42.023766Z",
+        "durationSeconds": 228.29
+      },
+      "run": {
+        "completedAt": "2026-08-12T01:33:42.023766Z"
+      },
+      "usage": {
+        "tokens": 420799,
+        "latencyMs": null,
+        "cost": null,
+        "inputTokens": 411462,
+        "cachedInputTokens": 350720,
+        "outputTokens": 9337,
+        "reasoningOutputTokens": 471
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "Dashboard uses generated historical-style S&P 500 base data from an in-page syntheticHistory function and user-controlled Monte Carlo assumptions; no live or historical market data is fetched."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-5-low-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-5-low-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-5-low-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-5-low-codex-20260812.json",
+        "screenshots": [
+          "validation/openai-gpt-5-5-low-codex-20260812-desktop.png",
+          "validation/openai-gpt-5-5-low-codex-20260812-mobile.png",
+          "validation/openai-gpt-5-5-low-codex-20260812-initial-desktop.png"
+        ],
+        "sha256": {
+          "rawResponse": "00d3c7f2a8af57dd681884045c3c5db2b5b6a2664b080f151d7a236add8647a6",
+          "originalHtml": "42bbeaa21183770597da1e0c844cce4fda640bd7d45095c8d189f97ee30ffba7",
+          "displayHtml": "42bbeaa21183770597da1e0c844cce4fda640bd7d45095c8d189f97ee30ffba7",
+          "validationEvidence": "d39e7721a0b0d1a1eb7d8b2f8b6d61212fdf04f8dcf532e779dc97c9e08d5c41",
+          "desktopScreenshot": "2669a6e7c03e4c119685a246242a0a3d01c819f0889986f0738ee1b54e0842e8",
+          "mobileScreenshot": "014e3a039b10efa1bedb7f944400c1bc4e991092b6483d65283886197917fb07",
+          "initialDesktopScreenshot": "e1131f57bc30ecd12f29f623a766a6b5d28b32fd51ba7d4dba2b01bfd6bac904"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 19,
+        "reviewer": "Codex",
+        "notes": "The dashboard is complete, interactive, responsive, and validated in Chrome. It is clear that the model is an educational scenario simulation using synthetic history and Monte Carlo assumptions, not a live market forecast. Forecasting methodology is reasonable for demonstration but not grounded in real S&P 500 data."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML are identical; no repair was required."
+          },
+          {
+            "name": "desktop-browser-validation",
+            "passed": true,
+            "details": "Chrome loaded the dashboard at 1366x900, rendered Chart.js, changed forecast output after controls were adjusted, and captured a screenshot."
+          },
+          {
+            "name": "mobile-browser-validation",
+            "passed": true,
+            "details": "Chrome loaded the dashboard at 390x900 without horizontal overflow, rendered the chart, and captured a screenshot."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "npm run validate and npm test passed after import."
+          },
+          {
+            "name": "table-row-open",
+            "passed": true,
+            "details": "The new table row link opened runs/rendered/openai-gpt-5-5-low-codex-20260812.html and showed the S&P 500 Forecast Lab heading."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.5 at low reasoning in an empty temp workspace, produced a standalone synthetic S&P 500 Monte Carlo forecast dashboard, validated desktop and mobile Chrome behavior, and required no rendering repair."
     }
   ]
 }
