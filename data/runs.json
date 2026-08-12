@@ -625,6 +625,108 @@
         ]
       },
       "summary": "Codex CLI completed a standalone S&P 500 forecast dashboard in an isolated temp workspace, bundled its data and Plotly locally, validated it in headless Chrome, and imported byte-identical original and displayed HTML without a repair."
+    },
+    {
+      "id": "openai-gpt-5-4-mini-max-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.4-mini",
+        "name": "gpt-5.4-mini",
+        "version": "gpt-5.4-mini"
+      },
+      "reasoning": {
+        "native": "xhigh",
+        "normalized": "max"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-run.Jtpis3",
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.4-mini",
+          "reasoningLevelConfigAttempt": "xhigh",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "enabledFeatures": [
+            "standalone_web_search"
+          ],
+          "outputLastMessage": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-11T23:56:05.846566990Z",
+        "finishedAt": "2026-08-12T00:18:35.442431Z",
+        "durationSeconds": 1349.596
+      },
+      "run": {
+        "completedAt": "2026-08-12T00:18:35.442431Z"
+      },
+      "usage": {
+        "tokens": 76142,
+        "latencyMs": null,
+        "cost": null
+      },
+      "dataSource": {
+        "type": "live",
+        "notes": "S&P 500 daily close data fetched from FRED during the benchmark run."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-4-mini-max-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-4-mini-max-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-4-mini-max-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-4-mini-max-codex-20260812.json",
+        "sha256": {
+          "rawResponse": "b768fcf643ecc1f766b6d9c9f70f129b93288e16ba860e92b735982e9d8d1996",
+          "originalHtml": "26d128fa1c455fd66d9a1ffb75e50f3ded5ccfcdce9eb4f45385f95acf3f58b1",
+          "displayHtml": "2d9a705ed5bd7e5aeaca9afe6e4be8a6db6b9b51ac7965ccbfbba017ad19e2e7",
+          "validationEvidence": "096a8cb2c1d8240f9edc210da192547495a1f851ec2d54da0336a7abdc9caff5"
+        },
+        "repaired": true,
+        "repairLog": "repairs/openai-gpt-5-4-mini-max-codex-20260812.md"
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 22,
+        "reviewer": "Codex",
+        "notes": "The dashboard is complete and interactive, with multiple forecast modes, live S&P 500 data, and clear caveats. The rendered copy needed only a minimal companion-asset repair to keep the standalone dashboard loading from the published table row."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "command": "sha256sum responses/openai-gpt-5-4-mini-max-codex-20260812.md runs/original/openai-gpt-5-4-mini-max-codex-20260812.html runs/rendered/openai-gpt-5-4-mini-max-codex-20260812.html runs/rendered/openai-gpt-5-4-mini-max-codex-20260812.sp500-data.js validation/openai-gpt-5-4-mini-max-codex-20260812.txt repairs/openai-gpt-5-4-mini-max-codex-20260812.md",
+            "result": "response, original HTML, rendered HTML, rendered companion data asset, validation log, and repair log all hashed successfully; the original and rendered HTML hashes differ because the rendered copy carries the minimal standalone-playback repair"
+          },
+          {
+            "name": "browser-dump",
+            "command": "google-chrome --headless --no-sandbox --disable-gpu --allow-file-access-from-files --window-size=1600,2600 --virtual-time-budget=8000 --dump-dom file:///tmp/benchmark-real-ai-work/repo/runs/rendered/openai-gpt-5-4-mini-max-codex-20260812.html",
+            "result": "completed successfully; DOM showed metricForecastValue, riskNote, chartSubtitle, forecastRows, history-line, and forecast-band with no uncaught errors"
+          },
+          {
+            "name": "row-open",
+            "command": "node --input-type=module - <<'NODE'\nimport { chromium } from 'playwright';\nconst browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox', '--disable-gpu'] });\nconst page = await browser.newPage();\nawait page.goto('http://127.0.0.1:4174/');\nawait page.locator('.run-row').nth(1).locator('.model-cell a').click();\nawait page.waitForURL(/runs\\/rendered\\/openai-gpt-5-4-mini-max-codex-20260812\\.html$/);\nawait page.waitForLoadState('networkidle');\nconst title = await page.title();\nconst forecast = await page.locator('#metricForecastValue').textContent();\nconst rows = await page.locator('#forecastRows tr').count();\nconsole.log(JSON.stringify({ url: page.url(), title, forecast, rows }, null, 2));\nawait browser.close();\nNODE",
+            "result": "completed successfully; clicking the published table row opened http://127.0.0.1:4174/runs/rendered/openai-gpt-5-4-mini-max-codex-20260812.html with title \"S&P 500 Forecast Studio\", forecast value 7,919.85, and 12 forecast rows"
+          }
+        ]
+      },
+      "summary": "Codex CLI completed a standalone HTML S&P 500 dashboard in a fresh temp workspace, validated it in headless Chrome, and preserved the original HTML while repairing the rendered copy with a uniquely named companion data asset so the table-row launch stays standalone."
     }
   ]
 }

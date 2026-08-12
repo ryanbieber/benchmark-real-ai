@@ -1,0 +1,9 @@
+Rendered dashboard validation
+
+- Browser dump against the rendered HTML completed with no uncaught errors.
+- The DOM included `metricForecastValue`, `riskNote`, `chartSubtitle`, `forecastRows`, `history-line`, and `forecast-band`.
+- Row-open confirmation navigated to `http://127.0.0.1:4174/runs/rendered/openai-gpt-5-4-mini-max-codex-20260812.html`.
+- The published dashboard title was `S&P 500 Forecast Studio`.
+- The forecast summary value was `7,919.85`, and the table contained 12 forecast rows.
+
+The rendered copy uses a uniquely named local data asset so the dashboard opens standalone from the table row in the flat repository layout.
