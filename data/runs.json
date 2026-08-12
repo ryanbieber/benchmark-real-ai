@@ -960,6 +960,112 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.5 at low reasoning in an empty temp workspace, produced a standalone synthetic S&P 500 Monte Carlo forecast dashboard, validated desktop and mobile Chrome behavior, and required no rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-5-medium-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.5",
+        "name": "gpt-5.5",
+        "version": "gpt-5.5"
+      },
+      "reasoning": {
+        "native": "medium",
+        "normalized": "medium"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/home/carnufex/Documents/Codex/bench-temp/benchmark-real-ai-gpt-5.5-medium-5z8yiB",
+          "isolatedCodexHome": "/home/carnufex/Documents/Codex/bench-temp/codex-bench-home-gpt-5.5-medium-lKJVIg",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.5",
+          "reasoningLevelConfigAttempt": "medium",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "outputLastMessage": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T01:30:51.834Z",
+        "finishedAt": "2026-08-12T01:41:11.728Z",
+        "durationSeconds": 619.894
+      },
+      "run": {
+        "completedAt": "2026-08-12T01:41:11.728Z"
+      },
+      "usage": {
+        "tokens": 1809638,
+        "latencyMs": null,
+        "cost": null
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "Final dashboard embeds a FRED SP500 daily-series snapshot fetched during the benchmark run, covering 2020-11-11 through 2026-08-11, with an optional live FRED refresh path that falls back when browser CORS blocks it."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-5-medium-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-5-medium-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-5-medium-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-5-medium-codex-20260812.json",
+        "sha256": {
+          "rawResponse": "5ba285c6e8afec77390f75c7ab4aca8442b92f7567f4769a73a48b9025d5ffab",
+          "originalHtml": "bedc2a07b8a64f4a726c7c0070d5b4dc6489b0d15fb3d29fd2f51feac417d3b0",
+          "displayHtml": "bedc2a07b8a64f4a726c7c0070d5b4dc6489b0d15fb3d29fd2f51feac417d3b0",
+          "validationEvidence": "9297759a3183a1d1622ec024bca226cb6480c35612f8c36446691acdcd8ece55",
+          "sessionLog": "3e4db7b43e0bf6046d2fe1683f35720b673d9a015b77d04ca7c84faa4192c3f4",
+          "desktopScreenshot": "6ab8667c9c38c8761f301695610dca7f826147d70605b4faad5160ebcb156842",
+          "mobileScreenshot": "25aed507998a46ce2d2d1cc84908059c61baf397756b0606bffd95d5eae92104"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 21,
+        "reviewer": "Codex",
+        "notes": "The original run produced a polished standalone dashboard with multiple forecast controls, browser validation, mobile validation, CSV export, and a real embedded FRED snapshot. The methodology is still a lightweight statistical projection rather than a rigorous market model; robustness is strong for a single-file artifact but direct live refresh depends on browser CORS behavior."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML hashes matched exactly; no import repair was required."
+          },
+          {
+            "name": "browser-validation",
+            "passed": true,
+            "details": "The benchmark run validated desktop rendering, interactive recalculation, nonblank canvas output, finite numeric values, and a 390px emulated mobile viewport with no horizontal overflow."
+          },
+          {
+            "name": "data-source",
+            "passed": true,
+            "details": "The final dashboard displays `Embedded FRED snapshot` and includes FRED SP500 data through 2026-08-11."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.5 at medium reasoning in an empty temp workspace, built a standalone interactive S&P 500 forecast dashboard, embedded a recent FRED SP500 snapshot after live browser data sources were blocked or unreliable, self-fixed NaN and mobile layout issues during validation, and finished with identical original and rendered artifacts."
     }
   ]
 }
