@@ -54,9 +54,9 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('.cost-row')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#combined-cost')).toHaveText('$7.32');
   await expect(page.locator('#pricing-note')).toContainText('not actual Codex subscription charges');
-  await expect(page.getByRole('heading', { name: 'Cost versus observed outcome' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cost versus token volume' })).toBeVisible();
   await expect(page.locator('.tradeoff-point')).toHaveCount(publishedRuns.length);
-  await expect(page.locator('.frontier')).toHaveCount(1);
+  await expect(page.locator('.frontier')).toHaveCount(0);
   await expect(page.locator('#plot-key a')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' })).toHaveCount(5);
   await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Extra High (xhigh)' })).toHaveCount(1);
@@ -64,6 +64,7 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   const pointFills = await page.locator('.tradeoff-point circle').evaluateAll((points) => [...new Set(points.map((point) => getComputedStyle(point).fill))]);
   expect(pointFills).toHaveLength(1);
   await expect(page.locator('#tradeoff-svg-desc')).toContainText('Point color has no categorical meaning');
+  await expect(page.locator('#tradeoff-plot')).toContainText('Total tokens');
   await page.locator('#tradeoff-metric').selectOption('reasoningShare');
   await expect(page.getByRole('heading', { name: 'Cost versus reasoning allocation' })).toBeVisible();
   await expect(page.locator('#tradeoff-description')).toContainText('share of output tokens');
