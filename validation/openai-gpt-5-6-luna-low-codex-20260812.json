@@ -1,0 +1,26 @@
+{
+  "promptExact": true,
+  "passed": true,
+  "checks": [
+    {
+      "name": "http-render",
+      "command": "python3 -m http.server 8001; curl -fsS http://127.0.0.1:8001/ | grep -o 'S&P 500, looking forward'",
+      "passed": true,
+      "result": "HTTP response contained the dashboard title. Port 8000 was occupied; the model switched to 8001."
+    },
+    {
+      "name": "javascript-syntax-and-controls",
+      "command": "sed -n '/<script>/,/<\\/script>/p' index.html | sed '1d;$d' > /tmp/sp500-dashboard.js && node --check /tmp/sp500-dashboard.js && test \"$(grep -o 'id=\\\"horizon\\\"' index.html | wc -l)\" -eq 1 && test \"$(grep -o 'Plotly.react' index.html | wc -l)\" -eq 1",
+      "passed": true,
+      "result": "HTTP, JavaScript syntax, and key controls validated."
+    },
+    {
+      "name": "browser-validation",
+      "command": "Codex in-app browser connection and browser list",
+      "passed": false,
+      "result": "Browser was not available; available browser list was empty. No visual browser automation was performed."
+    }
+  ],
+  "unresolvedFailures": ["Visual browser automation was unavailable in the benchmark runtime."],
+  "evidenceFiles": ["validation/openai-gpt-5-6-luna-low-codex-20260812.session.jsonl", "validation/openai-gpt-5-6-luna-low-codex-20260812.resume.jsonl"]
+}
