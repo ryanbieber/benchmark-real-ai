@@ -21,9 +21,10 @@ test('landing page renders the published run index', async ({ page, isMobile }) 
   for (const heading of headings) {
     await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
   }
-  await expect(page.locator('.run-row')).toHaveCount(1);
-  await expect(page.locator('.run-row')).toContainText('gpt-5.4-mini');
-  await expect(page.locator('.run-row')).toContainText('openai');
+  await expect(page.locator('.run-row')).toHaveCount(2);
+  await expect(page.locator('body')).toContainText('gpt-5.4-mini');
+  await expect(page.locator('body')).toContainText('gpt-5.4');
+  await expect(page.locator('body')).toContainText('openai');
 });
 
 test('a populated table exposes facets and opens the standalone artifact', async ({ page }) => {

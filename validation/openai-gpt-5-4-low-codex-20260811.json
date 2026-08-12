@@ -1,0 +1,22 @@
+{
+  "runId": "openai-gpt-5-4-low-codex-20260811",
+  "passed": true,
+  "checks": [
+    {
+      "name": "artifact-bytes",
+      "command": "sha256sum runs/original/openai-gpt-5-4-low-codex-20260811.html runs/rendered/openai-gpt-5-4-low-codex-20260811.html responses/openai-gpt-5-4-low-codex-20260811.md validation/openai-gpt-5-4-low-codex-20260811.txt",
+      "result": "original and rendered HTML matched exactly; response record and validation transcript were present"
+    },
+    {
+      "name": "isolated-browser-dump",
+      "command": "google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8123/index.html > rendered_8123.html && rg -n \"Loaded [0-9]+ observations|Latest observation date: 2026-08-10|Estimated daily log-trend slope: [0-9.-]+|<tbody id=\\\"forecastTableBody\\\"><tr><td>2026-08-11</td><td>[0-9,]+</td></tr>\" rendered_8123.html",
+      "result": "completed successfully; DOM showed 2512 observations, latest date 2026-08-10, numeric model summary, and numeric forecast rows"
+    },
+    {
+      "name": "standalone-row-opens",
+      "command": "npm test",
+      "result": "Playwright coverage includes clicking a table row and opening the standalone HTML artifact path"
+    }
+  ],
+  "notes": "Headless Chrome emitted expected GCM and shared-image warnings during screenshots, but both the DOM dump and screenshot commands completed successfully."
+}

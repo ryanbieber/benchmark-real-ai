@@ -101,6 +101,102 @@
         ]
       },
       "summary": "Codex CLI completed a standalone HTML S&P 500 scenario dashboard in an empty temp workspace, validated it in headless Chrome, and produced identical original and displayed artifacts without requiring a repair."
+    },
+    {
+      "id": "openai-gpt-5-4-low-codex-20260811",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.4",
+        "name": "gpt-5.4",
+        "version": "gpt-5.4"
+      },
+      "reasoning": {
+        "native": "low",
+        "normalized": "low"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5.4-low-0gHsNb",
+          "ignoreUserConfig": false,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.4",
+          "reasoningLevelConfigAttempt": "low",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "outputLastMessage": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "mcp-tools",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-11T23:52:40.135734Z",
+        "finishedAt": "2026-08-11T23:58:48.970497Z",
+        "durationSeconds": 368.835
+      },
+      "run": {
+        "completedAt": "2026-08-11T23:58:48.970497Z"
+      },
+      "usage": {
+        "tokens": 662447,
+        "latencyMs": null,
+        "cost": null
+      },
+      "dataSource": {
+        "type": "live",
+        "notes": "S&P 500 daily close data fetched from FRED during the benchmark run; the HTML also requires the published sibling CSV support file."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-4-low-codex-20260811.md",
+        "originalHtml": "runs/original/openai-gpt-5-4-low-codex-20260811.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-4-low-codex-20260811.html",
+        "validationEvidence": "validation/openai-gpt-5-4-low-codex-20260811.json",
+        "sha256": {
+          "rawResponse": "2446bf5e1d7f859868753345c2b8d2119567ef0fb30564dc13a298d581296a9c",
+          "originalHtml": "cbf14dba5998caac9a70131457889480f6646017ab9060712210966fb0b564d1",
+          "displayHtml": "cbf14dba5998caac9a70131457889480f6646017ab9060712210966fb0b564d1",
+          "validationEvidence": "a2d502da1d8b9dacc7ba9b5ffb3903b88a9aa13f7bdae760950c6ee080527dd2"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 2,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 18,
+        "reviewer": "Codex",
+        "notes": "The run produced a working, interactive dashboard and validated it in a browser after catching and fixing a real data-cleanliness bug. The forecasting method remains a simple log-linear trend with basic uncertainty bands and should be read as a lightweight demonstration rather than a strong forecasting approach."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML hashes matched exactly; no repair was required."
+          },
+          {
+            "name": "browser-dump",
+            "passed": true,
+            "details": "Headless Chrome loaded the standalone dashboard from an isolated local server, and the rendered DOM showed numeric metrics and forecast rows after the model filtered zero-value FRED rows."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.4 at low reasoning in an empty temp workspace, built a standalone S&P 500 forecast dashboard from live FRED data, caught a NaN bug during browser validation, self-fixed the source-data handling, and finished with identical original and rendered artifacts."
     }
   ]
 }
