@@ -54,8 +54,12 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('.run-row').first()).toContainText('1m 32s');
   const costs = await page.locator('.run-row').evaluateAll((rows) => rows.map((row) => Number(row.dataset.cost)));
   expect(costs).toEqual([...costs].sort((a, b) => a - b));
-  await expect(page.getByRole('heading', { name: /What each run would cost/i })).toBeVisible();
-  await expect(page.locator('.cost-row')).toHaveCount(publishedRuns.length);
+  await expect(page.getByRole('heading', { name: /Token volume by model/i })).toBeVisible();
+  await expect(page.locator('#cost-chart .token-chart')).toHaveCount(1);
+  await expect(page.locator('#cost-chart .token-bar')).toHaveCount(publishedRuns.length);
+  await expect(page.locator('#cost-chart .token-model-label')).toHaveCount(new Set(publishedRuns.map((run) => run.model.name)).size);
+  await expect(page.locator('#cost-chart')).toContainText('Total tokens');
+  await expect(page.locator('#premise, #protocol')).toHaveCount(0);
   await expect(page.locator('#combined-cost')).toHaveText('$7.45');
   await expect(page.locator('#pricing-note')).toContainText('not actual Codex subscription charges');
   await expect(page.getByRole('heading', { name: 'Cost versus token volume' })).toBeVisible();

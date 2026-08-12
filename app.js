@@ -111,29 +111,52 @@ function rowTemplate(run) {
     </tr>`;
 }
 
-function renderCostChart() {
-  const rows = [...state.runs].sort(compareByCost).map((run) => ({ run, cost: estimateCost(run) }));
-  const pricedRows = rows.filter(({ cost }) => cost);
-  const max = Math.max(...pricedRows.map(({ cost }) => cost.total), 0);
-  const combined = pricedRows.reduce((sum, { cost }) => sum + cost.total, 0);
-  $('#combined-cost').textContent = pricedRows.length ? formatCost(combined) : 'Unavailable';
+function formatTokenAxis(value) {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(value % 1_000_000 ? 1 : 0)}M`;
+  return `${Math.round(value / 1_000)}k`;
+}
 
-  $('#cost-chart').innerHTML = rows.map(({ run, cost }) => {
-    const reasoning = reasoningDescription(run);
-    const label = `${run.model.name} · ${reasoning} · ${run.harness.name}`;
-    if (!cost) return `<div class="cost-row"><div class="cost-label"><strong>${escapeHtml(run.model.name)}</strong><span>${escapeHtml(label)}</span></div><div class="cost-unavailable">Pricing unavailable</div></div>`;
-    const scale = max ? 100 / max : 0;
-    return `
-      <div class="cost-row">
-        <div class="cost-label"><strong>${escapeHtml(run.model.name)}</strong><span>${escapeHtml(reasoning)} reasoning · ${escapeHtml(run.harness.name)}</span></div>
-        <div class="cost-bar-track" aria-label="${escapeHtml(label)} estimated cost ${formatCost(cost.total)}">
-          <span class="cost-segment input" style="width:${cost.uncachedInput * scale}%" title="Uncached input ${formatCost(cost.uncachedInput)}"></span>
-          <span class="cost-segment cached" style="width:${cost.cachedInput * scale}%" title="Cached input ${formatCost(cost.cachedInput)}"></span>
-          <span class="cost-segment output" style="width:${cost.output * scale}%" title="Output ${formatCost(cost.output)}"></span>
-        </div>
-        <strong class="cost-value">${formatCost(cost.total)}</strong>
-      </div>`;
+function renderTokenChart() {
+  const runs = [...state.runs].sort((a, b) => a.model.name.localeCompare(b.model.name) || a.reasoning.native.localeCompare(b.reasoning.native) || a.id.localeCompare(b.id));
+  const groups = [...new Map(runs.map((run) => [run.model.name, runs.filter((candidate) => candidate.model.name === run.model.name)])).entries()];
+  const combined = runs.reduce((sum, run) => sum + (estimateCost(run)?.total || 0), 0);
+  $('#combined-cost').textContent = combined ? formatCost(combined) : 'Unavailable';
+
+  if (!runs.length) {
+    $('#cost-chart').textContent = 'No runs are available.';
+    return;
+  }
+
+  const width = 1120;
+  const height = 470;
+  const margin = { top: 28, right: 28, bottom: 108, left: 86 };
+  const chartWidth = width - margin.left - margin.right;
+  const chartHeight = height - margin.top - margin.bottom;
+  const maxTokens = Math.max(...runs.map((run) => run.usage.totalTokens));
+  const yMax = Math.max(1_000_000, Math.ceil(maxTokens / 500_000) * 500_000);
+  const y = (value) => margin.top + chartHeight - (value / yMax) * chartHeight;
+  const groupWidth = chartWidth / groups.length;
+  const yTicks = Array.from({ length: 8 }, (_, index) => yMax * index / 7);
+  const grid = yTicks.map((tick) => `<g><line x1="${margin.left}" y1="${y(tick)}" x2="${width - margin.right}" y2="${y(tick)}"/><text x="${margin.left - 14}" y="${y(tick) + 4}" text-anchor="end">${formatTokenAxis(tick)}</text></g>`).join('');
+  const bars = groups.map(([model, modelRuns], groupIndex) => {
+    const groupX = margin.left + groupIndex * groupWidth;
+    const barGap = 7;
+    const barWidth = Math.min(54, Math.max(14, (groupWidth - 34 - barGap * (modelRuns.length - 1)) / modelRuns.length));
+    const groupBarsWidth = modelRuns.length * barWidth + (modelRuns.length - 1) * barGap;
+    const startX = groupX + (groupWidth - groupBarsWidth) / 2;
+    const groupBars = modelRuns.map((run, runIndex) => {
+      const value = run.usage.totalTokens;
+      const barX = startX + runIndex * (barWidth + barGap);
+      const barY = y(value);
+      const barHeight = margin.top + chartHeight - barY;
+      const cost = estimateCost(run)?.total;
+      const label = `${run.model.name}, ${reasoningDescription(run)} reasoning, ${run.harness.name}: ${formatTokens(value)} total tokens${Number.isFinite(cost) ? `, ${formatCost(cost)} API estimate` : ''}`;
+      return `<a class="token-bar" href="${escapeHtml(run.artifacts.displayHtml)}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title><rect x="${barX}" y="${barY}" width="${barWidth}" height="${barHeight}" rx="2"/></a>`;
+    }).join('');
+    return `${groupBars}<text class="token-model-label" x="${groupX + groupWidth / 2}" y="${height - margin.bottom + 28}" text-anchor="middle">${escapeHtml(model)}</text>`;
   }).join('');
+
+  $('#cost-chart').innerHTML = `<svg class="token-chart" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="token-chart-title token-chart-desc"><title id="token-chart-title">Total tokens by model</title><desc id="token-chart-desc">A single grouped bar chart. Models are labeled along the bottom axis, total tokens are on the left axis, and each bar represents one reasoning and harness run.</desc><g class="token-grid">${grid}</g><line class="token-axis" x1="${margin.left}" y1="${margin.top + chartHeight}" x2="${width - margin.right}" y2="${margin.top + chartHeight}"/><g class="token-bars">${bars}</g><text class="token-axis-title" x="${margin.left + chartWidth / 2}" y="${height - 20}" text-anchor="middle">Model</text><text class="token-axis-title" transform="translate(20 ${margin.top + chartHeight / 2}) rotate(-90)" text-anchor="middle">Total tokens</text></svg>`;
 
   const pricing = state.pricing;
   if (!pricing) {
@@ -143,10 +166,7 @@ function renderCostChart() {
   const rates = Object.entries(pricing.models).map(([model, rate]) =>
     `<span><strong>${escapeHtml(model)}</strong> input $${rate.inputUsd} · cached $${rate.cachedInputUsd} · output $${rate.outputUsd}</span>`
   ).join('');
-  $('#pricing-note').innerHTML = `
-    <div class="cost-legend"><span><i class="input"></i>Uncached input</span><span><i class="cached"></i>Cached input</span><span><i class="output"></i>Output</span></div>
-    <p>API-equivalent estimates, not actual Codex subscription charges. Standard short-context rates per 1M tokens, retrieved ${escapeHtml(pricing.retrievedAt)} from <a href="${escapeHtml(pricing.source)}">OpenAI pricing ↗</a>. Cached input is included in input; reasoning is included in output and is not charged twice.</p>
-    <div class="rate-list">${rates}</div>`;
+  $('#pricing-note').innerHTML = `<p>API-equivalent estimates, not actual Codex subscription charges. Standard short-context rates per 1M tokens, retrieved ${escapeHtml(pricing.retrievedAt)} from <a href="${escapeHtml(pricing.source)}">OpenAI pricing ↗</a>. Cached input is included in input; reasoning is included in output and is not charged twice.</p><div class="rate-list">${rates}</div>`;
 }
 
 const plotMetrics = {
@@ -281,7 +301,7 @@ async function loadRuns() {
   populateFilters();
   updateStats();
   render();
-  renderCostChart();
+  renderTokenChart();
   renderTradeoffPlot();
 }
 

@@ -18,9 +18,7 @@
       <nav aria-label="Primary navigation">
         <a href="#behavior-map">Plot</a>
         <a href="#run-index">Run index</a>
-        <a href="#cost-comparison">Cost</a>
-        <a href="#premise">The premise</a>
-        <a href="#protocol">Protocol</a>
+        <a href="#token-volume">Tokens</a>
         <a class="nav-github" href="https://github.com/ryanbieber/benchmark-real-ai">GitHub ↗</a>
       </nav>
     </header>
@@ -127,12 +125,12 @@
         <div class="table-footer"><span id="result-count">0 runs shown</span><span>Lowest estimated cost first · rows open standalone HTML artifacts ↗</span></div>
       </section>
 
-      <section class="cost-section section-shell" id="cost-comparison" aria-labelledby="cost-title">
-        <div class="section-kicker">03 / API-equivalent cost</div>
+      <section class="cost-section section-shell" id="token-volume" aria-labelledby="cost-title">
+        <div class="section-kicker">03 / Token volume</div>
         <div class="cost-heading">
           <div>
-            <h2 id="cost-title">What each run would cost at today’s token rates.</h2>
-            <p>The chart prices every published run from its recorded uncached input, cached input, and output tokens.</p>
+            <h2 id="cost-title">Token volume by model.</h2>
+            <p>Each bar is one run, grouped under its model. The y-axis shows total input plus output tokens; hover a bar for reasoning, harness, and the API-equivalent cost estimate.</p>
           </div>
           <div class="cost-total" aria-label="Combined estimated cost">
             <span>Combined estimate</span>
@@ -141,40 +139,6 @@
         </div>
         <div class="cost-chart" id="cost-chart" aria-label="Estimated cost by benchmark run"></div>
         <div class="pricing-note" id="pricing-note"></div>
-      </section>
-
-      <section class="premise section-shell" id="premise" aria-labelledby="premise-title">
-        <div class="section-kicker">04 / The premise</div>
-        <div class="premise-grid">
-          <h2 id="premise-title">Judge the finished work, with the conditions attached.</h2>
-          <div class="premise-copy">
-            <p>New models arrive with sweeping claims. This project asks a more practical question: <strong>what happens when you ask the model to make something useful?</strong></p>
-            <p>The task stays constant. The model, reasoning setting, harness, tools, validation, and artifact stay visible.</p>
-          </div>
-        </div>
-        <div class="principle-grid">
-          <article><span class="principle-number">01</span><h3>Same goal</h3><p>Every run starts from the exact same S&amp;P 500 dashboard request.</p></article>
-          <article><span class="principle-number">02</span><h3>Real harnesses</h3><p>Codex and other agent environments are facets of the result.</p></article>
-          <article><span class="principle-number">03</span><h3>Direct artifacts</h3><p>Every table row opens the standalone HTML produced by that run.</p></article>
-          <article><span class="principle-number">04</span><h3>Honest limitations</h3><p>Repairs, data sources, missing facts, and failures are disclosed.</p></article>
-        </div>
-      </section>
-
-      <section class="protocol" id="protocol" aria-labelledby="protocol-title">
-        <div class="section-shell">
-          <div class="section-kicker light">05 / Recorded facets</div>
-          <div class="protocol-head">
-            <h2 id="protocol-title">Model. Reasoning. Harness. Evidence.</h2>
-            <p>A run is a specific model, reasoning setting, and harness combination. Change any one of them and it becomes a different row.</p>
-          </div>
-          <div class="protocol-grid">
-            <article><span>MODEL</span><h3>Exact identity</h3><p>Provider, model ID, version, and run date.</p></article>
-            <article><span>EFFORT</span><h3>Reasoning setting</h3><p>Native value plus a disclosed normalized band.</p></article>
-            <article><span>HARNESS</span><h3>Agent environment</h3><p>Name, version, interface, configuration, and tools.</p></article>
-            <article><span>EVIDENCE</span><h3>Validation trail</h3><p>Commands, outcomes, token usage, elapsed time, source classification, and repairs.</p></article>
-          </div>
-          <a class="text-link light" href="https://github.com/ryanbieber/benchmark-real-ai/blob/main/AGENTS.md">Read the collection rules <span>↗</span></a>
-        </div>
       </section>
     </main>
 
