@@ -10,7 +10,7 @@
       "high",
       "max"
     ],
-    "updatedAt": "2026-08-12T02:17:10Z",
+    "updatedAt": "2026-08-12T03:18:28Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -1373,6 +1373,146 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-sol at medium reasoning in an empty temporary workspace, produced a responsive standalone synthetic S&P 500 forecasting dashboard with three baseline models and executable validation, and required no rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-6-luna-xhigh-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-luna",
+        "name": "gpt-5.6-luna",
+        "version": "gpt-5.6-luna"
+      },
+      "reasoning": {
+        "native": "xhigh",
+        "normalized": "max"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5.6-luna-xhigh-X6yH7U",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-luna",
+          "reasoningLevel": "xhigh",
+          "reasoningLevelLabel": "extra high",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "dangerouslyBypassApprovalsAndSandbox": true,
+          "webSearch": true,
+          "jsonEvents": true,
+          "outputLastMessage": "/tmp/benchmark-real-ai-gpt-5.6-luna-xhigh-X6yH7U/final-response.md",
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T03:07:45.486Z",
+        "finishedAt": "2026-08-12T03:18:28.346Z",
+        "durationSeconds": 642.86
+      },
+      "run": {
+        "threadId": "019ff3f0-b8fd-78c0-824d-b7c20868c14e",
+        "completedAt": "2026-08-12T03:18:28.346Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": 642860
+      },
+      "usage": {
+        "inputTokens": 1490928,
+        "cachedInputTokens": 1388288,
+        "outputTokens": 28984,
+        "reasoningOutputTokens": 8230,
+        "totalTokens": 1519912,
+        "source": "Codex CLI final turn.completed usage event in validation/openai-gpt-5-6-luna-xhigh-codex-20260812.session.jsonl",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "FRED SP500 daily close data was fetched during the benchmark run, reduced to 121 monthly observations, and embedded through 2026-08-11 with a latest close of 7728.20. The dashboard retains an optional live FRED refresh path and visibly falls back to the embedded snapshot when live refresh is unavailable."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-luna-xhigh-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-luna-xhigh-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-luna-xhigh-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-6-luna-xhigh-codex-20260812.json",
+        "sessionLog": "validation/openai-gpt-5-6-luna-xhigh-codex-20260812.session.jsonl",
+        "stderrLog": "validation/openai-gpt-5-6-luna-xhigh-codex-20260812.stderr.log",
+        "screenshots": [
+          "validation/openai-gpt-5-6-luna-xhigh-codex-20260812-dashboard.png"
+        ],
+        "sha256": {
+          "rawResponse": "9875e4e9ad2c2e4cb563ed28f988619d424c675b54344cbdec99b5b4e0382b58",
+          "originalHtml": "c0dd27d5d63bebf1088821d9b242ea566d7898bb23967ac684a6ef9060543355",
+          "displayHtml": "c0dd27d5d63bebf1088821d9b242ea566d7898bb23967ac684a6ef9060543355",
+          "validationEvidence": "6fa533f5403378abb12ff0a3897c665bd433042aa36ae2e55301ba9f11aee506",
+          "sessionLog": "dc672a2a6a56aba8c8f24e98656c4084273093005f954e55b92dcd2bd4fd3ff3",
+          "stderrLog": "68ba63a8d480893c350c63d8cb188853d76c56f69bac7ae8e2c9e16e6d8feefe",
+          "screenshot": "8881b741dd277838c6843f18ddaa056f68ef3370446a9bf9c4bc2e129cd96b3d"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 4
+        },
+        "total": 23,
+        "reviewer": "Codex",
+        "notes": "The original artifact fully delivers a standalone interactive dashboard with lookback, horizon, risk, model, history-range, CSV, tooltip, scenario, and diagnostic interactions. Its trend and momentum blend, monthly volatility range, and walk-forward diagnostics are transparent and useful baselines, but remain simple heuristics rather than a validated financial forecasting model. The FRED historical snapshot, live-refresh fallback, 80% non-guarantee disclosure, and educational disclaimer are unusually clear. Technical robustness is strong after syntax, HTTP/Chrome rendering, and interaction checks; mobile and live-refresh behavior were not fully verified in the benchmark run."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-source-and-snapshot",
+            "passed": true,
+            "details": "FRED returned the SP500 CSV; the final HTML embeds 121 monthly observations from 2016-08-31 through 2026-08-11 and visibly identifies the FRED series and snapshot fallback."
+          },
+          {
+            "name": "benchmark-javascript-syntax",
+            "passed": true,
+            "details": "Node parsed the embedded script successfully."
+          },
+          {
+            "name": "benchmark-headless-chrome",
+            "passed": true,
+            "details": "Headless Chrome rendered the HTTP-served dashboard and captured the desktop screenshot."
+          },
+          {
+            "name": "benchmark-interactive-controls",
+            "passed": true,
+            "details": "Chrome DevTools checks changed horizon, risk, history range, model, and CSV parsing; finite scenario values and chart paths remained populated."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed HTML SHA-256 hashes match; no rendering repair was required."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "npm run validate and npm test pass on the final branch."
+          },
+          {
+            "name": "table-row-target",
+            "passed": true,
+            "details": "The new gpt-5.6-luna xhigh row maps to its manifest displayHtml target, which returned HTTP 200 with expected dashboard markers; the in-app browser backend was unavailable for an observed click-through."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-luna at native xhigh (extra high) reasoning in a fresh temporary workspace, produced a standalone FRED-backed S&P 500 forecast dashboard with an embedded historical snapshot and optional live refresh, validated it in Chrome with interactive checks, and imported identical original and display HTML without a repair."
     },
     {
       "id": "openai-gpt-5-6-terra-medium-codex-20260812",
