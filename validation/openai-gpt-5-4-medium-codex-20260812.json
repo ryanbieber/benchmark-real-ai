@@ -1,0 +1,138 @@
+{
+  "runId": "openai-gpt-5-4-medium-codex-20260812",
+  "workspace": "/tmp/benchmark-real-ai.DdxJag",
+  "isolatedCodexHome": "/tmp/codex-bench-home.cOuVIG",
+  "timestamps": {
+    "startedAt": "2026-08-12T00:01:31.000Z",
+    "finishedAt": "2026-08-12T00:06:55.000Z",
+    "durationMs": 323463,
+    "timeToFirstTokenMs": 9939
+  },
+  "usage": {
+    "totalTokens": 612801,
+    "inputTokens": 599733,
+    "cachedInputTokens": 515584,
+    "outputTokens": 13068,
+    "reasoningOutputTokens": 3094,
+    "cost": null
+  },
+  "dataSource": {
+    "type": "live",
+    "source": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500",
+    "notes": "The benchmark run fetched current daily S&P 500 history from FRED, then generated a local JSON snapshot for offline use."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "tooling-check",
+        "command": "which google-chrome || which chromium || which chromium-browser || which playwright || which wkhtmltoimage || which wkhtmltopdf",
+        "exitCode": 0,
+        "result": "/usr/bin/google-chrome"
+      },
+      {
+        "name": "fred-preview",
+        "command": "curl -L --max-time 20 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500' | head -n 12",
+        "exitCode": 0,
+        "result": "Confirmed live FRED CSV availability. The command ended after `head` closed the pipe and `curl` reported `Failure writing output to destination`, which did not block the run."
+      },
+      {
+        "name": "fred-tail",
+        "command": "curl -L --silent 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500' | tail -n 12",
+        "exitCode": 0,
+        "result": "Confirmed the latest imported market data row was `2026-08-10,7753.11`."
+      },
+      {
+        "name": "json-build",
+        "command": "node fetch_sp500.mjs",
+        "exitCode": 0,
+        "result": "Wrote 2512 rows to `sp500_data.json`."
+      },
+      {
+        "name": "dom-render-initial",
+        "command": "google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8000/index.html",
+        "exitCode": 0,
+        "result": "Rendered the dashboard successfully with Plotly initialized, before the dashboard was converted from CDN Plotly to a local bundle."
+      },
+      {
+        "name": "plotly-local-bundle",
+        "command": "curl -L --silent 'https://cdn.plot.ly/plotly-2.35.2.min.js' -o plotly-2.35.2.min.js && wc -c plotly-2.35.2.min.js",
+        "exitCode": 0,
+        "result": "Downloaded the local Plotly bundle (`4558696` bytes) so the final dashboard used only local files."
+      },
+      {
+        "name": "dom-assertions-final",
+        "command": "google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8000/index.html | rg 'Validated on the last|7753.11|Source: FRED SP500|Coverage: 2016-08-11 to 2026-08-10'",
+        "exitCode": 0,
+        "result": "Matched `Source: FRED SP500`, `Coverage: 2016-08-11 to 2026-08-10`, and `Validated on the last 63 trading days using a 756-day training window.`"
+      },
+      {
+        "name": "screenshot-pass",
+        "command": "google-chrome --headless --disable-gpu --no-sandbox --screenshot=dashboard.png --window-size=1440,2200 http://127.0.0.1:8000/index.html && file dashboard.png",
+        "exitCode": 0,
+        "result": "Wrote `dashboard.png` (1440x2200 PNG)."
+      }
+    ],
+    "warnings": [
+      "The early `git status --short` check failed because the benchmark workspace was intentionally not a git repository.",
+      "Headless Chrome emitted non-fatal GCM registration warnings (`DEPRECATED_ENDPOINT` and `PHONE_REGISTRATION_ERROR`) during DOM and screenshot validation."
+    ],
+    "observedOutputs": {
+      "datasetCoverage": {
+        "start": "2016-08-11",
+        "end": "2026-08-10",
+        "latestClose": 7753.11
+      },
+      "defaultDashboardMetrics": {
+        "forecastHorizonTradingDays": 63,
+        "projectedEnd": 8591.31,
+        "rmse": 527.35,
+        "mapePercent": 5.8,
+        "directionHitRatePercent": 54.8
+      }
+    }
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "npm-install",
+        "command": "npm install",
+        "exitCode": 0,
+        "result": "Installed dependencies successfully with 0 vulnerabilities reported."
+      },
+      {
+        "name": "manifest-validate",
+        "command": "npm run validate",
+        "exitCode": 0,
+        "result": "Manifest valid: 2 runs checked."
+      },
+      {
+        "name": "full-test-suite",
+        "command": "npm test",
+        "exitCode": 0,
+        "result": "Validation, unit tests, and Playwright browser tests all passed. Browser test summary: 5 passed, 1 skipped."
+      },
+      {
+        "name": "row-open-check",
+        "command": "Open http://127.0.0.1:4173/, click the `gpt-5.4` `medium` row, and inspect the opened artifact",
+        "exitCode": 0,
+        "result": "Opened `http://127.0.0.1:4173/runs/rendered/openai-gpt-5-4-medium-codex-20260812/index.html` with title `S&P 500 Forecast Dashboard`, latest close `7,753.11`, and source chip `Source: FRED SP500`."
+      }
+    ],
+    "result": "Repository validation passed and the new August 12, 2026 row opened the imported standalone dashboard directly from the table."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-4-medium-codex-20260812/index.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-4-medium-codex-20260812/index.html",
+    "responseRecord": "responses/openai-gpt-5-4-medium-codex-20260812.md",
+    "screenshot": "validation/openai-gpt-5-4-medium-codex-20260812-dashboard.png",
+    "supportFiles": [
+      "runs/original/openai-gpt-5-4-medium-codex-20260812/sp500_data.json",
+      "runs/original/openai-gpt-5-4-medium-codex-20260812/plotly-2.35.2.min.js",
+      "runs/original/openai-gpt-5-4-medium-codex-20260812/fetch_sp500.mjs",
+      "runs/rendered/openai-gpt-5-4-medium-codex-20260812/sp500_data.json",
+      "runs/rendered/openai-gpt-5-4-medium-codex-20260812/plotly-2.35.2.min.js",
+      "runs/rendered/openai-gpt-5-4-medium-codex-20260812/fetch_sp500.mjs"
+    ]
+  },
+  "unresolvedFailures": []
+}

@@ -525,6 +525,106 @@
         "notes": "Final validation ran against http://127.0.0.1:4281 because 4173 was occupied by the benchmark preview page in this workspace."
       },
       "summary": "Codex CLI completed a live-data S&P 500 dashboard in a fresh temp workspace, validated it with headless Chrome, and recorded a targeted rendering repair for the serialized SVG markers and forecast-end display."
+    },
+    {
+      "id": "openai-gpt-5-4-medium-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.4",
+        "name": "gpt-5.4",
+        "version": "gpt-5.4"
+      },
+      "reasoning": {
+        "native": "medium",
+        "normalized": "medium"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai.DdxJag",
+          "codexHome": "/tmp/codex-bench-home.cOuVIG",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.4",
+          "reasoningLevelConfigAttempt": "medium",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "jsonOutput": true,
+          "outputLastMessage": true,
+          "promptSource": "stdin",
+          "isolatedAuthOnlyHome": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "planning",
+          "network-access",
+          "browser-validation",
+          "screenshot-capture"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T00:01:31.000Z",
+        "finishedAt": "2026-08-12T00:06:55.000Z",
+        "durationSeconds": 323.463
+      },
+      "run": {
+        "completedAt": "2026-08-12T00:06:55.000Z"
+      },
+      "usage": {
+        "tokens": 612801,
+        "latencyMs": 9939,
+        "cost": null
+      },
+      "dataSource": {
+        "type": "live",
+        "notes": "Daily S&P 500 close history was fetched live from FRED during the benchmark run, then bundled locally into `sp500_data.json`."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-4-medium-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-4-medium-codex-20260812/index.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-4-medium-codex-20260812/index.html",
+        "validationEvidence": "validation/openai-gpt-5-4-medium-codex-20260812.json",
+        "sha256": {
+          "rawResponse": "3e666b3753b7966ff22592ff5d096e8acf62a25963bfb395414cf456d89f18bb",
+          "originalHtml": "d061de2769d1b59b711ae1412ad1a60da5bcd9918357ee8c61e755ee44edfda3",
+          "displayHtml": "d061de2769d1b59b711ae1412ad1a60da5bcd9918357ee8c61e755ee44edfda3",
+          "validationEvidence": "cc79e958abe0921946fd8b9570ec6062daccfc6470168a908f5c83f5e27e5d22"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 19,
+        "reviewer": "Codex",
+        "notes": "The dashboard is complete and interactive, validates itself with a visible holdout test, and discloses uncertainty bands and metrics, but the forecasting method remains a lightweight heuristic blend rather than a stronger statistical model."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML hashes matched exactly; no post-run repair was required."
+          },
+          {
+            "name": "browser-validation",
+            "passed": true,
+            "details": "Headless Chrome rendered the offline bundle, matched the FRED source and coverage text, and produced the reported validation status and screenshot."
+          }
+        ]
+      },
+      "summary": "Codex CLI completed a standalone S&P 500 forecast dashboard in an isolated temp workspace, bundled its data and Plotly locally, validated it in headless Chrome, and imported byte-identical original and displayed HTML without a repair."
     }
   ]
 }
