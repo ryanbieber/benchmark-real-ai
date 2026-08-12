@@ -1,0 +1,7 @@
+Reading additional input from stdin...
+2026-08-12T02:09:44.473120Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=file:///home/carnufex/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-08-12T02:09:44.474136Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=file:///home/carnufex/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-08-12T02:09:44.939423Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=file:///home/carnufex/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-08-12T02:09:44.940236Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=file:///home/carnufex/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-08-12T02:09:50.697807Z  WARN codex_otel::events::session_telemetry: metrics counter [codex.skill.injected] failed: tag value contains invalid characters: browser:control-in-app-browser
+2026-08-12T02:13:10.978765Z  WARN codex_file_watcher: failed to unwatch /home/carnufex/.codex/skills/.system: No watch was found. about ["/home/carnufex/.codex/skills/.system"]

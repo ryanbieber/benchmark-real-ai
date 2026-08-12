@@ -10,7 +10,7 @@
       "high",
       "max"
     ],
-    "updatedAt": "2026-08-12T02:13:07Z",
+    "updatedAt": "2026-08-12T02:17:10Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -39,6 +39,11 @@
           "inputUsd": 0.2,
           "cachedInputUsd": 0.02,
           "outputUsd": 1.2
+        },
+        "gpt-5.6-sol": {
+          "inputUsd": 5,
+          "cachedInputUsd": 0.5,
+          "outputUsd": 30
         }
       }
     }
@@ -1231,6 +1236,138 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-luna at medium reasoning in a fresh empty temporary workspace, built a standalone interactive S&P 500 forecast dashboard using explicitly labeled synthetic demo history, validated it with JavaScript and headless Chrome checks, and completed import with identical original and displayed HTML."
+    },
+    {
+      "id": "openai-gpt-5-6-sol-medium-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-sol",
+        "name": "gpt-5.6-sol",
+        "version": "gpt-5.6-sol"
+      },
+      "reasoning": {
+        "native": "medium",
+        "normalized": "medium"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-6-sol-medium-Y6Tm5j",
+          "ignoreUserConfig": false,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-sol",
+          "reasoningLevelConfigAttempt": "medium",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "outputLastMessage": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "mcp-tools",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T02:09:43.127Z",
+        "finishedAt": "2026-08-12T02:13:11.514Z",
+        "durationSeconds": 208.387
+      },
+      "run": {
+        "completedAt": "2026-08-12T02:13:11.514Z"
+      },
+      "usage": {
+        "inputTokens": 328221,
+        "cachedInputTokens": 290304,
+        "outputTokens": 9802,
+        "reasoningOutputTokens": 1068,
+        "totalTokens": 338023,
+        "source": "Codex CLI final turn.completed usage event",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The dashboard generates a deterministic 320-row S&P 500-like demonstration series in the HTML and visibly labels it synthetic. Users can upload real Date/Close CSV history; no external market data is bundled or fetched."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-sol-medium-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-sol-medium-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-sol-medium-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-6-sol-medium-codex-20260812.json",
+        "sessionLog": "validation/openai-gpt-5-6-sol-medium-codex-20260812.session.jsonl",
+        "benchmarkValidationScript": "validation/openai-gpt-5-6-sol-medium-codex-20260812.benchmark.mjs",
+        "stderrLog": "validation/openai-gpt-5-6-sol-medium-codex-20260812.stderr.log",
+        "screenshots": [
+          "validation/openai-gpt-5-6-sol-medium-codex-20260812-dashboard.png"
+        ],
+        "sha256": {
+          "rawResponse": "3d81649a3b21b9ea5f0deb7d400276edd8f3cbf60c5afa3db27c22e6dae86ce8",
+          "originalHtml": "79e28f9f2227aeee5d2993ddd15efbfeb6e3657627c95c6d4b3174d87ae6429d",
+          "displayHtml": "79e28f9f2227aeee5d2993ddd15efbfeb6e3657627c95c6d4b3174d87ae6429d",
+          "validationEvidence": "0ee96c23618c73480ae12226dd5ff8429444b276e76c1137ae2fcf29d90a2c9c",
+          "sessionLog": "8f9fca3ab8aa87c4c5f58fa3bdfd1d2ce6270f73a097ef30bebda77deffc70e5",
+          "benchmarkValidationScript": "3d6c38eb32793632bc81cf3e53d1bdf95a1766d25e4903a4e6cbc5df9d170a03",
+          "stderrLog": "abc704c9f9da63ce461c48eaceed8bef21cc71920fce84e0e466f7c3585b07c9",
+          "screenshot": "9f502cd76ffc0e3309b660369c655aac0fd349ac724ffffaac179e130de76f24"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 4
+        },
+        "total": 21,
+        "reviewer": "Codex",
+        "notes": "The original artifact is a polished, responsive, dependency-free dashboard with three baseline methods, configurable horizon and uncertainty, holdout metrics, CSV import, and forecast export. It is unusually clear that the bundled data are synthetic and that the forecasts are educational rather than investment advice. The methods and sqrt-horizon residual bands are useful baselines but not rigorous market models; the run's executable validator passed, while full-browser validation was completed independently during import because the benchmark session's in-app browser was unavailable."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-validation-script",
+            "passed": true,
+            "details": "The benchmark-created validator exercised initial rendering, all three models, metrics, CSV parsing and rejection, trading-day handling, and export behavior."
+          },
+          {
+            "name": "benchmark-browser-validation",
+            "passed": false,
+            "details": "The benchmark session attempted to use the Codex in-app browser, but the available browser list was empty; this limitation was disclosed in the final visible response."
+          },
+          {
+            "name": "independent-browser-validation",
+            "passed": true,
+            "details": "During import, Playwright with Google Chrome loaded the displayed artifact, changed model and horizon controls, recalculated a different finite forecast, captured a desktop screenshot, found no page errors, and confirmed no horizontal overflow at 390px."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed HTML are byte-identical; no rendering repair was required."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "On the final rebased branch, npm run validate passed for 12 runs; npm test passed all 4 unit tests and 5 browser tests with 1 intentional project skip."
+          },
+          {
+            "name": "table-row-open",
+            "passed": true,
+            "details": "The single gpt-5.6-sol medium table row opened the standalone rendered HTML with the expected title, synthetic disclosure, finite forecast, and rendered canvas."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-sol at medium reasoning in an empty temporary workspace, produced a responsive standalone synthetic S&P 500 forecasting dashboard with three baseline models and executable validation, and required no rendering repair."
     }
   ]
 }

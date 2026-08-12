@@ -1,0 +1,169 @@
+{
+  "runId": "openai-gpt-5-6-sol-medium-codex-20260812",
+  "workspace": "/tmp/benchmark-real-ai-gpt-5-6-sol-medium-Y6Tm5j",
+  "captureDirectory": "/tmp/benchmark-real-ai-capture-gpt-5-6-sol-medium-N2xIcd",
+  "timestamps": {
+    "startedAt": "2026-08-12T02:09:43.127Z",
+    "finishedAt": "2026-08-12T02:13:11.514Z",
+    "durationMs": 208387,
+    "timeToFirstTokenMs": null
+  },
+  "usage": {
+    "inputTokens": 328221,
+    "cachedInputTokens": 290304,
+    "outputTokens": 9802,
+    "reasoningOutputTokens": 1068,
+    "totalTokens": 338023,
+    "source": "Codex CLI final turn.completed usage event",
+    "actualCostUsd": null
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "command": "codex --search -m gpt-5.6-sol -c 'model_reasoning_effort=\"medium\"' --dangerously-bypass-approvals-and-sandbox -C /tmp/benchmark-real-ai-gpt-5-6-sol-medium-Y6Tm5j exec --skip-git-repo-check --json -o /tmp/benchmark-real-ai-capture-gpt-5-6-sol-medium-N2xIcd/final-response.txt 'I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.'",
+    "configuration": {
+      "freshWorkspace": true,
+      "ignoreUserConfig": false,
+      "skipGitRepoCheck": true,
+      "model": "gpt-5.6-sol",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "reasoningLevel": "medium",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": "never",
+      "webSearch": true,
+      "jsonEvents": true,
+      "outputLastMessage": true
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "mcp-tools",
+      "local-browser-validation"
+    ]
+  },
+  "dataSource": {
+    "type": "synthetic",
+    "source": null,
+    "notes": "The HTML generates a deterministic 320-row S&P 500-like demonstration series in makeSample() and visibly labels it `Synthetic demo`; users may upload real Date/Close CSV history. No external market data is bundled or fetched."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "workspace-inspection",
+        "command": "pwd && rg --files -g '!node_modules' | sed -n '1,200p' && find . -maxdepth 2 -type f -name 'AGENTS.md' -print",
+        "exitCode": 0,
+        "result": "The fresh workspace was empty and contained no AGENTS.md."
+      },
+      {
+        "name": "artifact-inspection",
+        "command": "ls -la && wc -l index.html && rg \"IndexCast|function run\" index.html",
+        "exitCode": 0,
+        "result": "index.html existed with 19,249 bytes and contained the dashboard title and run function."
+      },
+      {
+        "name": "in-app-browser-attempt",
+        "command": "Codex node_repl browser runtime setup, bootstrap troubleshooting, and agent.browsers.list()",
+        "exitCode": null,
+        "result": "The in-app browser request failed with `Browser is not available: iab`; the available browser list was `[]`."
+      },
+      {
+        "name": "inline-javascript-syntax",
+        "command": "sed -n '/<script>/,/<\\/script>/p' index.html | sed '1d;$d' | node --check",
+        "exitCode": 0,
+        "result": "Inline dashboard JavaScript passed Node syntax validation."
+      },
+      {
+        "name": "benchmark-validation-script",
+        "command": "node validate.mjs",
+        "exitCode": 0,
+        "result": "PASS: initial render, 3 models, metrics, CSV parsing, trading dates, and export validated"
+      },
+      {
+        "name": "http-and-script-check",
+        "command": "curl -sS -I http://127.0.0.1:4173/ && node --check validate.mjs && git diff --check 2>/dev/null || true",
+        "exitCode": 0,
+        "result": "HTTP/1.0 200 OK; Content-Type text/html; Content-Length 19249. The validation script passed syntax checking."
+      }
+    ],
+    "warnings": [
+      "The benchmark session could not run visual browser automation because the Codex in-app browser was unavailable; it disclosed this in the visible final response.",
+      "The benchmark-created validator uses a VM-backed DOM/canvas stub and executable assertions rather than a full browser.",
+      "Harness stderr contains non-fatal plugin-manifest and file-watcher warnings."
+    ]
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "benchmark-validator-rerun",
+        "command": "node /tmp/benchmark-real-ai-gpt-5-6-sol-medium-Y6Tm5j/validate.mjs",
+        "exitCode": 0,
+        "result": "PASS: initial render, 3 models, metrics, CSV parsing, trading dates, and export validated"
+      },
+      {
+        "name": "artifact-bytes",
+        "command": "cmp -s runs/original/openai-gpt-5-6-sol-medium-codex-20260812.html runs/rendered/openai-gpt-5-6-sol-medium-codex-20260812.html",
+        "exitCode": 0,
+        "result": "Original and displayed HTML are byte-identical; no rendering repair was required."
+      },
+      {
+        "name": "independent-playwright-validation",
+        "command": "Playwright/Google Chrome loaded the rendered artifact, selected the moving-average model, changed the horizon to 60, ran the forecast, captured a desktop screenshot, reloaded at 390x900, and checked overflow and page errors.",
+        "exitCode": 0,
+        "result": "Title `IndexCast — S&P 500 Forecast Lab`; status `Synthetic demo · 320 rows`; forecast changed from 5,953.68 to 5,839.69; MAPE 2.47%; moving-average control visible; canvas 1028x360; mobile innerWidth and scrollWidth both 390; no page errors."
+      },
+      {
+        "name": "official-pricing-snapshot",
+        "command": "curl -L --max-time 30 -sS https://developers.openai.com/api/docs/pricing/",
+        "exitCode": 0,
+        "result": "Official OpenAI pricing page listed gpt-5.6-sol standard short-context rates of $5/M input, $0.50/M cached input, and $30/M output on 2026-08-12."
+      },
+      {
+        "name": "initial-repository-test",
+        "command": "npm run validate && npm test",
+        "exitCode": 1,
+        "result": "Manifest validation passed for 11 runs. Unit tests passed. Browser tests found the combined-cost fixture still expected $6.30 while the page correctly calculated $6.92 after adding this run; 3 browser tests passed, 2 failed on that assertion, and 1 was skipped."
+      },
+      {
+        "name": "combined-cost-fixture-update",
+        "command": "Update tests/browser/showcase.spec.mjs combined-cost expectation from $6.30 to $6.92.",
+        "exitCode": 0,
+        "result": "The test fixture now matches the aggregate calculated from all 11 recorded runs and the dated pricing table. No dashboard artifact was changed."
+      },
+      {
+        "name": "final-repository-validation",
+        "command": "npm run validate && npm test",
+        "exitCode": 0,
+        "result": "Before rebase, manifest validation covered 11 runs, all 4 unit tests passed, and the Playwright browser suite reported 5 passed and 1 skipped. After rebasing over the concurrent gpt-5.6-luna medium addition, the same commands passed for 12 runs with 4 unit tests passed and 5 browser tests passed plus 1 skipped."
+      },
+      {
+        "name": "new-table-row-open",
+        "command": "Serve the repository at http://127.0.0.1:4321/, locate the single .run-row containing gpt-5.6-sol and medium, click its .model-cell link, and inspect the opened page with Playwright/Google Chrome.",
+        "exitCode": 0,
+        "result": "Opened http://127.0.0.1:4321/runs/rendered/openai-gpt-5-6-sol-medium-codex-20260812.html; title `IndexCast — S&P 500 Forecast Lab`; status `Synthetic demo · 320 rows`; forecast 5,953.68; canvas 1028x360."
+      }
+    ],
+    "result": "Independent full-browser validation passed, repository validation and tests passed on the final rebased 12-run branch, and the new table row opened the standalone dashboard directly."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-6-sol-medium-codex-20260812.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-6-sol-medium-codex-20260812.html",
+    "responseRecord": "responses/openai-gpt-5-6-sol-medium-codex-20260812.md",
+    "validationEvidence": "validation/openai-gpt-5-6-sol-medium-codex-20260812.json",
+    "sessionLog": "validation/openai-gpt-5-6-sol-medium-codex-20260812.session.jsonl",
+    "benchmarkValidationScript": "validation/openai-gpt-5-6-sol-medium-codex-20260812.benchmark.mjs",
+    "stderrLog": "validation/openai-gpt-5-6-sol-medium-codex-20260812.stderr.log",
+    "screenshot": "validation/openai-gpt-5-6-sol-medium-codex-20260812-dashboard.png",
+    "sha256": {
+      "originalHtml": "79e28f9f2227aeee5d2993ddd15efbfeb6e3657627c95c6d4b3174d87ae6429d",
+      "displayHtml": "79e28f9f2227aeee5d2993ddd15efbfeb6e3657627c95c6d4b3174d87ae6429d",
+      "responseRecord": "3d81649a3b21b9ea5f0deb7d400276edd8f3cbf60c5afa3db27c22e6dae86ce8",
+      "sessionLog": "8f9fca3ab8aa87c4c5f58fa3bdfd1d2ce6270f73a097ef30bebda77deffc70e5",
+      "benchmarkValidationScript": "3d6c38eb32793632bc81cf3e53d1bdf95a1766d25e4903a4e6cbc5df9d170a03",
+      "stderrLog": "abc704c9f9da63ce461c48eaceed8bef21cc71920fce84e0e466f7c3585b07c9",
+      "screenshot": "9f502cd76ffc0e3309b660369c655aac0fd349ac724ffffaac179e130de76f24"
+    }
+  },
+  "unresolvedFailures": []
+}
