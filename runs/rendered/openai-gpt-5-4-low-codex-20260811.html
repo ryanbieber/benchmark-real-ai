@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S&P 500 Forecast Dashboard</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --panel: rgba(255, 252, 246, 0.9);
+      --text: #1f2933;
+      --muted: #52606d;
+      --accent: #0f766e;
+      --accent-2: #c2410c;
+      --line: rgba(31, 41, 51, 0.12);
+      --shadow: 0 20px 50px rgba(31, 41, 51, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(194, 65, 12, 0.12), transparent 28%),
+        linear-gradient(180deg, #fbf8f1 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1280px, calc(100% - 32px));
+      margin: 24px auto 40px;
+    }
+
+    .hero, .panel {
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 28px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 10px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      line-height: 0.94;
+      margin: 0 0 14px;
+      max-width: 10ch;
+    }
+
+    .hero-copy {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 24px;
+      align-items: end;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.55;
+      max-width: 64ch;
+    }
+
+    .hero-note {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(15, 118, 110, 0.08);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .controls {
+      position: sticky;
+      top: 16px;
+    }
+
+    .control-group + .control-group {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    label, .metric-label {
+      display: block;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .range-value {
+      font-size: 1.3rem;
+      margin: 4px 0 0;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--line);
+    }
+
+    .metric-value {
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      margin: 0;
+    }
+
+    .card-row {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    #chart {
+      height: 620px;
+    }
+
+    .forecast-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .forecast-table th,
+    .forecast-table td {
+      text-align: left;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .status {
+      min-height: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .error {
+      color: #b42318;
+    }
+
+    @media (max-width: 1024px) {
+      .grid,
+      .hero-copy,
+      .card-row,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        position: static;
+      }
+
+      #chart {
+        height: 520px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <p class="eyebrow">Interactive HTML Forecasting Demo</p>
+      <div class="hero-copy">
+        <div>
+          <h1>S&amp;P 500 Forecast Dashboard</h1>
+          <p>
+            This dashboard reads local S&amp;P 500 history from FRED, fits a simple log-trend model with
+            volatility bands in your browser, and exposes the forecast assumptions directly through the controls.
+          </p>
+        </div>
+        <div class="hero-note">
+          Latest loaded observation: <strong id="latestDate">-</strong><br>
+          Forecasts are illustrative model outputs, not trading advice.
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <aside class="panel controls">
+        <div class="control-group">
+          <label for="lookbackDays">Training Window</label>
+          <input id="lookbackDays" type="range" min="252" max="2520" step="21" value="756">
+          <div class="range-value"><span id="lookbackDaysValue">756</span> trading days</div>
+          <div class="muted">How much recent history is used to fit the forecast model.</div>
+        </div>
+
+        <div class="control-group">
+          <label for="forecastDays">Forecast Horizon</label>
+          <input id="forecastDays" type="range" min="5" max="126" step="1" value="30">
+          <div class="range-value"><span id="forecastDaysValue">30</span> trading days</div>
+          <div class="muted">Projects the index path forward from the latest loaded close.</div>
+        </div>
+
+        <div class="control-group">
+          <label for="holdoutDays">Validation Holdout</label>
+          <input id="holdoutDays" type="range" min="20" max="252" step="5" value="60">
+          <div class="range-value"><span id="holdoutDaysValue">60</span> trading days</div>
+          <div class="muted">Reserved data used only for out-of-sample error measurement.</div>
+        </div>
+
+        <div class="control-group">
+          <label for="bandScale">Risk Band Width</label>
+          <input id="bandScale" type="range" min="0.5" max="3" step="0.1" value="1.5">
+          <div class="range-value"><span id="bandScaleValue">1.5</span>x residual sigma</div>
+          <div class="muted">Scales the forecast uncertainty envelope shown on the chart.</div>
+        </div>
+
+        <div class="control-group">
+          <button id="rerunBtn" style="width:100%;padding:14px 16px;border:none;border-radius:16px;background:var(--accent);color:white;font-size:1rem;cursor:pointer;">Recompute Forecast</button>
+        </div>
+      </aside>
+
+      <main class="panel">
+        <div class="status" id="status">Loading local data...</div>
+        <div class="metrics">
+          <div class="metric">
+            <span class="metric-label">Latest Close</span>
+            <p class="metric-value" id="latestClose">-</p>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Forecast End</span>
+            <p class="metric-value" id="forecastEnd">-</p>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Holdout MAPE</span>
+            <p class="metric-value" id="mape">-</p>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Holdout RMSE</span>
+            <p class="metric-value" id="rmse">-</p>
+          </div>
+        </div>
+
+        <div id="chart"></div>
+
+        <div class="card-row">
+          <section class="panel" style="padding:18px;">
+            <span class="metric-label">Model Notes</span>
+            <p class="muted" id="modelSummary" style="margin:0;">
+              -
+            </p>
+          </section>
+          <section class="panel" style="padding:18px;">
+            <span class="metric-label">Next 5 Forecast Points</span>
+            <table class="forecast-table">
+              <thead>
+                <tr><th>Date</th><th>Forecast</th></tr>
+              </thead>
+              <tbody id="forecastTableBody"></tbody>
+            </table>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const state = { rows: [] };
+
+    const controls = {
+      lookbackDays: document.getElementById("lookbackDays"),
+      forecastDays: document.getElementById("forecastDays"),
+      holdoutDays: document.getElementById("holdoutDays"),
+      bandScale: document.getElementById("bandScale"),
+      rerunBtn: document.getElementById("rerunBtn")
+    };
+
+    function updateLabels() {
+      document.getElementById("lookbackDaysValue").textContent = controls.lookbackDays.value;
+      document.getElementById("forecastDaysValue").textContent = controls.forecastDays.value;
+      document.getElementById("holdoutDaysValue").textContent = controls.holdoutDays.value;
+      document.getElementById("bandScaleValue").textContent = controls.bandScale.value;
+    }
+
+    function setStatus(message, isError = false) {
+      const el = document.getElementById("status");
+      el.textContent = message;
+      el.className = isError ? "status error" : "status";
+    }
+
+    async function loadCsv() {
+      const response = await fetch("./sp500_fred.csv", { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`Failed to load CSV: ${response.status}`);
+      }
+
+      const text = await response.text();
+      const lines = text.trim().split(/\r?\n/).slice(1);
+      return lines
+        .map((line) => {
+          const [date, value] = line.split(",");
+          const close = Number(value);
+          if (!date || !Number.isFinite(close) || close <= 0) {
+            return null;
+          }
+          return { date, close };
+        })
+        .filter(Boolean);
+    }
+
+    function linearRegression(x, y) {
+      const n = x.length;
+      const xMean = x.reduce((sum, value) => sum + value, 0) / n;
+      const yMean = y.reduce((sum, value) => sum + value, 0) / n;
+      let numerator = 0;
+      let denominator = 0;
+      for (let i = 0; i < n; i += 1) {
+        numerator += (x[i] - xMean) * (y[i] - yMean);
+        denominator += (x[i] - xMean) ** 2;
+      }
+      const slope = denominator === 0 ? 0 : numerator / denominator;
+      const intercept = yMean - slope * xMean;
+      return { slope, intercept };
+    }
+
+    function sigma(values) {
+      const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+      const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
+      return Math.sqrt(variance);
+    }
+
+    function tradingDateSequence(lastDate, steps) {
+      const dates = [];
+      const cursor = new Date(`${lastDate}T00:00:00Z`);
+      while (dates.length < steps) {
+        cursor.setUTCDate(cursor.getUTCDate() + 1);
+        const day = cursor.getUTCDay();
+        if (day !== 0 && day !== 6) {
+          dates.push(cursor.toISOString().slice(0, 10));
+        }
+      }
+      return dates;
+    }
+
+    function fitAndForecast(rows, lookback, holdout, horizon, bandScale) {
+      const usableHoldout = Math.min(holdout, rows.length - 40);
+      const trainEnd = rows.length - usableHoldout;
+      const trainingPool = rows.slice(0, trainEnd);
+      const trainWindow = trainingPool.slice(-Math.min(lookback, trainingPool.length));
+
+      const xTrain = trainWindow.map((_, idx) => idx);
+      const yTrain = trainWindow.map((row) => Math.log(row.close));
+      const { slope, intercept } = linearRegression(xTrain, yTrain);
+
+      const fittedTrain = xTrain.map((x) => Math.exp(intercept + slope * x));
+      const residuals = fittedTrain.map((fit, idx) => Math.log(trainWindow[idx].close / fit));
+      const residualSigma = Math.max(sigma(residuals), 0.0001);
+
+      const validationRows = rows.slice(trainEnd, trainEnd + usableHoldout);
+      const validationForecast = validationRows.map((_, idx) => {
+        const x = xTrain.length + idx;
+        return Math.exp(intercept + slope * x);
+      });
+
+      const mapeValue = validationRows.reduce((sum, row, idx) => {
+        return sum + Math.abs((row.close - validationForecast[idx]) / row.close);
+      }, 0) / validationRows.length;
+
+      const rmseValue = Math.sqrt(validationRows.reduce((sum, row, idx) => {
+        return sum + (row.close - validationForecast[idx]) ** 2;
+      }, 0) / validationRows.length);
+
+      const latestWindow = rows.slice(-Math.min(lookback, rows.length));
+      const xLatest = latestWindow.map((_, idx) => idx);
+      const yLatest = latestWindow.map((row) => Math.log(row.close));
+      const latestModel = linearRegression(xLatest, yLatest);
+      const fittedLatest = xLatest.map((x) => Math.exp(latestModel.intercept + latestModel.slope * x));
+      const latestResiduals = fittedLatest.map((fit, idx) => Math.log(latestWindow[idx].close / fit));
+      const latestSigma = Math.max(sigma(latestResiduals), 0.0001);
+
+      const forecastDates = tradingDateSequence(rows[rows.length - 1].date, horizon);
+      const forecast = forecastDates.map((date, idx) => {
+        const x = xLatest.length + idx;
+        const center = Math.exp(latestModel.intercept + latestModel.slope * x);
+        const spread = bandScale * latestSigma * Math.sqrt(idx + 1);
+        return {
+          date,
+          center,
+          lower: center * Math.exp(-spread),
+          upper: center * Math.exp(spread)
+        };
+      });
+
+      return {
+        trainWindow,
+        latestWindow,
+        validationRows,
+        validationForecast,
+        forecast,
+        latestSigma,
+        slope: latestModel.slope,
+        mapeValue,
+        rmseValue
+      };
+    }
+
+    function fmtNumber(value) {
+      return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
+    }
+
+    function fmtPct(value) {
+      return `${(value * 100).toFixed(2)}%`;
+    }
+
+    function renderTable(forecast) {
+      const body = document.getElementById("forecastTableBody");
+      body.innerHTML = forecast.slice(0, 5).map((row) => {
+        return `<tr><td>${row.date}</td><td>${fmtNumber(row.center)}</td></tr>`;
+      }).join("");
+    }
+
+    function renderDashboard() {
+      if (!state.rows.length) {
+        return;
+      }
+
+      updateLabels();
+
+      const lookback = Number(controls.lookbackDays.value);
+      const horizon = Number(controls.forecastDays.value);
+      const holdout = Number(controls.holdoutDays.value);
+      const bandScale = Number(controls.bandScale.value);
+
+      const result = fitAndForecast(state.rows, lookback, holdout, horizon, bandScale);
+      const latest = state.rows[state.rows.length - 1];
+      const forecastEnd = result.forecast[result.forecast.length - 1];
+
+      document.getElementById("latestDate").textContent = latest.date;
+      document.getElementById("latestClose").textContent = fmtNumber(latest.close);
+      document.getElementById("forecastEnd").textContent = fmtNumber(forecastEnd.center);
+      document.getElementById("mape").textContent = fmtPct(result.mapeValue);
+      document.getElementById("rmse").textContent = fmtNumber(result.rmseValue);
+      document.getElementById("modelSummary").textContent =
+        `Model: linear regression on log closes over the most recent ${Math.min(lookback, state.rows.length)} trading days. ` +
+        `Validation: the prior ${result.validationRows.length} trading days were held out before refitting on the latest window. ` +
+        `Estimated daily log-trend slope: ${result.slope.toFixed(6)}. Residual sigma: ${result.latestSigma.toFixed(4)}.`;
+
+      renderTable(result.forecast);
+
+      const forecastDates = result.forecast.map((row) => row.date);
+      const actualDates = state.rows.map((row) => row.date);
+      const actualValues = state.rows.map((row) => row.close);
+      const validationDates = result.validationRows.map((row) => row.date);
+
+      const traces = [
+        {
+          x: actualDates,
+          y: actualValues,
+          mode: "lines",
+          name: "Historical Close",
+          line: { color: "#0f172a", width: 2 }
+        },
+        {
+          x: validationDates,
+          y: result.validationForecast,
+          mode: "lines",
+          name: "Holdout Forecast",
+          line: { color: "#c2410c", width: 2, dash: "dot" }
+        },
+        {
+          x: forecastDates,
+          y: result.forecast.map((row) => row.upper),
+          mode: "lines",
+          name: "Upper Band",
+          line: { color: "rgba(15,118,110,0.2)", width: 1 },
+          hoverinfo: "skip",
+          showlegend: false
+        },
+        {
+          x: forecastDates,
+          y: result.forecast.map((row) => row.lower),
+          mode: "lines",
+          name: "Lower Band",
+          line: { color: "rgba(15,118,110,0.2)", width: 1 },
+          fill: "tonexty",
+          fillcolor: "rgba(15,118,110,0.12)",
+          hoverinfo: "skip",
+          showlegend: false
+        },
+        {
+          x: forecastDates,
+          y: result.forecast.map((row) => row.center),
+          mode: "lines",
+          name: "Forward Forecast",
+          line: { color: "#0f766e", width: 3 }
+        }
+      ];
+
+      const layout = {
+        margin: { l: 50, r: 20, t: 20, b: 50 },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(255,255,255,0.66)",
+        hovermode: "x unified",
+        xaxis: {
+          gridcolor: "rgba(31,41,51,0.08)",
+          zeroline: false
+        },
+        yaxis: {
+          gridcolor: "rgba(31,41,51,0.08)",
+          tickprefix: " ",
+          separatethousands: true
+        },
+        legend: {
+          orientation: "h",
+          y: 1.1
+        }
+      };
+
+      Plotly.react("chart", traces, layout, { responsive: true, displaylogo: false });
+      setStatus(`Loaded ${state.rows.length} observations. Latest observation date: ${latest.date}.`);
+    }
+
+    async function init() {
+      try {
+        updateLabels();
+        state.rows = await loadCsv();
+        if (state.rows.length < 300) {
+          throw new Error("Dataset is too short for the default validation setup.");
+        }
+        if (state.rows.some((row) => !Number.isFinite(row.close) || row.close <= 0)) {
+          throw new Error("Dataset contains invalid close values after parsing.");
+        }
+        renderDashboard();
+      } catch (error) {
+        console.error(error);
+        setStatus(error.message, true);
+      }
+    }
+
+    Object.values(controls).forEach((element) => {
+      if (element.tagName === "INPUT") {
+        element.addEventListener("input", renderDashboard);
+      }
+    });
+    controls.rerunBtn.addEventListener("click", renderDashboard);
+
+    init();
+  </script>
+</body>
+</html>
