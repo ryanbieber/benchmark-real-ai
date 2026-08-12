@@ -34,7 +34,7 @@ test('landing page renders the published run index', async ({ page, isMobile }) 
   await expect(page.locator('.run-row').first()).toContainText('6m 59s');
   await expect(page.getByRole('heading', { name: /What each run would cost/i })).toBeVisible();
   await expect(page.locator('.cost-row')).toHaveCount(publishedRuns.length);
-  await expect(page.locator('#combined-cost')).toHaveText('$6.30');
+  await expect(page.locator('#combined-cost')).toHaveText('$6.31');
   await expect(page.locator('#pricing-note')).toContainText('not actual Codex subscription charges');
 });
 

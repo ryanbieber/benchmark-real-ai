@@ -1,0 +1,71 @@
+{
+  "promptExact": true,
+  "passed": true,
+  "usageEvidence": {
+    "capturedFrom": "Codex turn.completed usage event in validation/openai-gpt-5-6-luna-medium-codex-20260812.session.jsonl",
+    "inputTokens": 126995,
+    "cachedInputTokens": 100864,
+    "outputTokens": 7491,
+    "reasoningOutputTokens": 784,
+    "totalTokens": 134486,
+    "actualCostUsd": null
+  },
+  "timestamps": {
+    "startedAt": "2026-08-12T02:08:57.064Z",
+    "finishedAt": "2026-08-12T02:11:23.732Z",
+    "durationMs": 146668,
+    "timeToFirstTokenMs": null
+  },
+  "harness": {
+    "version": "codex-cli 0.144.4",
+    "command": "codex --search -a never exec --json --ignore-user-config --skip-git-repo-check -C /tmp/benchmark-real-ai-gpt-5.6-luna-medium-2JBu1e -m gpt-5.6-luna -c model_reasoning_effort=\"medium\" -s danger-full-access -o /tmp/benchmark-real-ai-gpt-5.6-luna-medium-2JBu1e/final-response.md [exact prompt]",
+    "capabilities": ["shell", "file-editing", "web-search", "browser-validation"]
+  },
+  "dataSource": {
+    "type": "synthetic",
+    "notes": "The dashboard labels its default data as Demo market history and tells users to import current/licensed data for production forecasting; no external market-data source was used."
+  },
+  "checks": [
+    {
+      "name": "benchmark-javascript-syntax",
+      "command": "node vm.Script over the original HTML script block",
+      "passed": true,
+      "result": "JavaScript syntax validated."
+    },
+    {
+      "name": "benchmark-headless-render",
+      "command": "google-chrome --headless --no-sandbox --disable-gpu --allow-file-access-from-files --dump-dom file:///tmp/benchmark-real-ai-gpt-5.6-luna-medium-2JBu1e/index.html",
+      "passed": true,
+      "result": "Chrome rendered the dashboard and populated forecast values and controls; the run reported no browser errors."
+    },
+    {
+      "name": "import-http-render",
+      "command": "python3 -m http.server 47831 --bind 127.0.0.1 --directory runs/rendered; curl -fsSI http://127.0.0.1:47831/openai-gpt-5-6-luna-medium-codex-20260812.html",
+      "passed": true,
+      "result": "Standalone displayed artifact served HTTP/1.0 200 OK."
+    },
+    {
+      "name": "import-dom-render",
+      "command": "google-chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=5000 --dump-dom http://127.0.0.1:47831/openai-gpt-5-6-luna-medium-codex-20260812.html",
+      "passed": true,
+      "result": "Rendered DOM contained S&P 500 outlook, Price forecast, and Model ready markers; no runtime NaN, undefined, or Loading market text was present."
+    },
+    {
+      "name": "artifact-bytes",
+      "command": "cmp -s runs/original/openai-gpt-5-6-luna-medium-codex-20260812.html runs/rendered/openai-gpt-5-6-luna-medium-codex-20260812.html",
+      "passed": true,
+      "result": "Original and displayed HTML are byte-identical; no rendering repair was required."
+    },
+    {
+      "name": "table-row-standalone-link",
+      "command": "npm test browser showcase verification",
+      "passed": true,
+      "result": "The repository browser test opened the new table row's standalone dashboard artifact successfully."
+    }
+  ],
+  "unresolvedFailures": [],
+  "evidenceFiles": [
+    "validation/openai-gpt-5-6-luna-medium-codex-20260812.session.jsonl",
+    "responses/openai-gpt-5-6-luna-medium-codex-20260812.md"
+  ]
+}
