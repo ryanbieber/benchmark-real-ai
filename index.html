@@ -46,7 +46,7 @@
         <div class="index-heading">
           <div>
             <h2 id="run-index-title">Run index</h2>
-            <p>Filter the recorded facets, then open the original dashboard directly.</p>
+            <p>Runs are ordered from lowest to highest estimated cost. Filter the recorded facets, then open the original dashboard directly.</p>
           </div>
           <dl class="index-stats" aria-label="Published benchmark totals">
             <div><dt id="stat-runs">0</dt><dd>Runs</dd></div>
@@ -76,7 +76,7 @@
                 <th scope="col">Reasoning tokens</th>
                 <th scope="col">Total</th>
                 <th scope="col">Time</th>
-                <th scope="col">Est. cost</th>
+                <th scope="col" aria-sort="ascending">Est. cost ↑</th>
                 <th scope="col"><span class="visually-hidden">Open artifact</span></th>
               </tr>
             </thead>
@@ -91,7 +91,7 @@
           <a class="button button-primary" href="https://github.com/ryanbieber/benchmark-real-ai/blob/main/CONTRIBUTING.md">Contribute the first run <span>↗</span></a>
         </div>
 
-        <div class="table-footer"><span id="result-count">0 runs shown</span><span>Rows open standalone HTML artifacts ↗</span></div>
+        <div class="table-footer"><span id="result-count">0 runs shown</span><span>Lowest estimated cost first · rows open standalone HTML artifacts ↗</span></div>
       </section>
 
       <section class="cost-section section-shell" id="cost-comparison" aria-labelledby="cost-title">
@@ -107,6 +107,28 @@
           </div>
         </div>
         <div class="cost-chart" id="cost-chart" aria-label="Estimated cost by benchmark run"></div>
+        <div class="tradeoff-panel">
+          <div class="tradeoff-head">
+            <div>
+              <span>BEHAVIOR MAP</span>
+              <h3 id="tradeoff-title">Cost versus observed outcome</h3>
+              <p id="tradeoff-description">Higher is a stronger manual rubric result. The dashed line marks the cost–score frontier; these scores are observational and reviewer-assigned, not scientific measurements.</p>
+            </div>
+            <label for="tradeoff-metric">Y-axis
+              <select id="tradeoff-metric">
+                <option value="score">Rubric score / 25</option>
+                <option value="reasoningShare">Reasoning share of output</option>
+                <option value="duration">Elapsed time</option>
+                <option value="tokens">Total tokens</option>
+              </select>
+            </label>
+          </div>
+          <div class="tradeoff-plot-wrap" id="tradeoff-plot" aria-live="polite"></div>
+          <div class="tradeoff-legend">
+            <span><i class="low"></i>Low</span><span><i class="medium"></i>Medium</span><span><i class="high"></i>High</span><span><i class="max"></i>Max reasoning</span><span class="bubble-note">Bubble size = total tokens</span>
+          </div>
+          <div class="plot-key" id="plot-key" aria-label="Plot point details"></div>
+        </div>
         <div class="pricing-note" id="pricing-note"></div>
       </section>
 

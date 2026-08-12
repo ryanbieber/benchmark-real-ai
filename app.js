@@ -35,7 +35,7 @@ function filteredRuns() {
     (state.filters.model === 'all' || run.model.name === state.filters.model) &&
     (state.filters.harness === 'all' || run.harness.name === state.filters.harness) &&
     (state.filters.reasoning === 'all' || run.reasoning.normalized === state.filters.reasoning)
-  );
+  ).sort(compareByCost);
 }
 
 function formatDate(value) {
@@ -72,13 +72,21 @@ function estimateCost(run) {
   return { uncachedInput, cachedInput, output, total: uncachedInput + cachedInput + output };
 }
 
+function compareByCost(a, b) {
+  const costA = estimateCost(a)?.total;
+  const costB = estimateCost(b)?.total;
+  if (!Number.isFinite(costA)) return Number.isFinite(costB) ? 1 : 0;
+  if (!Number.isFinite(costB)) return -1;
+  return costA - costB;
+}
+
 function rowTemplate(run) {
   const artifact = escapeHtml(run.artifacts.displayHtml);
   const usage = run.usage || {};
   const cost = estimateCost(run);
   const runMeta = `${run.provider} · ${run.dataSource.type} · ${run.validation.passed ? 'validated' : 'failed'} · ${formatDate(run.run.completedAt)}`;
   return `
-    <tr class="run-row" data-artifact="${artifact}" tabindex="0" aria-label="Open ${escapeHtml(run.model.name)} dashboard">
+    <tr class="run-row" data-artifact="${artifact}" data-cost="${cost?.total ?? ''}" tabindex="0" aria-label="Open ${escapeHtml(run.model.name)} dashboard">
       <td class="model-cell"><a href="${artifact}"><strong>${escapeHtml(run.model.name)}</strong><small>${escapeHtml(runMeta)}</small></a></td>
       <td><strong>${escapeHtml(run.harness.name)}</strong><small>${escapeHtml(run.harness.version)}</small></td>
       <td><span class="reasoning-badge">${escapeHtml(titleCase(run.reasoning.normalized))}</span><small>${escapeHtml(run.reasoning.native)}</small></td>
@@ -94,7 +102,7 @@ function rowTemplate(run) {
 }
 
 function renderCostChart() {
-  const rows = state.runs.map((run) => ({ run, cost: estimateCost(run) }));
+  const rows = [...state.runs].sort(compareByCost).map((run) => ({ run, cost: estimateCost(run) }));
   const pricedRows = rows.filter(({ cost }) => cost);
   const max = Math.max(...pricedRows.map(({ cost }) => cost.total), 0);
   const combined = pricedRows.reduce((sum, { cost }) => sum + cost.total, 0);
@@ -128,6 +136,93 @@ function renderCostChart() {
     <div class="cost-legend"><span><i class="input"></i>Uncached input</span><span><i class="cached"></i>Cached input</span><span><i class="output"></i>Output</span></div>
     <p>API-equivalent estimates, not actual Codex subscription charges. Standard short-context rates per 1M tokens, retrieved ${escapeHtml(pricing.retrievedAt)} from <a href="${escapeHtml(pricing.source)}">OpenAI pricing ↗</a>. Cached input is included in input; reasoning is included in output and is not charged twice.</p>
     <div class="rate-list">${rates}</div>`;
+}
+
+const plotMetrics = {
+  score: {
+    title: 'Cost versus observed outcome',
+    label: 'Manual rubric score / 25',
+    value: (run) => run.evaluation?.total,
+    format: (value) => `${value}/25`,
+    domain: () => [0, 25],
+    description: 'Higher is a stronger manual rubric result. The dashed line marks the cost–score frontier; these scores are observational and reviewer-assigned, not scientific measurements.'
+  },
+  reasoningShare: {
+    title: 'Cost versus reasoning allocation',
+    label: 'Reasoning share of output',
+    value: (run) => run.usage.outputTokens ? run.usage.reasoningOutputTokens / run.usage.outputTokens * 100 : 0,
+    format: (value) => `${value.toFixed(1)}%`,
+    domain: (values) => [0, Math.max(10, Math.ceil(Math.max(...values) / 10) * 10)],
+    description: 'Higher means a larger share of output tokens were classified as reasoning. It shows work allocation, not reasoning quality.'
+  },
+  duration: {
+    title: 'Cost versus elapsed time',
+    label: 'Elapsed time (minutes)',
+    value: (run) => run.timestamps.durationSeconds / 60,
+    format: (value) => `${value.toFixed(1)} min`,
+    domain: (values) => [0, Math.ceil(Math.max(...values) / 5) * 5],
+    description: 'Higher means the harness spent more wall-clock time completing and validating the run. Time includes tools and validation, not just model generation.'
+  },
+  tokens: {
+    title: 'Cost versus token volume',
+    label: 'Total tokens (millions)',
+    value: (run) => run.usage.totalTokens / 1_000_000,
+    format: (value) => `${value.toFixed(2)}M`,
+    domain: (values) => [0, Math.ceil(Math.max(...values) * 2) / 2],
+    description: 'Higher means more total input plus output tokens. Cached input and reasoning output remain subsets and are not added again.'
+  }
+};
+
+function renderTradeoffPlot() {
+  const metricKey = $('#tradeoff-metric').value;
+  const metric = plotMetrics[metricKey];
+  const points = [...state.runs].sort(compareByCost).map((run, index) => ({
+    run,
+    index: index + 1,
+    cost: estimateCost(run)?.total,
+    value: metric.value(run)
+  })).filter((point) => Number.isFinite(point.cost) && Number.isFinite(point.value));
+
+  $('#tradeoff-title').textContent = metric.title;
+  $('#tradeoff-description').textContent = metric.description;
+  if (!points.length) {
+    $('#tradeoff-plot').textContent = 'No priced runs are available.';
+    $('#plot-key').innerHTML = '';
+    return;
+  }
+
+  const width = 960;
+  const height = 500;
+  const margin = { top: 34, right: 36, bottom: 74, left: 78 };
+  const chartWidth = width - margin.left - margin.right;
+  const chartHeight = height - margin.top - margin.bottom;
+  const minCost = Math.min(...points.map((point) => point.cost));
+  const maxCost = Math.max(...points.map((point) => point.cost));
+  const logMin = Math.log10(minCost * 0.72);
+  const logMax = Math.log10(maxCost * 1.22);
+  const [yMin, yMax] = metric.domain(points.map((point) => point.value));
+  const x = (cost) => margin.left + (Math.log10(cost) - logMin) / (logMax - logMin) * chartWidth;
+  const y = (value) => margin.top + (yMax - value) / (yMax - yMin || 1) * chartHeight;
+  const radius = (tokens) => 8 + Math.sqrt(tokens / Math.max(...points.map((point) => point.run.usage.totalTokens))) * 13;
+  const xTicks = [0.01, 0.03, 0.1, 0.3, 1, 3].filter((tick) => tick >= minCost * 0.72 && tick <= maxCost * 1.22);
+  const yTicks = Array.from({ length: 6 }, (_, index) => yMin + (yMax - yMin) * index / 5);
+  const frontier = [];
+  let best = -Infinity;
+  if (metricKey === 'score') points.forEach((point) => {
+    if (point.value > best) { frontier.push(point); best = point.value; }
+  });
+
+  const grid = yTicks.map((tick) => `<g><line x1="${margin.left}" y1="${y(tick)}" x2="${width - margin.right}" y2="${y(tick)}"/><text x="${margin.left - 13}" y="${y(tick) + 4}" text-anchor="end">${escapeHtml(metric.format(tick))}</text></g>`).join('');
+  const costTicks = xTicks.map((tick) => `<g><line x1="${x(tick)}" y1="${margin.top}" x2="${x(tick)}" y2="${height - margin.bottom}"/><text x="${x(tick)}" y="${height - margin.bottom + 27}" text-anchor="middle">${formatCost(tick)}</text></g>`).join('');
+  const frontierPath = frontier.length > 1 ? `<path class="frontier" d="M ${frontier.map((point) => `${x(point.cost)} ${y(point.value)}`).join(' L ')}"/>` : '';
+  const circles = points.map((point) => {
+    const label = `${point.run.model.name}, ${point.run.reasoning.normalized} reasoning: ${formatCost(point.cost)}, ${metric.format(point.value)}`;
+    const r = radius(point.run.usage.totalTokens);
+    return `<a class="tradeoff-point ${escapeHtml(point.run.reasoning.normalized)}" href="${escapeHtml(point.run.artifacts.displayHtml)}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title><circle cx="${x(point.cost)}" cy="${y(point.value)}" r="${r}"/><text x="${x(point.cost)}" y="${y(point.value) + 4}" text-anchor="middle">${point.index}</text></a>`;
+  }).join('');
+
+  $('#tradeoff-plot').innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="tradeoff-svg-title tradeoff-svg-desc"><title id="tradeoff-svg-title">Estimated cost versus ${escapeHtml(metric.label)}</title><desc id="tradeoff-svg-desc">Each numbered bubble is a published benchmark run. Bubble size represents total tokens and color represents reasoning level.</desc><g class="plot-grid">${grid}${costTicks}</g>${frontierPath}${circles}<text class="axis-title" x="${margin.left + chartWidth / 2}" y="${height - 15}" text-anchor="middle">Estimated API-equivalent cost, USD (log scale)</text><text class="axis-title" transform="translate(18 ${margin.top + chartHeight / 2}) rotate(-90)" text-anchor="middle">${escapeHtml(metric.label)}</text></svg>`;
+  $('#plot-key').innerHTML = points.map((point) => `<a href="${escapeHtml(point.run.artifacts.displayHtml)}"><b class="${escapeHtml(point.run.reasoning.normalized)}">${point.index}</b><span><strong>${escapeHtml(point.run.model.name)}</strong> · ${escapeHtml(point.run.reasoning.normalized)} · ${formatCost(point.cost)} · ${escapeHtml(metric.format(point.value))}</span></a>`).join('');
 }
 
 function render() {
@@ -169,6 +264,7 @@ async function loadRuns() {
   updateStats();
   render();
   renderCostChart();
+  renderTradeoffPlot();
 }
 
 ['provider', 'model', 'harness', 'reasoning'].forEach((key) => {
@@ -179,6 +275,7 @@ async function loadRuns() {
 });
 
 $('#clear-filters').addEventListener('click', clearFilters);
+$('#tradeoff-metric').addEventListener('change', renderTradeoffPlot);
 $('#copy-prompt').addEventListener('click', async () => {
   await navigator.clipboard.writeText($('#benchmark-prompt').textContent.trim());
   $('#copy-prompt').textContent = 'Copied';

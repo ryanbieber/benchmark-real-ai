@@ -16,26 +16,37 @@ const testRun = {
   run: { completedAt: '2026-08-11T00:00:00Z' },
   dataSource: { type: 'historical-snapshot' },
   artifacts: { displayHtml: 'runs/original/test.html' },
-  validation: { passed: true }
+  validation: { passed: true },
+  evaluation: { total: 20 }
 };
 
-test('landing page renders the published run index', async ({ page, isMobile }) => {
+test('landing page sorts runs by estimated cost and renders the behavior map', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Same task/i })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Run index' })).toBeVisible();
-  for (const heading of ['Model', 'Harness', 'Reasoning level', 'Input', 'Cached', 'Output', 'Reasoning tokens', 'Total', 'Time', 'Est. cost']) await expect(page.getByRole('columnheader', { name: heading, exact: true })).toBeVisible();
+  for (const heading of ['Model', 'Harness', 'Reasoning level', 'Input', 'Cached', 'Output', 'Reasoning tokens', 'Total', 'Time', 'Est. cost ↑']) await expect(page.getByRole('columnheader', { name: heading, exact: true })).toBeVisible();
   await expect(page.locator('.run-row')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#result-count')).toContainText(`${publishedRuns.length}`);
-  await expect(page.locator('.run-row').first()).toContainText(publishedRuns[0].model.name);
+  await expect(page.locator('.run-row').first()).toContainText('gpt-5.6-luna');
   await expect(page.locator('#run-table-body')).toContainText(publishedRuns.at(-1).model.name);
-  await expect(page.locator('.run-row').first()).toContainText('238,545');
-  await expect(page.locator('.run-row').first()).toContainText('197,888');
-  await expect(page.locator('.run-row').first()).toContainText('25,418');
-  await expect(page.locator('.run-row').first()).toContainText('6m 59s');
+  await expect(page.locator('.run-row').first()).toContainText('191,277');
+  await expect(page.locator('.run-row').first()).toContainText('173,312');
+  await expect(page.locator('.run-row').first()).toContainText('4,133');
+  await expect(page.locator('.run-row').first()).toContainText('1m 32s');
+  const costs = await page.locator('.run-row').evaluateAll((rows) => rows.map((row) => Number(row.dataset.cost)));
+  expect(costs).toEqual([...costs].sort((a, b) => a - b));
   await expect(page.getByRole('heading', { name: /What each run would cost/i })).toBeVisible();
   await expect(page.locator('.cost-row')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#combined-cost')).toHaveText('$6.30');
   await expect(page.locator('#pricing-note')).toContainText('not actual Codex subscription charges');
+  await expect(page.getByRole('heading', { name: 'Cost versus observed outcome' })).toBeVisible();
+  await expect(page.locator('.tradeoff-point')).toHaveCount(publishedRuns.length);
+  await expect(page.locator('.frontier')).toHaveCount(1);
+  await expect(page.locator('#plot-key a')).toHaveCount(publishedRuns.length);
+  await page.locator('#tradeoff-metric').selectOption('reasoningShare');
+  await expect(page.getByRole('heading', { name: 'Cost versus reasoning allocation' })).toBeVisible();
+  await expect(page.locator('#tradeoff-description')).toContainText('share of output tokens');
+  await expect(page.locator('#tradeoff-plot')).toContainText('Reasoning share of output');
 });
 
 test('a populated table exposes facets, usage, cost, and opens the standalone artifact', async ({ page, isMobile }) => {
