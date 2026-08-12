@@ -117,7 +117,8 @@ function formatTokenAxis(value) {
 }
 
 function renderTokenChart() {
-  const runs = [...state.runs].sort((a, b) => a.model.name.localeCompare(b.model.name) || a.reasoning.native.localeCompare(b.reasoning.native) || a.id.localeCompare(b.id));
+  const reasoningOrder = { default: 0, low: 1, medium: 2, high: 3, xhigh: 4, max: 5 };
+  const runs = [...state.runs].sort((a, b) => a.model.name.localeCompare(b.model.name) || (reasoningOrder[a.reasoning.native] ?? 99) - (reasoningOrder[b.reasoning.native] ?? 99) || a.id.localeCompare(b.id));
   const groups = [...new Map(runs.map((run) => [run.model.name, runs.filter((candidate) => candidate.model.name === run.model.name)])).entries()];
   const combined = runs.reduce((sum, run) => sum + (estimateCost(run)?.total || 0), 0);
   $('#combined-cost').textContent = combined ? formatCost(combined) : 'Unavailable';
@@ -145,18 +146,27 @@ function renderTokenChart() {
     const groupBarsWidth = modelRuns.length * barWidth + (modelRuns.length - 1) * barGap;
     const startX = groupX + (groupWidth - groupBarsWidth) / 2;
     const groupBars = modelRuns.map((run, runIndex) => {
-      const value = run.usage.totalTokens;
       const barX = startX + runIndex * (barWidth + barGap);
-      const barY = y(value);
-      const barHeight = margin.top + chartHeight - barY;
+      const segments = [
+        { key: 'uncached-input', label: 'Uncached input', value: Math.max(0, run.usage.inputTokens - run.usage.cachedInputTokens) },
+        { key: 'cached-input', label: 'Cached input', value: run.usage.cachedInputTokens },
+        { key: 'output', label: 'Output', value: run.usage.outputTokens }
+      ];
+      let stackY = margin.top + chartHeight;
+      const segmentRects = segments.map((segment) => {
+        const segmentHeight = segment.value / yMax * chartHeight;
+        stackY -= segmentHeight;
+        return `<rect class="token-segment ${segment.key}" x="${barX}" y="${stackY}" width="${barWidth}" height="${segmentHeight}"/>`;
+      }).join('');
       const cost = estimateCost(run)?.total;
-      const label = `${run.model.name}, ${reasoningDescription(run)} reasoning, ${run.harness.name}: ${formatTokens(value)} total tokens${Number.isFinite(cost) ? `, ${formatCost(cost)} API estimate` : ''}`;
-      return `<a class="token-bar" href="${escapeHtml(run.artifacts.displayHtml)}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title><rect x="${barX}" y="${barY}" width="${barWidth}" height="${barHeight}" rx="2"/></a>`;
+      const breakdown = segments.map((segment) => `${segment.label} ${formatTokens(segment.value)}`).join(', ');
+      const label = `${run.model.name}, ${reasoningDescription(run)} reasoning, ${run.harness.name}: ${formatTokens(run.usage.totalTokens)} total tokens; ${breakdown}${Number.isFinite(cost) ? `; ${formatCost(cost)} API estimate` : ''}`;
+      return `<a class="token-bar" data-model="${escapeHtml(run.model.name)}" data-reasoning="${escapeHtml(run.reasoning.native)}" href="${escapeHtml(run.artifacts.displayHtml)}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title>${segmentRects}</a>`;
     }).join('');
     return `${groupBars}<text class="token-model-label" x="${groupX + groupWidth / 2}" y="${height - margin.bottom + 28}" text-anchor="middle">${escapeHtml(model)}</text>`;
   }).join('');
 
-  $('#cost-chart').innerHTML = `<svg class="token-chart" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="token-chart-title token-chart-desc"><title id="token-chart-title">Total tokens by model</title><desc id="token-chart-desc">A single grouped bar chart. Models are labeled along the bottom axis, total tokens are on the left axis, and each bar represents one reasoning and harness run.</desc><g class="token-grid">${grid}</g><line class="token-axis" x1="${margin.left}" y1="${margin.top + chartHeight}" x2="${width - margin.right}" y2="${margin.top + chartHeight}"/><g class="token-bars">${bars}</g><text class="token-axis-title" x="${margin.left + chartWidth / 2}" y="${height - 20}" text-anchor="middle">Model</text><text class="token-axis-title" transform="translate(20 ${margin.top + chartHeight / 2}) rotate(-90)" text-anchor="middle">Total tokens</text></svg>`;
+  $('#cost-chart').innerHTML = `<svg class="token-chart" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="token-chart-title token-chart-desc"><title id="token-chart-title">Total tokens by model</title><desc id="token-chart-desc">A single grouped stacked bar chart. Models are labeled along the bottom axis, total tokens are on the left axis, each bar represents one run, and bars within each model are ordered from lowest to highest native reasoning.</desc><g class="token-grid">${grid}</g><line class="token-axis" x1="${margin.left}" y1="${margin.top + chartHeight}" x2="${width - margin.right}" y2="${margin.top + chartHeight}"/><g class="token-bars">${bars}</g><text class="token-axis-title" x="${margin.left + chartWidth / 2}" y="${height - 20}" text-anchor="middle">Model</text><text class="token-axis-title" transform="translate(20 ${margin.top + chartHeight / 2}) rotate(-90)" text-anchor="middle">Total tokens</text></svg>`;
 
   const pricing = state.pricing;
   if (!pricing) {

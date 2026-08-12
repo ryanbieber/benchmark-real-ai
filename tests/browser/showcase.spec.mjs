@@ -58,6 +58,12 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('#cost-chart .token-chart')).toHaveCount(1);
   await expect(page.locator('#cost-chart .token-bar')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#cost-chart .token-model-label')).toHaveCount(new Set(publishedRuns.map((run) => run.model.name)).size);
+  await expect(page.locator('#cost-chart .token-segment.uncached-input')).toHaveCount(publishedRuns.length);
+  await expect(page.locator('#cost-chart .token-segment.cached-input')).toHaveCount(publishedRuns.length);
+  await expect(page.locator('#cost-chart .token-segment.output')).toHaveCount(publishedRuns.length);
+  await expect(page.locator('#token-legend')).toContainText('Reasoning output is included within output');
+  const lunaReasoningOrder = await page.locator('#cost-chart .token-bar[data-model="gpt-5.6-luna"]').evaluateAll((bars) => bars.map((bar) => bar.dataset.reasoning));
+  expect(lunaReasoningOrder).toEqual(['low', 'medium', 'high', 'xhigh', 'max']);
   await expect(page.locator('#cost-chart')).toContainText('Total tokens');
   await expect(page.locator('#premise, #protocol')).toHaveCount(0);
   await expect(page.locator('#combined-cost')).toHaveText('$7.45');

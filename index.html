@@ -130,14 +130,20 @@
         <div class="cost-heading">
           <div>
             <h2 id="cost-title">Token volume by model.</h2>
-            <p>Each bar is one run, grouped under its model. The y-axis shows total input plus output tokens; hover a bar for reasoning, harness, and the API-equivalent cost estimate.</p>
+            <p>Each stacked bar is one run, grouped under its model and ordered from lowest to highest native reasoning. The y-axis shows total input plus output tokens; hover a bar for reasoning, harness, and the API-equivalent cost estimate.</p>
           </div>
           <div class="cost-total" aria-label="Combined estimated cost">
             <span>Combined estimate</span>
             <strong id="combined-cost">—</strong>
           </div>
         </div>
-        <div class="cost-chart" id="cost-chart" aria-label="Estimated cost by benchmark run"></div>
+        <div class="cost-chart" id="cost-chart" aria-label="Token volume by benchmark run"></div>
+        <div class="token-legend" id="token-legend" aria-label="Token type legend">
+          <span><i class="uncached-input"></i>Uncached input</span>
+          <span><i class="cached-input"></i>Cached input</span>
+          <span><i class="output"></i>Output</span>
+          <small>Reasoning output is included within output and is not stacked twice.</small>
+        </div>
         <div class="pricing-note" id="pricing-note"></div>
       </section>
     </main>

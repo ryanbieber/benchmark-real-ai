@@ -163,9 +163,19 @@ a { color: inherit; }
 .token-axis { stroke: var(--ink); stroke-width: 1; }
 .token-axis-title { fill: var(--muted); font: 500 10px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 .token-bar { cursor: pointer; }
-.token-bar rect { fill: var(--blue); transition: fill .15s ease, opacity .15s ease; }
-.token-bar:hover rect, .token-bar:focus rect { fill: var(--orange); }
+.token-segment { transition: opacity .15s ease; }
+.token-segment.uncached-input { fill: var(--blue); }
+.token-segment.cached-input { fill: var(--acid); }
+.token-segment.output { fill: var(--orange); }
+.token-bar:hover .token-segment, .token-bar:focus .token-segment { opacity: .72; }
 .token-model-label { fill: var(--ink); font: 500 10px var(--mono); }
+.token-legend { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 16px; color: var(--muted); }
+.token-legend span { display: inline-flex; align-items: center; gap: 8px; font: 500 9px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+.token-legend i { width: 11px; height: 11px; display: inline-block; }
+.token-legend i.uncached-input { background: var(--blue); }
+.token-legend i.cached-input { background: var(--acid); border: 1px solid var(--ink); }
+.token-legend i.output { background: var(--orange); }
+.token-legend small { color: var(--muted); font: 400 10px/1.4 var(--mono); }
 .pricing-note { margin-top: 24px; padding: 20px 22px; border: 1px solid var(--line); background: var(--white); }
 .pricing-note p { margin: 16px 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
 .pricing-note a { font-weight: 700; text-underline-offset: 3px; }
