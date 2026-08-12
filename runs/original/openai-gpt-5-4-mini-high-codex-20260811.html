@@ -1,0 +1,1149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>S&P 500 Forecast Studio</title>
+  <style>
+    :root {
+      --bg: #07111c;
+      --bg-soft: #0d1725;
+      --panel: rgba(12, 20, 33, 0.78);
+      --panel-strong: rgba(15, 25, 41, 0.96);
+      --border: rgba(172, 193, 224, 0.12);
+      --border-strong: rgba(172, 193, 224, 0.22);
+      --text: #e6eefc;
+      --muted: #8fa1bd;
+      --muted-2: #6f829e;
+      --accent: #56d6c2;
+      --accent-2: #f5c15d;
+      --accent-3: #7ba7ff;
+      --danger: #ff7a7a;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      --font-body: "Avenir Next", "Segoe UI", "Trebuchet MS", system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(86, 214, 194, 0.18), transparent 32%),
+        radial-gradient(circle at 82% 10%, rgba(245, 193, 93, 0.12), transparent 30%),
+        radial-gradient(circle at 60% 90%, rgba(123, 167, 255, 0.14), transparent 30%),
+        linear-gradient(180deg, #050b12 0%, #07111c 36%, #050a11 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.26;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), transparent 95%);
+    }
+
+    .shell {
+      width: min(1320px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.92fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .hero-copy, .panel, .metric, .chip, .control, .forecast-table, .tooltip {
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .hero-copy, .panel, .metric {
+      background: linear-gradient(180deg, rgba(15, 24, 38, 0.9), rgba(10, 17, 28, 0.84));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      inset: auto -15% -60% auto;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(86, 214, 194, 0.12), transparent 64%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 11px;
+      color: var(--accent-2);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 10ch;
+      font: 700 clamp(38px, 5vw, 62px) / 0.95 var(--font-display);
+      letter-spacing: -0.05em;
+    }
+
+    .lede {
+      margin: 16px 0 0;
+      max-width: 68ch;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 128px;
+    }
+
+    .metric .label {
+      color: var(--muted-2);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+    }
+
+    .metric .value {
+      margin-top: 12px;
+      font-size: clamp(22px, 3vw, 34px);
+      font-weight: 700;
+      letter-spacing: -0.05em;
+    }
+
+    .metric .sub {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.54fr) minmax(320px, 0.86fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .panel-note {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .control {
+      padding: 10px 12px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(12, 19, 32, 0.6);
+    }
+
+    .control label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .segmented {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .segmented button {
+      appearance: none;
+      border: 1px solid rgba(161, 182, 216, 0.18);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 999px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font: 600 13px/1 var(--font-body);
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, color 120ms ease;
+    }
+
+    .segmented button:hover { transform: translateY(-1px); border-color: rgba(161, 182, 216, 0.35); }
+    .segmented button.active {
+      color: #07111c;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--accent), #94f3e4);
+      box-shadow: 0 8px 18px rgba(86, 214, 194, 0.18);
+    }
+
+    .chart-shell {
+      position: relative;
+      padding: 12px 10px 6px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(86, 214, 194, 0.08), transparent 25%),
+        radial-gradient(circle at 100% 0%, rgba(245, 193, 93, 0.06), transparent 25%),
+        rgba(4, 10, 17, 0.55);
+      overflow: hidden;
+    }
+
+    .chart-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 100% 52px;
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    .chart-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 580px;
+    }
+
+    .chart-wrap svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      flex: 0 0 auto;
+    }
+
+    .swatch.history { background: var(--accent-3); }
+    .swatch.forecast { background: var(--accent); }
+    .swatch.band { background: rgba(245, 193, 93, 0.7); }
+
+    .side {
+      display: grid;
+      gap: 18px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .summary-card {
+      padding: 14px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(16, 26, 42, 0.92), rgba(9, 16, 26, 0.92));
+      border: 1px solid var(--border);
+    }
+
+    .summary-card .kicker {
+      color: var(--muted-2);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 11px;
+    }
+
+    .summary-card .amount {
+      margin-top: 10px;
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .summary-card .detail {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .method {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(16, 26, 42, 0.88), rgba(9, 16, 26, 0.9));
+    }
+
+    .method h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .method p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .forecast-panel {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(16, 26, 42, 0.92), rgba(9, 16, 26, 0.96));
+      overflow: hidden;
+    }
+
+    .forecast-table-wrap {
+      max-height: 420px;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: rgba(11, 19, 30, 0.98);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 11px;
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(172, 193, 224, 0.08);
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(odd) td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    tbody tr:hover td {
+      background: rgba(86, 214, 194, 0.06);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(86, 214, 194, 0.12);
+    }
+
+    .error {
+      color: #ffd1d1;
+    }
+
+    .tooltip {
+      position: absolute;
+      inset: auto auto 0 0;
+      transform: translate(-9999px, -9999px);
+      min-width: 190px;
+      max-width: 260px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(8, 13, 22, 0.96);
+      border: 1px solid rgba(172, 193, 224, 0.16);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.36);
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 120ms ease;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    .tooltip .title {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .tooltip .price {
+      margin-top: 8px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .tooltip .extra {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted-2);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1080px) {
+      .hero, .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-wrap {
+        height: 520px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100vw - 20px, 1320px);
+        padding-top: 16px;
+      }
+
+      .hero-copy, .panel {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: clamp(30px, 10vw, 44px);
+      }
+
+      .hero-meta, .summary-grid, .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-wrap {
+        height: 440px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">S&amp;P 500 forecast studio</p>
+        <h1>Forecast the index with a transparent trend model</h1>
+        <p class="lede">
+          This dashboard pulls recent S&amp;P 500 history from Yahoo Finance, fits a log-linear trend on the
+          selected lookback window, and fans uncertainty using the observed daily volatility. It is designed
+          to show the mechanics clearly, not to hide the assumptions.
+        </p>
+      </div>
+      <div class="hero-meta">
+        <div class="metric">
+          <div class="label">Latest close</div>
+          <div class="value" id="latest-close">--</div>
+          <div class="sub" id="latest-close-sub">Waiting for market data.</div>
+        </div>
+        <div class="metric">
+          <div class="label">Trend signal</div>
+          <div class="value" id="trend-signal">--</div>
+          <div class="sub" id="trend-signal-sub">Annualized drift from the fitted window.</div>
+        </div>
+        <div class="metric">
+          <div class="label">Volatility</div>
+          <div class="value" id="volatility">--</div>
+          <div class="sub" id="volatility-sub">Annualized from daily log returns.</div>
+        </div>
+        <div class="metric">
+          <div class="label">Forecast edge</div>
+          <div class="value" id="forecast-edge">--</div>
+          <div class="sub" id="forecast-edge-sub">Selected horizon vs. latest close.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Interactive forecast</h2>
+            <p class="panel-note">Change the lookback, horizon, and confidence interval. The chart updates instantly.</p>
+          </div>
+          <div class="status" id="status">
+            <span class="dot"></span>
+            <span>Loading market history...</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="control">
+            <label>Lookback window</label>
+            <div class="segmented" data-group="lookback">
+              <button type="button" data-value="126">6 months</button>
+              <button type="button" data-value="252" class="active">1 year</button>
+              <button type="button" data-value="504">2 years</button>
+            </div>
+          </div>
+          <div class="control">
+            <label>Forecast horizon</label>
+            <div class="segmented" data-group="horizon">
+              <button type="button" data-value="10">10 days</button>
+              <button type="button" data-value="20" class="active">20 days</button>
+              <button type="button" data-value="60">60 days</button>
+            </div>
+          </div>
+          <div class="control">
+            <label>Confidence band</label>
+            <div class="segmented" data-group="confidence">
+              <button type="button" data-value="0.8">80%</button>
+              <button type="button" data-value="0.9" class="active">90%</button>
+              <button type="button" data-value="0.95">95%</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-shell">
+          <div class="chart-wrap" id="chart-wrap">
+            <svg id="chart" aria-label="S&P 500 chart"></svg>
+            <div id="tooltip" class="tooltip" aria-hidden="true">
+              <div class="title" id="tooltip-title">Date</div>
+              <div class="price" id="tooltip-price">--</div>
+              <div class="extra" id="tooltip-extra"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="chip"><span class="swatch history"></span>Historical close</div>
+          <div class="chip"><span class="swatch forecast"></span>Forecast path</div>
+          <div class="chip"><span class="swatch band"></span>Confidence band</div>
+        </div>
+
+        <div class="footer-note">
+          Model: log-price regression on the selected window. The fan chart assumes daily volatility is constant
+          and scales uncertainty by the square root of the forecast horizon.
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="summary-grid">
+          <div class="summary-card">
+            <div class="kicker">1-month change</div>
+            <div class="amount" id="one-month-change">--</div>
+            <div class="detail" id="one-month-change-detail">Trailing 20 trading days.</div>
+          </div>
+          <div class="summary-card">
+            <div class="kicker">1-year change</div>
+            <div class="amount" id="one-year-change">--</div>
+            <div class="detail" id="one-year-change-detail">Trailing 252 trading days.</div>
+          </div>
+          <div class="summary-card">
+            <div class="kicker">Projected end</div>
+            <div class="amount" id="projected-end">--</div>
+            <div class="detail" id="projected-end-detail">At the selected horizon.</div>
+          </div>
+          <div class="summary-card">
+            <div class="kicker">Trend band</div>
+            <div class="amount" id="trend-band">--</div>
+            <div class="detail" id="trend-band-detail">Confidence interval at the forecast horizon.</div>
+          </div>
+        </section>
+
+        <section class="method">
+          <h3>What the dashboard is doing</h3>
+          <p>
+            It takes the recent close series, fits a straight line to log prices, and extrapolates that line
+            forward. That gives a simple trend estimate. The uncertainty band is built from observed return
+            volatility, so you can see how quickly the range widens as the horizon extends.
+          </p>
+        </section>
+
+        <section class="forecast-panel">
+          <div class="panel" style="border:0;border-radius:0;padding-bottom:8px;">
+            <div class="panel-head" style="margin-bottom:10px;">
+              <div>
+                <h2 class="panel-title">Forecast path</h2>
+                <p class="panel-note">Selected horizon and confidence interval.</p>
+              </div>
+            </div>
+          </div>
+          <div class="forecast-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Forecast</th>
+                  <th>Low</th>
+                  <th>High</th>
+                </tr>
+              </thead>
+              <tbody id="forecast-table"></tbody>
+            </table>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    const state = {
+      lookback: 252,
+      horizon: 20,
+      confidence: 0.9,
+      data: [],
+      forecast: [],
+      hover: null,
+      chartBox: null,
+    };
+
+    const formatPrice = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2,
+    });
+
+    const formatPct = new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      maximumFractionDigits: 1,
+    });
+
+    const formatShortPct = new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      maximumFractionDigits: 2,
+    });
+
+    const formatDate = new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    });
+
+    const axisDateFormat = new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+
+    const chart = document.getElementById('chart');
+    const chartWrap = document.getElementById('chart-wrap');
+    const tooltip = document.getElementById('tooltip');
+    const tooltipTitle = document.getElementById('tooltip-title');
+    const tooltipPrice = document.getElementById('tooltip-price');
+    const tooltipExtra = document.getElementById('tooltip-extra');
+    const statusEl = document.getElementById('status');
+
+    function niceDate(value) {
+      return formatDate.format(new Date(`${value}T00:00:00Z`));
+    }
+
+    function parseDate(value) {
+      return new Date(`${value}T00:00:00Z`);
+    }
+
+    function addTradingDays(dateString, days) {
+      const date = parseDate(dateString);
+      let added = 0;
+
+      while (added < days) {
+        date.setUTCDate(date.getUTCDate() + 1);
+        const day = date.getUTCDay();
+        if (day !== 0 && day !== 6) added += 1;
+      }
+
+      return date.toISOString().slice(0, 10);
+    }
+
+    function mean(values) {
+      return values.reduce((sum, value) => sum + value, 0) / values.length;
+    }
+
+    function standardDeviation(values) {
+      if (values.length <= 1) return 0;
+      const avg = mean(values);
+      const variance = values.reduce((sum, value) => sum + (value - avg) ** 2, 0) / (values.length - 1);
+      return Math.sqrt(variance);
+    }
+
+    function covariance(x, y) {
+      const xMean = mean(x);
+      const yMean = mean(y);
+      let total = 0;
+      for (let i = 0; i < x.length; i += 1) {
+        total += (x[i] - xMean) * (y[i] - yMean);
+      }
+      return total / (x.length - 1);
+    }
+
+    function linearFit(points) {
+      const x = points.map((_, index) => index);
+      const y = points.map((point) => Math.log(point.close));
+      const slope = covariance(x, y) / covariance(x, x);
+      const intercept = mean(y) - slope * mean(x);
+      return { slope, intercept };
+    }
+
+    function confidenceToZ(confidence) {
+      if (confidence >= 0.95) return 1.959963984540;
+      if (confidence >= 0.9) return 1.644853626951;
+      return 1.281551565545;
+    }
+
+    function buildForecast(series, lookback, horizon, confidence) {
+      const window = series.slice(-Math.min(lookback, series.length));
+      const fit = linearFit(window);
+      const returns = [];
+      for (let i = 1; i < window.length; i += 1) {
+        returns.push(Math.log(window[i].close / window[i - 1].close));
+      }
+
+      const sigma = Math.max(standardDeviation(returns), 0.0001);
+      const annualizedVol = sigma * Math.sqrt(252);
+      const annualizedTrend = Math.expm1(fit.slope * 252);
+      const z = confidenceToZ(confidence);
+      const last = window[window.length - 1];
+      const forecast = [];
+
+      for (let step = 1; step <= horizon; step += 1) {
+        const x = window.length - 1 + step;
+        const midLog = fit.intercept + fit.slope * x;
+        const band = z * sigma * Math.sqrt(step);
+        const date = addTradingDays(last.date, step);
+        forecast.push({
+          date,
+          close: Math.exp(midLog),
+          lower: Math.exp(midLog - band),
+          upper: Math.exp(midLog + band),
+        });
+      }
+
+      return {
+        window,
+        forecast,
+        annualizedVol,
+        annualizedTrend,
+        oneMonthChange: series.length > 20 ? series.at(-1).close / series.at(-21).close - 1 : 0,
+        oneYearChange: series.length > 252 ? series.at(-1).close / series.at(-253).close - 1 : 0,
+        projectedChange: forecast.at(-1).close / last.close - 1,
+        projectedLow: forecast.at(-1).lower / last.close - 1,
+        projectedHigh: forecast.at(-1).upper / last.close - 1,
+        projectedEnd: forecast.at(-1).close,
+        projectedDate: forecast.at(-1).date,
+      };
+    }
+
+    function money(value) {
+      return formatPrice.format(value);
+    }
+
+    function pct(value) {
+      return formatPct.format(value);
+    }
+
+    function fmtSignedPct(value) {
+      const rounded = pct(value);
+      return value >= 0 ? `+${rounded}` : rounded;
+    }
+
+    function getBounds(points) {
+      const xs = points.map((point) => point.x);
+      const ys = points.flatMap((point) => [point.low ?? point.y, point.high ?? point.y]);
+      return {
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+    }
+
+    function makeScale(domainMin, domainMax, rangeMin, rangeMax) {
+      const span = domainMax - domainMin || 1;
+      return (value) => rangeMin + ((value - domainMin) / span) * (rangeMax - rangeMin);
+    }
+
+    function makePath(points, xScale, yScale) {
+      if (!points.length) return '';
+      return points
+        .map((point, index) => {
+          const command = index === 0 ? 'M' : 'L';
+          return `${command}${xScale(point.x).toFixed(2)} ${yScale(point.y).toFixed(2)}`;
+        })
+        .join(' ');
+    }
+
+    function makeAreaPath(points, xScale, yLow, yHigh) {
+      if (!points.length) return '';
+      const upper = points.map((point, index) => `${index === 0 ? 'M' : 'L'}${xScale(point.x).toFixed(2)} ${yHigh(point.high).toFixed(2)}`).join(' ');
+      const lower = points
+        .slice()
+        .reverse()
+        .map((point, index) => `${index === 0 ? 'L' : 'L'}${xScale(point.x).toFixed(2)} ${yLow(point.low).toFixed(2)}`)
+        .join(' ');
+      return `${upper} ${lower} Z`;
+    }
+
+    function buildChart(history, forecast) {
+      const width = chartWrap.clientWidth;
+      const height = chartWrap.clientHeight;
+      const margin = { top: 24, right: 26, bottom: 54, left: 74 };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = height - margin.top - margin.bottom;
+      const historyPoints = history.map((point) => ({
+        x: parseDate(point.date).getTime(),
+        y: point.close,
+      }));
+      const forecastPoints = forecast.map((point) => ({
+        x: parseDate(point.date).getTime(),
+        y: point.close,
+        low: point.lower,
+        high: point.upper,
+      }));
+      const combined = historyPoints.concat(forecastPoints);
+      const bounds = getBounds(combined);
+      const yPadding = (bounds.maxY - bounds.minY) * 0.08 || 1;
+      const xScale = makeScale(bounds.minX, bounds.maxX, margin.left, margin.left + plotWidth);
+      const yScale = makeScale(bounds.minY - yPadding, bounds.maxY + yPadding, margin.top + plotHeight, margin.top);
+      const bandScaleLow = (value) => yScale(value);
+      const bandScaleHigh = (value) => yScale(value);
+      const gridTicksY = 6;
+      const gridTicksX = 6;
+      const yTicks = Array.from({ length: gridTicksY }, (_, index) => {
+        const ratio = index / (gridTicksY - 1);
+        return bounds.minY - yPadding + ratio * ((bounds.maxY + yPadding) - (bounds.minY - yPadding));
+      });
+      const xTicks = Array.from({ length: gridTicksX }, (_, index) => {
+        const ratio = index / (gridTicksX - 1);
+        return bounds.minX + ratio * (bounds.maxX - bounds.minX);
+      });
+
+      const historyPath = makePath(historyPoints, xScale, yScale);
+      const forecastPath = makePath(forecastPoints, xScale, yScale);
+      const areaPath = forecastPoints.length
+        ? (() => {
+            const top = forecastPoints
+              .map((point, index) => `${index === 0 ? 'M' : 'L'}${xScale(point.x).toFixed(2)} ${bandScaleHigh(point.high).toFixed(2)}`)
+              .join(' ');
+            const bottom = forecastPoints
+              .slice()
+              .reverse()
+              .map((point, index) => `${index === 0 ? 'L' : 'L'}${xScale(point.x).toFixed(2)} ${bandScaleLow(point.low).toFixed(2)}`)
+              .join(' ');
+            return `${top} ${bottom} Z`;
+          })()
+        : '';
+      const forecastStartX = forecastPoints.length ? xScale(forecastPoints[0].x) : xScale(historyPoints.at(-1).x);
+      const firstForecast = forecast[0];
+      const lastForecast = forecast.at(-1);
+      const historyLast = history.at(-1);
+
+      const chartTicksY = yTicks.map((value) => {
+        const y = yScale(value);
+        return `
+          <line x1="${margin.left}" y1="${y.toFixed(2)}" x2="${margin.left + plotWidth}" y2="${y.toFixed(2)}" stroke="rgba(172,193,224,0.10)" />
+          <text x="${margin.left - 12}" y="${(y + 4).toFixed(2)}" fill="#8fa1bd" font-size="12" text-anchor="end">${value >= 1000 ? value.toFixed(0) : value.toFixed(2)}</text>
+        `;
+      }).join('');
+
+      const chartTicksX = xTicks.map((value) => {
+        const x = xScale(value);
+        const dateLabel = axisDateFormat.format(new Date(value));
+        const isFirst = value === xTicks[0];
+        const isLast = value === xTicks[xTicks.length - 1];
+        const anchor = isFirst ? 'start' : isLast ? 'end' : 'middle';
+        const labelX = isFirst ? x + 4 : isLast ? x - 4 : x;
+        return `
+          <line x1="${x.toFixed(2)}" y1="${margin.top}" x2="${x.toFixed(2)}" y2="${margin.top + plotHeight}" stroke="rgba(172,193,224,0.10)" />
+          <text x="${labelX.toFixed(2)}" y="${(margin.top + plotHeight + 30).toFixed(2)}" fill="#8fa1bd" font-size="11" text-anchor="${anchor}">${dateLabel}</text>
+        `;
+      }).join('');
+
+      chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      chart.innerHTML = `
+        <defs>
+          <linearGradient id="forecastBand" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(245,193,93,0.33)" />
+            <stop offset="100%" stop-color="rgba(245,193,93,0.06)" />
+          </linearGradient>
+          <linearGradient id="historyLine" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#7ba7ff" />
+            <stop offset="100%" stop-color="#56d6c2" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>
+        <g>
+          ${chartTicksY}
+          ${chartTicksX}
+          <line x1="${forecastStartX.toFixed(2)}" y1="${margin.top}" x2="${forecastStartX.toFixed(2)}" y2="${margin.top + plotHeight}" stroke="rgba(245,193,93,0.55)" stroke-dasharray="8 8" />
+          <text x="${(forecastStartX > width - 130 ? forecastStartX - 8 : forecastStartX + 8).toFixed(2)}" y="${(margin.top + 18).toFixed(2)}" fill="#f5c15d" font-size="11" text-anchor="${forecastStartX > width - 130 ? 'end' : 'start'}">forecast begins</text>
+          <path d="${areaPath}" fill="url(#forecastBand)" stroke="none"></path>
+          <path d="${historyPath}" fill="none" stroke="url(#historyLine)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="${forecastPath}" fill="none" stroke="#f5c15d" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="11 8"></path>
+          <circle cx="${xScale(historyLast.x).toFixed(2)}" cy="${yScale(historyLast.y).toFixed(2)}" r="5.5" fill="#56d6c2" stroke="#07111c" stroke-width="2.5"></circle>
+          <circle cx="${xScale(lastForecast.x).toFixed(2)}" cy="${yScale(lastForecast.y).toFixed(2)}" r="6.5" fill="#f5c15d" stroke="#07111c" stroke-width="2.5"></circle>
+          <text x="${xScale(historyLast.x) + 10}" y="${(yScale(historyLast.y) - 12).toFixed(2)}" fill="#e6eefc" font-size="12">Latest</text>
+          <text x="${xScale(lastForecast.x) + 10}" y="${(yScale(lastForecast.y) - 12).toFixed(2)}" fill="#e6eefc" font-size="12">Projected end</text>
+        </g>
+        <rect id="hover-capture" x="${margin.left}" y="${margin.top}" width="${plotWidth}" height="${plotHeight}" fill="transparent" style="cursor: crosshair;"></rect>
+      `;
+
+      const overlay = chart.getElementById ? chart.getElementById('hover-capture') : chart.querySelector('#hover-capture');
+      const hoverLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      const hoverCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      hoverLine.setAttribute('stroke', 'rgba(230,238,252,0.28)');
+      hoverLine.setAttribute('stroke-dasharray', '4 6');
+      hoverLine.setAttribute('y1', String(margin.top));
+      hoverLine.setAttribute('y2', String(margin.top + plotHeight));
+      hoverLine.setAttribute('opacity', '0');
+      hoverCircle.setAttribute('r', '5');
+      hoverCircle.setAttribute('fill', '#ffffff');
+      hoverCircle.setAttribute('stroke', '#07111c');
+      hoverCircle.setAttribute('stroke-width', '2.2');
+      hoverCircle.setAttribute('opacity', '0');
+      chart.appendChild(hoverLine);
+      chart.appendChild(hoverCircle);
+
+      const nearestPoints = historyPoints.map((point) => ({ ...point, kind: 'history' })).concat(
+        forecastPoints.map((point) => ({ ...point, kind: 'forecast', low: point.low, high: point.high }))
+      );
+
+      function showTooltip(event, point) {
+        const rect = chartWrap.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        tooltip.style.transform = `translate(${Math.min(x + 16, rect.width - 252)}px, ${Math.max(y - 90, 12)}px)`;
+        tooltip.classList.add('visible');
+        tooltip.setAttribute('aria-hidden', 'false');
+        tooltipTitle.textContent = `${point.kind === 'forecast' ? 'Forecast' : 'History'} • ${niceDate(new Date(point.x).toISOString().slice(0, 10))}`;
+        tooltipPrice.textContent = money(point.y);
+        tooltipExtra.textContent = point.kind === 'forecast'
+          ? `Band: ${money(point.low)} - ${money(point.high)}`
+          : `Historical close at the selected point.`;
+      }
+
+      function hideTooltip() {
+        tooltip.classList.remove('visible');
+        tooltip.setAttribute('aria-hidden', 'true');
+        hoverLine.setAttribute('opacity', '0');
+        hoverCircle.setAttribute('opacity', '0');
+      }
+
+      overlay.addEventListener('mousemove', (event) => {
+        const rect = overlay.getBoundingClientRect();
+        const x = event.clientX - rect.left + margin.left;
+        const target = nearestPoints.reduce((best, point) => {
+          const dx = Math.abs(xScale(point.x) - x);
+          return !best || dx < best.dx ? { point, dx } : best;
+        }, null).point;
+        hoverLine.setAttribute('x1', String(xScale(target.x).toFixed(2)));
+        hoverLine.setAttribute('x2', String(xScale(target.x).toFixed(2)));
+        hoverLine.setAttribute('opacity', '1');
+        hoverCircle.setAttribute('cx', String(xScale(target.x).toFixed(2)));
+        hoverCircle.setAttribute('cy', String(yScale(target.y).toFixed(2)));
+        hoverCircle.setAttribute('opacity', '1');
+        showTooltip(event, target);
+      });
+
+      overlay.addEventListener('mouseleave', hideTooltip);
+      overlay.addEventListener('mouseenter', (event) => {
+        const rect = overlay.getBoundingClientRect();
+        const x = event.clientX - rect.left + margin.left;
+        const target = nearestPoints.reduce((best, point) => {
+          const dx = Math.abs(xScale(point.x) - x);
+          return !best || dx < best.dx ? { point, dx } : best;
+        }, null).point;
+        hoverLine.setAttribute('x1', String(xScale(target.x).toFixed(2)));
+        hoverLine.setAttribute('x2', String(xScale(target.x).toFixed(2)));
+        hoverLine.setAttribute('opacity', '1');
+        hoverCircle.setAttribute('cx', String(xScale(target.x).toFixed(2)));
+        hoverCircle.setAttribute('cy', String(yScale(target.y).toFixed(2)));
+        hoverCircle.setAttribute('opacity', '1');
+        showTooltip(event, target);
+      });
+
+      return {
+        bounds,
+        historyLast,
+        firstForecast,
+      };
+    }
+
+    function renderSummary(metrics, stateData) {
+      document.getElementById('latest-close').textContent = money(stateData.at(-1).close);
+      document.getElementById('latest-close-sub').textContent = `As of ${niceDate(stateData.at(-1).date)} from ${stateData.source || 'Yahoo Finance'}`;
+      document.getElementById('trend-signal').textContent = fmtSignedPct(metrics.annualizedTrend);
+      document.getElementById('trend-signal-sub').textContent = `Fitted on the most recent ${Math.min(state.lookback, stateData.length)} trading days.`;
+      document.getElementById('volatility').textContent = pct(metrics.annualizedVol);
+      document.getElementById('volatility-sub').textContent = `Based on daily return volatility over the selected window.`;
+      document.getElementById('forecast-edge').textContent = fmtSignedPct(metrics.projectedChange);
+      document.getElementById('forecast-edge-sub').textContent = `${state.horizon} trading days ahead at ${Math.round(state.confidence * 100)}% confidence.`;
+
+      document.getElementById('one-month-change').textContent = fmtSignedPct(metrics.oneMonthChange);
+      document.getElementById('one-month-change-detail').textContent = `Trailing 20 trading days from ${niceDate(stateData.at(-21)?.date || stateData[0].date)} to ${niceDate(stateData.at(-1).date)}.`;
+
+      document.getElementById('one-year-change').textContent = fmtSignedPct(metrics.oneYearChange);
+      document.getElementById('one-year-change-detail').textContent = `Trailing 252 trading days, if available in the loaded history.`;
+
+      document.getElementById('projected-end').textContent = money(metrics.projectedEnd || state.forecast.at(-1).close);
+      document.getElementById('projected-end-detail').textContent = `Projected ${niceDate(metrics.projectedDate || state.forecast.at(-1).date)} close.`;
+
+      document.getElementById('trend-band').textContent = `${fmtSignedPct(metrics.projectedLow)} / ${fmtSignedPct(metrics.projectedHigh)}`;
+      document.getElementById('trend-band-detail').textContent = `Lower and upper bounds at the selected horizon.`;
+    }
+
+    function renderTable(forecast) {
+      const tbody = document.getElementById('forecast-table');
+      tbody.innerHTML = forecast
+        .map((row) => `
+          <tr>
+            <td>${niceDate(row.date)}</td>
+            <td>${money(row.close)}</td>
+            <td>${money(row.lower)}</td>
+            <td>${money(row.upper)}</td>
+          </tr>
+        `)
+        .join('');
+    }
+
+    function setActive(group, value) {
+      document.querySelectorAll(`.segmented[data-group="${group}"] button`).forEach((button) => {
+        button.classList.toggle('active', button.dataset.value === String(value));
+      });
+    }
+
+    function wireControls() {
+      document.querySelectorAll('.segmented').forEach((group) => {
+        group.addEventListener('click', (event) => {
+          const button = event.target.closest('button');
+          if (!button) return;
+          const { group: groupName } = group.dataset;
+          const value = groupName === 'confidence' ? Number(button.dataset.value) : Number(button.dataset.value);
+          state[groupName] = value;
+          setActive(groupName, value);
+          render();
+        });
+      });
+    }
+
+    function render() {
+      if (!state.data.length) return;
+      const metrics = buildForecast(state.data, state.lookback, state.horizon, state.confidence);
+      state.forecast = metrics.forecast;
+      const chartData = buildChart(metrics.window, metrics.forecast);
+      renderSummary(metrics, state.data);
+      renderTable(metrics.forecast);
+      statusEl.innerHTML = '<span class="dot"></span><span>Rendering complete. Hover the chart or change the controls.</span>';
+      statusEl.classList.remove('error');
+      if (state.chartBox) {
+        state.chartBox.dispose?.();
+      }
+      state.chartBox = chartData;
+      document.body.dataset.ready = 'true';
+    }
+
+    async function bootstrap() {
+      wireControls();
+      try {
+        const response = await fetch('/api/sp500?range=5y', { cache: 'no-store' });
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload.error || 'Failed to load market history');
+        }
+        state.data = payload.points;
+        statusEl.innerHTML = `<span class="dot"></span><span>Loaded ${state.data.length} trading days of S&amp;P 500 history.</span>`;
+        render();
+      } catch (error) {
+        statusEl.classList.add('error');
+        statusEl.innerHTML = `<span class="dot" style="background:#ff7a7a;box-shadow:0 0 0 6px rgba(255,122,122,0.12)"></span><span>${error.message}</span>`;
+        document.getElementById('latest-close-sub').textContent = 'Market data failed to load.';
+      }
+      window.addEventListener('resize', () => {
+        if (state.data.length) render();
+      });
+    }
+
+    bootstrap();
+  </script>
+</body>
+</html>

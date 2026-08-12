@@ -1,0 +1,12 @@
+Run ID: openai-gpt-5-4-mini-high-codex-20260811
+
+Validation summary:
+- `node --check server.js` passed.
+- `curl -I http://127.0.0.1:4281` returned `HTTP/1.1 200 OK`.
+- `google-chrome --headless=new --disable-gpu --no-sandbox --window-size=1600,1800 --virtual-time-budget=12000 --screenshot=/tmp/benchmark-real-ai-run-CIcwbt/dashboard-4281.png http://127.0.0.1:4281` wrote `897743 bytes`.
+
+Intermediate failures that were resolved during the benchmark run:
+- A DOM check against `http://127.0.0.1:4173` hit the benchmark preview page already occupying that port.
+- A detached launch on port `4281` refused the connection, so the run relaunched the server in an attached session.
+
+No unresolved validation failures remain.

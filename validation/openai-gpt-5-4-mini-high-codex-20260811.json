@@ -1,0 +1,33 @@
+{
+  "runId": "openai-gpt-5-4-mini-high-codex-20260811",
+  "passed": true,
+  "checks": [
+    {
+      "name": "syntax",
+      "command": "node --check server.js",
+      "result": "passed"
+    },
+    {
+      "name": "endpoint",
+      "command": "curl -I http://127.0.0.1:4281",
+      "result": "HTTP/1.1 200 OK"
+    },
+    {
+      "name": "screenshot",
+      "command": "google-chrome --headless=new --disable-gpu --no-sandbox --window-size=1600,1800 --virtual-time-budget=12000 --screenshot=/tmp/benchmark-real-ai-run-CIcwbt/dashboard-4281.png http://127.0.0.1:4281",
+      "result": "897743 bytes written to /tmp/benchmark-real-ai-run-CIcwbt/dashboard-4281.png"
+    }
+  ],
+  "intermediateFailures": [
+    {
+      "command": "google-chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=12000 --dump-dom http://127.0.0.1:4173 | rg -n \"firstForecast|NaN|Rendering complete|Projected end|Market data failed|Loading market history|Latest close\"",
+      "result": "hit the benchmark preview page on port 4173; the run later moved validation to 4281 after identifying the port conflict"
+    },
+    {
+      "command": "PORT=4281 nohup node server.js",
+      "result": "connection refused; the dashboard was relaunched in an attached terminal session"
+    }
+  ],
+  "unresolvedFailures": [],
+  "notes": "Final validation ran against http://127.0.0.1:4281 because 4173 was occupied by the benchmark preview page in this workspace."
+}
