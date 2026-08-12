@@ -727,6 +727,110 @@
         ]
       },
       "summary": "Codex CLI completed a standalone HTML S&P 500 dashboard in a fresh temp workspace, validated it in headless Chrome, and preserved the original HTML while repairing the rendered copy with a uniquely named companion data asset so the table-row launch stays standalone."
+    },
+    {
+      "id": "openai-gpt-5-6-luna-low-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-luna",
+        "name": "gpt-5.6-luna",
+        "version": "gpt-5.6-luna"
+      },
+      "reasoning": {
+        "native": "low",
+        "normalized": "low"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-run-lGtKOE",
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-luna",
+          "reasoningLevel": "low",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": null,
+          "enabledFeatures": ["js_repl: false"],
+          "outputLastMessage": "/tmp/benchmark-real-ai-run-lGtKOE/final-response.txt"
+        },
+        "capabilities": ["shell", "file-editing", "browser-validation"]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T01:31:13.422146Z",
+        "finishedAt": "2026-08-12T01:32:45.293990Z",
+        "durationSeconds": 91.871844
+      },
+      "run": {
+        "completedAt": "2026-08-12T01:32:45.293990Z"
+      },
+      "usage": {
+        "tokens": 195859,
+        "inputTokens": 191277,
+        "cachedInputTokens": 173312,
+        "outputTokens": 4133,
+        "reasoningOutputTokens": 449,
+        "latencyMs": null,
+        "cost": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The dashboard generated a deterministic illustrative price series in the HTML and explicitly labels it synthetic; no external market-data source was used."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-luna-low-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-luna-low-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-luna-low-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-6-luna-low-codex-20260812.json",
+        "sha256": {
+          "rawResponse": "4a57e9bb9a44fb1b1641a525572f1de59b08065a6683e1e19fdd7b05b1033c12",
+          "originalHtml": "0690b336f8e22cfb1b13903c235a372ca30e71e8c7b5786093f25a939698a20d",
+          "displayHtml": "0690b336f8e22cfb1b13903c235a372ca30e71e8c7b5786093f25a939698a20d",
+          "validationEvidence": "98b934860021683cab87d0efb0f4247774414580e81dc086666e08cb2fabad8f"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 2,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 3
+        },
+        "total": 17,
+        "reviewer": "Codex",
+        "notes": "The original artifact delivers a complete interactive dashboard with horizon, trend-window, and scenario controls plus an uncertainty band. The forecasting method is a simple log-linear baseline over deterministic synthetic data, and browser automation could not run, so technical robustness is scored conservatively."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "http-render",
+            "passed": true,
+            "details": "Local HTTP response contained the dashboard title; port 8000 was occupied and the run switched to port 8001."
+          },
+          {
+            "name": "javascript-syntax-and-controls",
+            "passed": true,
+            "details": "JavaScript syntax, the horizon control, and Plotly chart call were validated."
+          },
+          {
+            "name": "browser-validation",
+            "passed": false,
+            "details": "In-app browser was unavailable and the available browser list was empty."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed HTML are byte-identical; no rendering repair was required."
+          }
+        ]
+      },
+      "summary": "Codex CLI completed an interactive S&P 500 forecast dashboard in a fresh temporary workspace, preserved the original and displayed HTML byte-for-byte, and recorded successful HTTP, JavaScript, and control checks with browser automation unavailable."
     }
   ]
 }
