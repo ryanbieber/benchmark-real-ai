@@ -1,0 +1,49 @@
+Benchmark validation transcript
+Run ID: openai-gpt-5-4-low-codex-20260811
+
+Harness session facts captured from the isolated run:
+- Thread ID: 019ff33e-15b5-7481-b5d1-98989bbcb36c
+- Started at: 2026-08-11T23:52:40.135734Z
+- Finished at: 2026-08-11T23:58:48.970497Z
+- Usage: input_tokens=647281, cached_input_tokens=572288, output_tokens=13160, reasoning_output_tokens=2006
+
+Key benchmark commands and outcomes:
+
+1. Data-source checks
+   curl -L --fail 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500&cosd=1950-01-03' > sp500_fred.csv
+   Result: succeeded; downloaded 2609 CSV lines including header, with latest observation 2026-08-10.
+
+2. Initial validation against wrong local port
+   curl -I http://127.0.0.1:8000/index.html
+   google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8000/index.html > rendered.html
+   Result: HTTP 200 from a different local page; DOM checks did not match the benchmark artifact. This was correctly identified as a validation-target mistake, not as dashboard success.
+
+3. Isolated validation server
+   python3 -m http.server 8123
+   curl -I http://127.0.0.1:8123/index.html
+   Result: HTTP 200 from the benchmark workspace.
+
+4. First isolated DOM dump
+   google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8123/index.html > rendered_8123.html
+   Result: dashboard rendered, but model summary and forecast rows contained NaN values.
+
+5. Root-cause check
+   node -e "const fs=require('fs');const rows=fs.readFileSync('sp500_fred.csv','utf8').trim().split(/\\r?\\n/).slice(1).map(l=>{const [d,v]=l.split(',');return {d,v:Number(v),log:Math.log(Number(v))};}); console.log(rows.find(r=>!Number.isFinite(r.log)));"
+   Result: found `{ d: '2016-09-05', v: 0, log: -Infinity }`, showing FRED zero placeholders on market-closed dates.
+
+6. Final isolated DOM dump after the model's self-fix
+   google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8123/index.html > rendered_8123.html
+   rg -n "Loaded [0-9]+ observations|Latest observation date: 2026-08-10|Estimated daily log-trend slope: [0-9.-]+|<tbody id=\\\"forecastTableBody\\\"><tr><td>2026-08-11</td><td>[0-9,]+</td></tr>" rendered_8123.html
+   Result:
+   - Loaded 2512 observations. Latest observation date: 2026-08-10.
+   - Estimated daily log-trend slope: 0.000701. Residual sigma: 0.0419.
+   - Forecast rows started with 2026-08-11 -> 7,594.
+
+7. Screenshot validation
+   google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=10000 --screenshot=dashboard_8123.png --window-size=1440,1600 http://127.0.0.1:8123/index.html
+   Result: wrote dashboard_8123.png successfully.
+
+Published-artifact notes:
+- No rendering repair was required.
+- Original and displayed HTML are identical bytes.
+- The dashboard fetches ./sp500_fred.csv, so that support file is published adjacent to both HTML copies to preserve standalone execution without altering the artifact.
