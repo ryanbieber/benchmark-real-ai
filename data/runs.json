@@ -8,9 +8,10 @@
       "low",
       "medium",
       "high",
+      "xhigh",
       "max"
     ],
-    "updatedAt": "2026-08-12T03:22:05Z",
+    "updatedAt": "2026-08-12T11:35:30Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -139,6 +140,11 @@
       "validation": {
         "passed": true,
         "checks": [
+          {
+            "name": "provenance-correction",
+            "passed": true,
+            "details": "Native Codex session metadata recorded xhigh, so the run ID, normalized band, and current artifact paths were corrected from max to xhigh. Historical validation commands below retain the filenames used when originally executed."
+          },
           {
             "name": "artifact-bytes",
             "passed": true,
@@ -684,7 +690,7 @@
       "summary": "Codex CLI completed a standalone S&P 500 forecast dashboard in an isolated temp workspace, bundled its data and Plotly locally, validated it in headless Chrome, and imported byte-identical original and displayed HTML without a repair."
     },
     {
-      "id": "openai-gpt-5-4-mini-max-codex-20260812",
+      "id": "openai-gpt-5-4-mini-xhigh-codex-20260812",
       "status": "benchmark",
       "provider": "openai",
       "model": {
@@ -694,7 +700,7 @@
       },
       "reasoning": {
         "native": "xhigh",
-        "normalized": "max"
+        "normalized": "xhigh"
       },
       "harness": {
         "name": "Codex CLI",
@@ -742,18 +748,18 @@
         "notes": "S&P 500 daily close data fetched from FRED during the benchmark run."
       },
       "artifacts": {
-        "rawResponse": "responses/openai-gpt-5-4-mini-max-codex-20260812.md",
-        "originalHtml": "runs/original/openai-gpt-5-4-mini-max-codex-20260812.html",
-        "displayHtml": "runs/rendered/openai-gpt-5-4-mini-max-codex-20260812.html",
-        "validationEvidence": "validation/openai-gpt-5-4-mini-max-codex-20260812.json",
+        "rawResponse": "responses/openai-gpt-5-4-mini-xhigh-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-4-mini-xhigh-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-4-mini-xhigh-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-4-mini-xhigh-codex-20260812.json",
         "sha256": {
-          "rawResponse": "b768fcf643ecc1f766b6d9c9f70f129b93288e16ba860e92b735982e9d8d1996",
+          "rawResponse": "9fc395bf4d97d94b4aa0deccad1f314e50592408d8a5db9aede36e7e7310d7c3",
           "originalHtml": "26d128fa1c455fd66d9a1ffb75e50f3ded5ccfcdce9eb4f45385f95acf3f58b1",
-          "displayHtml": "2d9a705ed5bd7e5aeaca9afe6e4be8a6db6b9b51ac7965ccbfbba017ad19e2e7",
-          "validationEvidence": "52b8ad7395535b4aba8bfba2e8190804668dc9fe49a0eeedbc5ac45af8956c7a"
+          "displayHtml": "5f8a4d6b555c090169824bbdd9ffb258a45cba2a6978af73361799ecf0580f3b",
+          "validationEvidence": "d33876ba33a113be8d4df64b819aee50bb24de4b8c693dae5b84407ea2e8477c"
         },
         "repaired": true,
-        "repairLog": "repairs/openai-gpt-5-4-mini-max-codex-20260812.md"
+        "repairLog": "repairs/openai-gpt-5-4-mini-xhigh-codex-20260812.md"
       },
       "evaluation": {
         "scores": {
@@ -1385,7 +1391,7 @@
       },
       "reasoning": {
         "native": "xhigh",
-        "normalized": "max"
+        "normalized": "xhigh"
       },
       "harness": {
         "name": "Codex CLI",
@@ -1449,7 +1455,7 @@
           "validation/openai-gpt-5-6-luna-xhigh-codex-20260812-dashboard.png"
         ],
         "sha256": {
-          "rawResponse": "9875e4e9ad2c2e4cb563ed28f988619d424c675b54344cbdec99b5b4e0382b58",
+          "rawResponse": "50cdfc0065587a397291023d470a1bfd6d36735606cf209e457687d98ec5c1a5",
           "originalHtml": "c0dd27d5d63bebf1088821d9b242ea566d7898bb23967ac684a6ef9060543355",
           "displayHtml": "c0dd27d5d63bebf1088821d9b242ea566d7898bb23967ac684a6ef9060543355",
           "validationEvidence": "6fa533f5403378abb12ff0a3897c665bd433042aa36ae2e55301ba9f11aee506",

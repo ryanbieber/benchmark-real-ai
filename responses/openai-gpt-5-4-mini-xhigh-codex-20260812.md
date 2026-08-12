@@ -1,8 +1,8 @@
 # Benchmark Run Record
 
-- Run ID: `openai-gpt-5-4-mini-max-codex-20260812`
+- Run ID: `openai-gpt-5-4-mini-xhigh-codex-20260812`
 - Model: `openai / gpt-5.4-mini`
-- Reasoning: native `xhigh`, normalized `max`
+- Reasoning: native `xhigh`, normalized `xhigh` (Extra High)
 - Harness: `Codex CLI 0.144.4`, interface `exec`
 - Workspace: fresh temp workspace at `/tmp/benchmark-real-ai-run.Jtpis3`
 - Data source: `live`

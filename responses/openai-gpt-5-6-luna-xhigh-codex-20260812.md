@@ -2,7 +2,7 @@
 
 - Run ID: `openai-gpt-5-6-luna-xhigh-codex-20260812`
 - Model: `openai / gpt-5.6-luna`
-- Reasoning: native `xhigh` (Extra high reasoning depth), normalized `max`
+- Reasoning: native `xhigh` (Extra High reasoning depth), normalized `xhigh`
 - Harness: `Codex CLI 0.144.4`, interface `exec`
 - Workspace: fresh temporary workspace at `/tmp/benchmark-real-ai-gpt-5.6-luna-xhigh-X6yH7U`
 - Data source: `historical-snapshot` (FRED SP500 data fetched during the run and embedded as a monthly snapshot; optional live refresh path retained)

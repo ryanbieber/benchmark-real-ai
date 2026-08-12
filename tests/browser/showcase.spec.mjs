@@ -27,6 +27,11 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   for (const heading of ['Model', 'Harness', 'Reasoning level', 'Input', 'Cached', 'Output', 'Reasoning tokens', 'Total', 'Time', 'Est. cost ↑']) await expect(page.getByRole('columnheader', { name: heading, exact: true })).toBeVisible();
   await expect(page.locator('.run-row')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#result-count')).toContainText(`${publishedRuns.length}`);
+  await expect(page.locator('#filter-reasoning option[value="xhigh"]')).toHaveText('Extra High');
+  await expect(page.locator('#filter-reasoning option[value="max"]')).toHaveText('Max');
+  await expect(page.locator('.run-row', { hasText: 'gpt-5.4-mini' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
+  await expect(page.locator('.run-row', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
+  await expect(page.locator('.run-row', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Max' })).toHaveCount(1);
   await expect(page.locator('.run-row').first()).toContainText('gpt-5.6-luna');
   await expect(page.locator('#run-table-body')).toContainText(publishedRuns.at(-1).model.name);
   await expect(page.locator('.run-row').first()).toContainText('191,277');
@@ -43,6 +48,10 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('.tradeoff-point')).toHaveCount(publishedRuns.length);
   await expect(page.locator('.frontier')).toHaveCount(1);
   await expect(page.locator('#plot-key a')).toHaveCount(publishedRuns.length);
+  await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' })).toHaveCount(5);
+  const pointFills = await page.locator('.tradeoff-point circle').evaluateAll((points) => [...new Set(points.map((point) => getComputedStyle(point).fill))]);
+  expect(pointFills).toHaveLength(1);
+  await expect(page.locator('#tradeoff-svg-desc')).toContainText('Point color has no categorical meaning');
   await page.locator('#tradeoff-metric').selectOption('reasoningShare');
   await expect(page.getByRole('heading', { name: 'Cost versus reasoning allocation' })).toBeVisible();
   await expect(page.locator('#tradeoff-description')).toContainText('share of output tokens');

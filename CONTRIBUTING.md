@@ -5,6 +5,7 @@ Thanks for helping make model comparisons more concrete. Before collecting anyth
 ## Collection
 
 1. Choose a model, native reasoning setting, and harness.
+   Treat `xhigh` (Extra High) and `max` as separate settings. Do not label an `xhigh` run as Max, and do not record Max unless the selected model supports it.
 2. Record the harness name and version before the run.
 3. Start from a fresh workspace and submit the exact benchmark prompt once.
 4. Allow the harness's normal tools. Do not provide follow-up guidance.

@@ -19,6 +19,15 @@ test('every run records the complete non-duplicative token breakdown', () => {
   }
 });
 
+test('Extra High and Max remain distinct reasoning bands', () => {
+  const manifest = readManifest();
+  assert.deepEqual(manifest.benchmark.normalizedReasoningBands, ['default', 'low', 'medium', 'high', 'xhigh', 'max']);
+  for (const run of manifest.runs) {
+    if (run.reasoning.native === 'xhigh') assert.equal(run.reasoning.normalized, 'xhigh', run.id);
+    if (run.reasoning.native === 'max') assert.equal(run.reasoning.normalized, 'max', run.id);
+  }
+});
+
 test('governance contains the exact goal and model-harness rule', () => {
   const agents = readFileSync('AGENTS.md', 'utf8');
   assert.ok(agents.includes(readManifest().benchmark.goal));

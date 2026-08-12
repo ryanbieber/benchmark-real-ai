@@ -7,17 +7,18 @@ const state = {
 const $ = (selector) => document.querySelector(selector);
 const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 const titleCase = (value) => String(value).replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+const reasoningLabel = (value) => value === 'xhigh' ? 'Extra High' : titleCase(value);
 
 function unique(field) {
   return [...new Set(state.runs.map(field))].sort((a, b) => a.localeCompare(b));
 }
 
-function fillSelect(selector, values) {
+function fillSelect(selector, values, label = titleCase) {
   const select = $(selector);
   values.forEach((value) => {
     const option = document.createElement('option');
     option.value = value;
-    option.textContent = titleCase(value);
+    option.textContent = label(value);
     select.append(option);
   });
 }
@@ -26,7 +27,7 @@ function populateFilters() {
   fillSelect('#filter-provider', unique((run) => run.provider));
   fillSelect('#filter-model', unique((run) => run.model.name));
   fillSelect('#filter-harness', unique((run) => run.harness.name));
-  fillSelect('#filter-reasoning', unique((run) => run.reasoning.normalized));
+  fillSelect('#filter-reasoning', unique((run) => run.reasoning.normalized), reasoningLabel);
 }
 
 function filteredRuns() {
@@ -89,7 +90,7 @@ function rowTemplate(run) {
     <tr class="run-row" data-artifact="${artifact}" data-cost="${cost?.total ?? ''}" tabindex="0" aria-label="Open ${escapeHtml(run.model.name)} dashboard">
       <td class="model-cell"><a href="${artifact}"><strong>${escapeHtml(run.model.name)}</strong><small>${escapeHtml(runMeta)}</small></a></td>
       <td><strong>${escapeHtml(run.harness.name)}</strong><small>${escapeHtml(run.harness.version)}</small></td>
-      <td><span class="reasoning-badge">${escapeHtml(titleCase(run.reasoning.normalized))}</span><small>${escapeHtml(run.reasoning.native)}</small></td>
+      <td><span class="reasoning-badge">${escapeHtml(reasoningLabel(run.reasoning.normalized))}</span><small>${escapeHtml(run.reasoning.native)}</small></td>
       <td class="metric-cell">${formatTokens(usage.inputTokens)}</td>
       <td class="metric-cell">${formatTokens(usage.cachedInputTokens)}</td>
       <td class="metric-cell">${formatTokens(usage.outputTokens)}</td>
@@ -109,12 +110,13 @@ function renderCostChart() {
   $('#combined-cost').textContent = pricedRows.length ? formatCost(combined) : 'Unavailable';
 
   $('#cost-chart').innerHTML = rows.map(({ run, cost }) => {
-    const label = `${run.model.name} · ${run.reasoning.normalized} · ${run.harness.name}`;
+    const reasoning = reasoningLabel(run.reasoning.normalized);
+    const label = `${run.model.name} · ${reasoning} · ${run.harness.name}`;
     if (!cost) return `<div class="cost-row"><div class="cost-label"><strong>${escapeHtml(run.model.name)}</strong><span>${escapeHtml(label)}</span></div><div class="cost-unavailable">Pricing unavailable</div></div>`;
     const scale = max ? 100 / max : 0;
     return `
       <div class="cost-row">
-        <div class="cost-label"><strong>${escapeHtml(run.model.name)}</strong><span>${escapeHtml(run.reasoning.normalized)} reasoning · ${escapeHtml(run.harness.name)}</span></div>
+        <div class="cost-label"><strong>${escapeHtml(run.model.name)}</strong><span>${escapeHtml(reasoning)} reasoning · ${escapeHtml(run.harness.name)}</span></div>
         <div class="cost-bar-track" aria-label="${escapeHtml(label)} estimated cost ${formatCost(cost.total)}">
           <span class="cost-segment input" style="width:${cost.uncachedInput * scale}%" title="Uncached input ${formatCost(cost.uncachedInput)}"></span>
           <span class="cost-segment cached" style="width:${cost.cachedInput * scale}%" title="Cached input ${formatCost(cost.cachedInput)}"></span>
@@ -216,13 +218,13 @@ function renderTradeoffPlot() {
   const costTicks = xTicks.map((tick) => `<g><line x1="${x(tick)}" y1="${margin.top}" x2="${x(tick)}" y2="${height - margin.bottom}"/><text x="${x(tick)}" y="${height - margin.bottom + 27}" text-anchor="middle">${formatCost(tick)}</text></g>`).join('');
   const frontierPath = frontier.length > 1 ? `<path class="frontier" d="M ${frontier.map((point) => `${x(point.cost)} ${y(point.value)}`).join(' L ')}"/>` : '';
   const circles = points.map((point) => {
-    const label = `${point.run.model.name}, ${point.run.reasoning.normalized} reasoning: ${formatCost(point.cost)}, ${metric.format(point.value)}`;
+    const label = `${point.run.model.name}, ${reasoningLabel(point.run.reasoning.normalized)} reasoning: ${formatCost(point.cost)}, ${metric.format(point.value)}`;
     const r = radius(point.run.usage.totalTokens);
-    return `<a class="tradeoff-point ${escapeHtml(point.run.reasoning.normalized)}" href="${escapeHtml(point.run.artifacts.displayHtml)}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title><circle cx="${x(point.cost)}" cy="${y(point.value)}" r="${r}"/><text x="${x(point.cost)}" y="${y(point.value) + 4}" text-anchor="middle">${point.index}</text></a>`;
+    return `<a class="tradeoff-point" href="${escapeHtml(point.run.artifacts.displayHtml)}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title><circle cx="${x(point.cost)}" cy="${y(point.value)}" r="${r}"/><text x="${x(point.cost)}" y="${y(point.value) + 4}" text-anchor="middle">${point.index}</text></a>`;
   }).join('');
 
-  $('#tradeoff-plot').innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="tradeoff-svg-title tradeoff-svg-desc"><title id="tradeoff-svg-title">Estimated cost versus ${escapeHtml(metric.label)}</title><desc id="tradeoff-svg-desc">Each numbered bubble is a published benchmark run. Bubble size represents total tokens and color represents reasoning level.</desc><g class="plot-grid">${grid}${costTicks}</g>${frontierPath}${circles}<text class="axis-title" x="${margin.left + chartWidth / 2}" y="${height - 15}" text-anchor="middle">Estimated API-equivalent cost, USD (log scale)</text><text class="axis-title" transform="translate(18 ${margin.top + chartHeight / 2}) rotate(-90)" text-anchor="middle">${escapeHtml(metric.label)}</text></svg>`;
-  $('#plot-key').innerHTML = points.map((point) => `<a href="${escapeHtml(point.run.artifacts.displayHtml)}"><b class="${escapeHtml(point.run.reasoning.normalized)}">${point.index}</b><span><strong>${escapeHtml(point.run.model.name)}</strong> · ${escapeHtml(point.run.reasoning.normalized)} · ${formatCost(point.cost)} · ${escapeHtml(metric.format(point.value))}</span></a>`).join('');
+  $('#tradeoff-plot').innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="tradeoff-svg-title tradeoff-svg-desc"><title id="tradeoff-svg-title">Estimated cost versus ${escapeHtml(metric.label)}</title><desc id="tradeoff-svg-desc">Each numbered bubble is one model, reasoning setting, and harness run. Bubble size represents total tokens. Point color has no categorical meaning.</desc><g class="plot-grid">${grid}${costTicks}</g>${frontierPath}${circles}<text class="axis-title" x="${margin.left + chartWidth / 2}" y="${height - 15}" text-anchor="middle">Estimated API-equivalent cost, USD (log scale)</text><text class="axis-title" transform="translate(18 ${margin.top + chartHeight / 2}) rotate(-90)" text-anchor="middle">${escapeHtml(metric.label)}</text></svg>`;
+  $('#plot-key').innerHTML = points.map((point) => `<a href="${escapeHtml(point.run.artifacts.displayHtml)}"><b>${point.index}</b><span><strong>${escapeHtml(point.run.model.name)}</strong> · ${escapeHtml(reasoningLabel(point.run.reasoning.normalized))} · ${formatCost(point.cost)} · ${escapeHtml(metric.format(point.value))}</span></a>`).join('');
 }
 
 function render() {
