@@ -1,0 +1,79 @@
+{
+  "runId": "openai-gpt-5-6-terra-high-codex-20260812",
+  "source": {
+    "eventFile": "/home/carnufex/.codex/sessions/2026/08/12/rollout-2026-08-12T17-50-24-019ff718-c8c9-7613-9772-077272f439dd.jsonl",
+    "threadId": "019ff718-c8c9-7613-9772-077272f439dd",
+    "finalUsageEvent": "Codex session token_count event at 2026-08-12T17:53:49.804Z",
+    "note": "This evidence records visible messages, commands, outputs, and usage only; hidden reasoning was not copied."
+  },
+  "timestamps": {
+    "startedAt": "2026-08-12T17:50:26.637Z",
+    "finishedAt": "2026-08-12T17:53:49.806Z",
+    "durationSeconds": 203.169,
+    "timeToFirstTokenMs": 4757
+  },
+  "usage": {
+    "inputTokens": 388030,
+    "cachedInputTokens": 354048,
+    "outputTokens": 9721,
+    "reasoningOutputTokens": 1881,
+    "totalTokens": 397751,
+    "actualCostUsd": null
+  },
+  "checks": [
+    {
+      "name": "embedded-javascript-syntax",
+      "command": "sed -n '/<script>/,/<\\/script>/p' index.html | sed '1d;$d' | node --check -",
+      "result": "passed",
+      "output": "The command exited successfully with no syntax errors."
+    },
+    {
+      "name": "local-http-delivery",
+      "command": "curl -fsSI http://127.0.0.1:4173/index.html",
+      "result": "passed",
+      "output": "HTTP/1.0 200 OK; Content-type: text/html; Content-Length: 17596."
+    },
+    {
+      "name": "interactive-controls-present",
+      "command": "curl -fsS http://127.0.0.1:4173/ | rg -n '<title>|Forecast controls|chart-hit|script>'",
+      "result": "passed",
+      "output": "The served artifact exposed the page title, Forecast controls, chart-hit target, and inline script."
+    },
+    {
+      "name": "in-app-browser-automation",
+      "command": null,
+      "result": "not-run",
+      "output": "The in-app browser connector reported no available target. The benchmark's visible final response discloses that visual automation could not run."
+    },
+    {
+      "name": "artifact-bytes",
+      "command": "sha256sum runs/original/openai-gpt-5-6-terra-high-codex-20260812.html runs/rendered/openai-gpt-5-6-terra-high-codex-20260812.html",
+      "result": "passed",
+      "output": "Both files produced d48edb434c504cf774cf43bf63f49b8a5fa7aefb29a7d875037dc1b1e92549c1; no repair was required."
+    },
+    {
+      "name": "repository-manifest-validation",
+      "command": "npm run validate",
+      "result": "passed",
+      "output": "Manifest valid: 18 runs checked."
+    },
+    {
+      "name": "repository-test-suite",
+      "command": "npm test",
+      "result": "passed",
+      "output": "5 unit tests passed; 5 browser tests passed; 1 browser project test was intentionally skipped."
+    },
+    {
+      "name": "published-table-row-open",
+      "command": "Playwright: locate the gpt-5.6-terra High row, click its model link, and wait for the rendered artifact URL.",
+      "result": "passed",
+      "output": "Opened http://127.0.0.1:4321/runs/rendered/openai-gpt-5-6-terra-high-codex-20260812.html with title Index Lens — S&P 500 Forecast Studio."
+    }
+  ],
+  "unresolvedFailures": [
+    {
+      "name": "in-app-browser-automation",
+      "details": "Unavailable in the fresh benchmark workspace; no browser interaction or visual-rendering result was produced by the benchmark run."
+    }
+  ]
+}
