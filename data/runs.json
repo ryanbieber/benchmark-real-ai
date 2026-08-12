@@ -44,6 +44,11 @@
           "inputUsd": 5,
           "cachedInputUsd": 0.5,
           "outputUsd": 30
+        },
+        "gpt-5.6-terra": {
+          "inputUsd": 2,
+          "cachedInputUsd": 0.2,
+          "outputUsd": 12
         }
       }
     }
@@ -1368,6 +1373,21 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-sol at medium reasoning in an empty temporary workspace, produced a responsive standalone synthetic S&P 500 forecasting dashboard with three baseline models and executable validation, and required no rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-6-terra-medium-codex-20260812",
+      "status": "benchmark", "provider": "openai",
+      "model": { "id": "gpt-5.6-terra", "name": "gpt-5.6-terra", "version": "gpt-5.6-terra" },
+      "reasoning": { "native": "medium", "normalized": "medium" },
+      "harness": { "name": "Codex CLI", "version": "0.144.4", "interface": "exec", "configuration": { "cd": "/tmp/benchmark-real-ai-gpt-5.6-terra-medium-mR8OS5", "ignoreUserConfig": true, "skipGitRepoCheck": true, "model": "gpt-5.6-terra", "reasoningLevelConfigAttempt": "medium", "reasoningLevelConfigKey": "model_reasoning_effort", "sandbox": "danger-full-access", "approvalPolicy": null, "webSearch": null, "jsonEvents": true, "outputLastMessage": true, "normalToolsEnabled": true }, "capabilities": ["shell", "file-editing", "local-browser-validation"] },
+      "timestamps": { "startedAt": "2026-08-12T02:11:02.652Z", "finishedAt": "2026-08-12T02:13:25.765Z", "durationSeconds": 140.2 },
+      "run": { "threadId": "019ff3bc-d09d-7ae3-bbb5-f378638d4c4d", "completedAt": "2026-08-12T02:13:25.765Z", "timeToFirstTokenMs": 3343, "latencyMs": 140200 },
+      "usage": { "inputTokens": 199452, "cachedInputTokens": 180480, "outputTokens": 6546, "reasoningOutputTokens": 727, "totalTokens": 205998, "source": "Codex session token_count event at 2026-08-12T02:13:25.762Z", "actualCostUsd": null },
+      "dataSource": { "type": "synthetic", "notes": "The default dashboard generates deterministic synthetic demonstration history; users may import a local CSV, and no external market data was fetched or embedded." },
+      "artifacts": { "rawResponse": "responses/openai-gpt-5-6-terra-medium-codex-20260812.md", "originalHtml": "runs/original/openai-gpt-5-6-terra-medium-codex-20260812.html", "displayHtml": "runs/rendered/openai-gpt-5-6-terra-medium-codex-20260812.html", "validationEvidence": "validation/openai-gpt-5-6-terra-medium-codex-20260812.json", "sha256": { "rawResponse": "ea9fbca3fc0bd9742c41562c72929225295ff22fc755e2af8e5976f66f870b17", "originalHtml": "30682309a4b7535b49d2b7920654701c9799579d2bba0d1f285c6f92d05e9d10", "displayHtml": "30682309a4b7535b49d2b7920654701c9799579d2bba0d1f285c6f92d05e9d10", "validationEvidence": "8c2d45491ec801e0aa602fd7ef334c4301c0addd19a7434397c519c839f1304f", "desktopScreenshot": "9e3194984392d7181c474e5ce1f3d63dd3c6088078a2b9a35977a786d51e0908" }, "repaired": false, "repairLog": null },
+      "evaluation": { "scores": { "taskFulfillment": 4, "interactivityUsability": 4, "forecastingMethodology": 3, "uncertaintyHonesty": 4, "technicalRobustness": 4 }, "total": 19, "reviewer": "Codex", "notes": "The original artifact is a polished self-contained interactive dashboard with controls, hover chart, CSV import, uncertainty range, and clear disclaimer. Its default history is synthetic and methods are simple heuristics." },
+      "validation": { "passed": true, "checks": [ { "name": "artifact-bytes", "passed": true, "details": "Original and rendered HTML SHA-256 hashes match; no rendering repair was required." }, { "name": "embedded-javascript-syntax", "passed": true, "details": "The benchmark run parsed the embedded script with Node's Function constructor." }, { "name": "headless-chrome", "passed": true, "details": "Headless Chrome rendered populated forecast metrics and reported a clean browser console." }, { "name": "interactive-control-path", "passed": true, "details": "The benchmark run completed a final interactive-control-path check." }, { "name": "published-artifact-smoke-test", "passed": true, "details": "The landing page rendered gpt-5.6-terra and its standalone artifact returned HTTP 200." } ] },
+      "summary": "Codex CLI ran gpt-5.6-terra at medium reasoning in a fresh temporary workspace, produced and browser-validated a self-contained S&P 500 forecasting dashboard with deterministic synthetic demo data and local CSV import, and imported byte-identical original and display artifacts without a repair."
     }
   ]
 }
