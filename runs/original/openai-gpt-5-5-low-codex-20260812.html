@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>S&P 500 Forecast Lab</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #64717f;
+      --line: #d7dde4;
+      --panel: #ffffff;
+      --page: #f3f6f8;
+      --accent: #087f8c;
+      --accent-2: #b35c00;
+      --danger: #b42318;
+      --good: #067647;
+      --shadow: 0 12px 30px rgba(24, 39, 75, 0.10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page);
+      color: var(--ink);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    h1 { font-size: 22px; line-height: 1.2; margin: 0; font-weight: 750; letter-spacing: 0; }
+    .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    main {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    aside, .chart-wrap, .metrics, .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    aside { padding: 16px; border-radius: 8px; align-self: start; position: sticky; top: 82px; }
+    .section { padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+    .section:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+    h2 { font-size: 13px; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; letter-spacing: .08em; }
+    label { display: block; font-size: 13px; font-weight: 650; margin: 12px 0 7px; }
+    select, input[type="number"], input[type="range"], button {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+    select, input[type="number"] { padding: 10px 11px; }
+    input[type="range"] { accent-color: var(--accent); }
+    button {
+      cursor: pointer;
+      min-height: 42px;
+      font-weight: 750;
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .secondary { background: #fff; color: var(--ink); border-color: var(--line); }
+    .value { float: right; font-weight: 750; color: var(--accent); }
+    .content { display: grid; gap: 18px; }
+    .metrics { border-radius: 8px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: hidden; }
+    .metric { padding: 16px; border-right: 1px solid var(--line); min-width: 0; }
+    .metric:last-child { border-right: 0; }
+    .metric b { display: block; font-size: clamp(19px, 2.2vw, 30px); margin-top: 5px; white-space: nowrap; }
+    .metric span { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .metric .up { color: var(--good); }
+    .metric .down { color: var(--danger); }
+    .chart-wrap { border-radius: 8px; padding: 16px; min-height: 530px; }
+    .chart-head { display: flex; justify-content: space-between; gap: 16px; align-items: start; margin-bottom: 8px; }
+    .chart-head h2 { color: var(--ink); font-size: 18px; text-transform: none; letter-spacing: 0; margin: 0; }
+    .note { color: var(--muted); font-size: 13px; max-width: 720px; line-height: 1.45; }
+    canvas { width: 100% !important; height: 450px !important; }
+    .table-wrap { border-radius: 8px; overflow: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 680px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: right; font-size: 13px; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: #eef3f5; color: #43515e; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .pill { display: inline-flex; align-items: center; justify-content: center; padding: 5px 8px; border-radius: 999px; background: #e7f5f6; color: #05616b; font-weight: 750; font-size: 12px; }
+    @media (max-width: 900px) {
+      header { align-items: flex-start; flex-direction: column; }
+      main { grid-template-columns: 1fr; padding: 12px; }
+      aside { position: static; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      canvas { height: 390px !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>S&P 500 Forecast Lab</h1>
+      <div class="sub">Interactive scenario model for learning forecast mechanics. It is not investment advice.</div>
+    </div>
+    <div class="pill" id="status">Ready</div>
+  </header>
+  <main>
+    <aside>
+      <div class="section">
+        <h2>Market Assumptions</h2>
+        <label>Starting S&P 500 level <input id="startLevel" type="number" min="1000" max="12000" step="50" value="5600"></label>
+        <label>Expected annual return <span class="value" id="returnValue"></span><input id="returnRate" type="range" min="-12" max="18" step="0.5" value="7"></label>
+        <label>Annual volatility <span class="value" id="volValue"></span><input id="volatility" type="range" min="5" max="35" step="1" value="16"></label>
+        <label>Dividend yield <span class="value" id="divValue"></span><input id="dividend" type="range" min="0" max="4" step="0.1" value="1.4"></label>
+      </div>
+      <div class="section">
+        <h2>Forecast Setup</h2>
+        <label>Horizon
+          <select id="horizon">
+            <option value="6">6 months</option>
+            <option value="12" selected>12 months</option>
+            <option value="24">24 months</option>
+            <option value="36">36 months</option>
+          </select>
+        </label>
+        <label>Recession shock <span class="value" id="shockValue"></span><input id="shock" type="range" min="-25" max="5" step="1" value="-8"></label>
+        <label>Simulation paths <span class="value" id="pathValue"></span><input id="paths" type="range" min="200" max="3000" step="100" value="1000"></label>
+        <div class="btn-row">
+          <button id="run">Run forecast</button>
+          <button id="reset" class="secondary">Reset</button>
+        </div>
+      </div>
+      <div class="section">
+        <h2>Method</h2>
+        <div class="note">The dashboard combines drift, dividends, volatility and a one-time macro shock in a Monte Carlo model. The shaded range shows the 10th to 90th percentile forecast band.</div>
+      </div>
+    </aside>
+    <section class="content">
+      <div class="metrics">
+        <div class="metric"><span>Median forecast</span><b id="medianOut">-</b></div>
+        <div class="metric"><span>Expected total return</span><b id="returnOut">-</b></div>
+        <div class="metric"><span>Downside 10th pct.</span><b id="downsideOut">-</b></div>
+        <div class="metric"><span>Probability positive</span><b id="positiveOut">-</b></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <div><h2>Forecast Distribution</h2><div class="note">Adjust the assumptions, then run the model to see how the forecast cone changes.</div></div>
+          <div class="pill" id="asof">Synthetic base data</div>
+        </div>
+        <canvas id="chart" aria-label="S&P 500 forecast chart"></canvas>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Month</th><th>Bear case</th><th>Median</th><th>Bull case</th><th>Expected total return</th></tr></thead>
+          <tbody id="forecastRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script>
+    const ids = ["startLevel", "returnRate", "volatility", "dividend", "horizon", "shock", "paths"];
+    const controls = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+    const fmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+    const pct = new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1 });
+    let chart;
+
+    function normalRandom() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+
+    function percentile(values, p) {
+      const sorted = [...values].sort((a, b) => a - b);
+      const i = (sorted.length - 1) * p;
+      const low = Math.floor(i), high = Math.ceil(i);
+      return sorted[low] + (sorted[high] - sorted[low]) * (i - low);
+    }
+
+    function syntheticHistory(start) {
+      const months = 36;
+      const out = [];
+      let level = start / 1.24;
+      for (let i = months; i >= 1; i--) {
+        level *= 1 + 0.006 + Math.sin(i / 2.7) * 0.006 + normalRandom() * 0.018;
+        out.push({ label: `-${i}m`, level });
+      }
+      out.push({ label: "Now", level: start });
+      return out;
+    }
+
+    function runForecast() {
+      const start = Number(controls.startLevel.value);
+      const annualReturn = Number(controls.returnRate.value) / 100;
+      const vol = Number(controls.volatility.value) / 100;
+      const div = Number(controls.dividend.value) / 100;
+      const horizon = Number(controls.horizon.value);
+      const shock = Number(controls.shock.value) / 100;
+      const paths = Number(controls.paths.value);
+      const monthlyDrift = (annualReturn + div) / 12;
+      const monthlyVol = vol / Math.sqrt(12);
+      const shockMonth = Math.max(2, Math.ceil(horizon / 3));
+      const buckets = Array.from({ length: horizon + 1 }, () => []);
+
+      for (let p = 0; p < paths; p++) {
+        let level = start;
+        buckets[0].push(level);
+        for (let m = 1; m <= horizon; m++) {
+          const macroShock = m === shockMonth ? shock : 0;
+          level *= Math.exp(monthlyDrift - 0.5 * monthlyVol * monthlyVol + monthlyVol * normalRandom()) * (1 + macroShock);
+          buckets[m].push(Math.max(level, 1));
+        }
+      }
+
+      const history = syntheticHistory(start);
+      const forecast = buckets.map((bucket, month) => ({
+        label: month === 0 ? "Now" : `+${month}m`,
+        bear: percentile(bucket, 0.1),
+        median: percentile(bucket, 0.5),
+        bull: percentile(bucket, 0.9)
+      }));
+      updateMetrics(start, forecast, buckets[horizon]);
+      updateTable(start, forecast);
+      updateChart(history, forecast);
+      document.getElementById("status").textContent = `Ran ${fmt.format(paths)} paths`;
+    }
+
+    function updateLabels() {
+      document.getElementById("returnValue").textContent = `${controls.returnRate.value}%`;
+      document.getElementById("volValue").textContent = `${controls.volatility.value}%`;
+      document.getElementById("divValue").textContent = `${controls.dividend.value}%`;
+      document.getElementById("shockValue").textContent = `${controls.shock.value}%`;
+      document.getElementById("pathValue").textContent = fmt.format(Number(controls.paths.value));
+    }
+
+    function updateMetrics(start, forecast, terminal) {
+      const last = forecast[forecast.length - 1];
+      const totalReturn = last.median / start - 1;
+      const positive = terminal.filter(v => v > start).length / terminal.length;
+      document.getElementById("medianOut").textContent = fmt.format(last.median);
+      document.getElementById("returnOut").textContent = pct.format(totalReturn);
+      document.getElementById("returnOut").className = totalReturn >= 0 ? "up" : "down";
+      document.getElementById("downsideOut").textContent = fmt.format(last.bear);
+      document.getElementById("positiveOut").textContent = pct.format(positive);
+    }
+
+    function updateTable(start, forecast) {
+      document.getElementById("forecastRows").innerHTML = forecast.filter((_, i) => i > 0 && (i === 1 || i % 3 === 0 || i === forecast.length - 1)).map(row => `
+        <tr>
+          <td>${row.label}</td>
+          <td>${fmt.format(row.bear)}</td>
+          <td>${fmt.format(row.median)}</td>
+          <td>${fmt.format(row.bull)}</td>
+          <td>${pct.format(row.median / start - 1)}</td>
+        </tr>`).join("");
+    }
+
+    function updateChart(history, forecast) {
+      const labels = [...history.map(d => d.label), ...forecast.slice(1).map(d => d.label)];
+      const historyData = [...history.map(d => d.level), ...Array(forecast.length - 1).fill(null)];
+      const medianData = [...Array(history.length - 1).fill(null), ...forecast.map(d => d.median)];
+      const bearData = [...Array(history.length - 1).fill(null), ...forecast.map(d => d.bear)];
+      const bullData = [...Array(history.length - 1).fill(null), ...forecast.map(d => d.bull)];
+      const data = { labels, datasets: [
+        { label: "Historical", data: historyData, borderColor: "#17202a", backgroundColor: "#17202a", pointRadius: 0, borderWidth: 2, tension: 0.25 },
+        { label: "Bull case", data: bullData, borderColor: "#087f8c", backgroundColor: "rgba(8, 127, 140, 0.12)", pointRadius: 0, borderWidth: 1.5, tension: 0.25 },
+        { label: "Bear case", data: bearData, borderColor: "#087f8c", backgroundColor: "rgba(8, 127, 140, 0.12)", fill: "-1", pointRadius: 0, borderWidth: 1.5, tension: 0.25 },
+        { label: "Median forecast", data: medianData, borderColor: "#b35c00", backgroundColor: "#b35c00", pointRadius: 0, borderWidth: 3, tension: 0.25 }
+      ]};
+      if (chart) chart.destroy();
+      chart = new Chart(document.getElementById("chart"), {
+        type: "line",
+        data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: { legend: { position: "bottom" }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${fmt.format(c.parsed.y)}` } } },
+          scales: { x: { grid: { display: false } }, y: { ticks: { callback: v => fmt.format(v) } } }
+        }
+      });
+    }
+
+    document.getElementById("run").addEventListener("click", runForecast);
+    document.getElementById("reset").addEventListener("click", () => {
+      Object.assign(controls.startLevel, { value: 5600 });
+      Object.assign(controls.returnRate, { value: 7 });
+      Object.assign(controls.volatility, { value: 16 });
+      Object.assign(controls.dividend, { value: 1.4 });
+      Object.assign(controls.horizon, { value: 12 });
+      Object.assign(controls.shock, { value: -8 });
+      Object.assign(controls.paths, { value: 1000 });
+      updateLabels();
+      runForecast();
+    });
+    ids.forEach(id => controls[id].addEventListener("input", updateLabels));
+    updateLabels();
+    runForecast();
+  </script>
+</body>
+</html>
