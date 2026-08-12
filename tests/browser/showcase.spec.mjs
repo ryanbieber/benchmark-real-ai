@@ -20,7 +20,7 @@ const testRun = {
   evaluation: { total: 20 }
 };
 
-test('landing page sorts runs by estimated cost and renders the behavior map', async ({ page }) => {
+test('landing page sorts runs by estimated cost and renders the behavior map', async ({ page, isMobile }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Same task/i })).toBeVisible();
   const plotPrecedesIndex = await page.evaluate(() => Boolean(document.querySelector('#behavior-map').compareDocumentPosition(document.querySelector('#run-index')) & Node.DOCUMENT_POSITION_FOLLOWING));
@@ -29,6 +29,10 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   for (const heading of ['Model', 'Harness', 'Reasoning level', 'Input', 'Cached', 'Output', 'Reasoning tokens', 'Total', 'Time', 'Est. cost ↑']) await expect(page.getByRole('columnheader', { name: heading, exact: true })).toBeVisible();
   await expect(page.locator('.run-row')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#result-count')).toContainText(`${publishedRuns.length}`);
+  const tableViewport = await page.locator('.run-table-wrap').evaluate((element) => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight, maxHeight: getComputedStyle(element).maxHeight }));
+  expect(tableViewport.scrollHeight).toBeGreaterThan(tableViewport.clientHeight);
+  expect(tableViewport.maxHeight).toBe(isMobile ? '430px' : '500px');
+  await expect(page.locator('.run-table thead th').first()).toHaveCSS('position', 'sticky');
   await expect(page.locator('#facet-panel')).not.toHaveAttribute('open', '');
   await page.locator('#facet-panel summary').click();
   await expect(page.locator('#facet-panel')).toHaveAttribute('open', '');

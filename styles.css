@@ -108,9 +108,9 @@ a { color: inherit; }
 .table-filters label { display: grid; gap: 8px; padding: 13px 16px; border-right: 1px solid var(--line); color: var(--muted); font: 500 8px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; }
 .table-filters select { appearance: none; width: 100%; min-width: 0; padding: 4px 24px 2px 0; border: 0; color: var(--ink); background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='m1 1 4 4 4-4' fill='none' stroke='%2310130f'/%3E%3C/svg%3E") right center / 10px 6px no-repeat; font-size: 12px; font-weight: 700; }
 .table-filters .clear-button { min-width: 78px; }
-.run-table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; overscroll-behavior-inline: contain; contain: inline-size paint; border: 1px solid var(--ink); border-top: 0; background: var(--white); }
+.run-table-wrap { width: 100%; max-width: 100%; min-width: 0; max-height: 500px; overflow: auto; overscroll-behavior: contain; contain: inline-size paint; border: 1px solid var(--ink); border-top: 0; background: var(--white); }
 .run-table { width: 100%; min-width: 1370px; border-collapse: collapse; table-layout: fixed; }
-.run-table th { padding: 13px 15px; color: var(--muted); background: var(--paper-deep); border-right: 1px solid var(--line); border-bottom: 1px solid var(--ink); font: 500 8px/1 var(--mono); text-align: left; text-transform: uppercase; letter-spacing: .1em; }
+.run-table th { position: sticky; top: 0; z-index: 2; padding: 13px 15px; color: var(--muted); background: var(--paper-deep); border-right: 1px solid var(--line); border-bottom: 1px solid var(--ink); font: 500 8px/1 var(--mono); text-align: left; text-transform: uppercase; letter-spacing: .1em; }
 .run-table th:nth-child(1) { width: 230px; }
 .run-table th:nth-child(2) { width: 135px; }
 .run-table th:nth-child(3) { width: 105px; }
@@ -297,6 +297,7 @@ footer > div:last-child { display: flex; justify-content: end; gap: 22px; font-s
   .table-filters label { border-right: 0; }
   .table-footer { align-items: start; flex-direction: column; gap: 7px; }
   .run-table-wrap { max-width: calc(100vw - 48px); }
+  .run-table-wrap { max-height: 430px; }
   .hero h1 { font-size: 53px; }
   .hero-lede { font-size: 15px; }
   .hero-actions { align-items: stretch; flex-direction: column; }
