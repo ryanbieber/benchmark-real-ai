@@ -17,6 +17,7 @@
       </a>
       <nav aria-label="Primary navigation">
         <a href="#run-index">Run index</a>
+        <a href="#cost-comparison">Cost</a>
         <a href="#premise">The premise</a>
         <a href="#protocol">Protocol</a>
         <a class="nav-github" href="https://github.com/ryanbieber/benchmark-real-ai">GitHub ↗</a>
@@ -67,14 +68,15 @@
             <thead>
               <tr>
                 <th scope="col">Model</th>
-                <th scope="col">Provider</th>
                 <th scope="col">Harness</th>
-                <th scope="col">Reasoning</th>
-                <th scope="col">Data</th>
-                <th scope="col">Validated</th>
-                <th scope="col">Tokens</th>
-                <th scope="col">Time taken</th>
-                <th scope="col">Run date</th>
+                <th scope="col">Reasoning level</th>
+                <th scope="col">Input</th>
+                <th scope="col">Cached</th>
+                <th scope="col">Output</th>
+                <th scope="col">Reasoning tokens</th>
+                <th scope="col">Total</th>
+                <th scope="col">Time</th>
+                <th scope="col">Est. cost</th>
                 <th scope="col"><span class="visually-hidden">Open artifact</span></th>
               </tr>
             </thead>
@@ -92,8 +94,24 @@
         <div class="table-footer"><span id="result-count">0 runs shown</span><span>Rows open standalone HTML artifacts ↗</span></div>
       </section>
 
+      <section class="cost-section section-shell" id="cost-comparison" aria-labelledby="cost-title">
+        <div class="section-kicker">02 / API-equivalent cost</div>
+        <div class="cost-heading">
+          <div>
+            <h2 id="cost-title">What each run would cost at today’s token rates.</h2>
+            <p>The chart prices every published run from its recorded uncached input, cached input, and output tokens.</p>
+          </div>
+          <div class="cost-total" aria-label="Combined estimated cost">
+            <span>Combined estimate</span>
+            <strong id="combined-cost">—</strong>
+          </div>
+        </div>
+        <div class="cost-chart" id="cost-chart" aria-label="Estimated cost by benchmark run"></div>
+        <div class="pricing-note" id="pricing-note"></div>
+      </section>
+
       <section class="premise section-shell" id="premise" aria-labelledby="premise-title">
-        <div class="section-kicker">02 / The premise</div>
+        <div class="section-kicker">03 / The premise</div>
         <div class="premise-grid">
           <h2 id="premise-title">Judge the finished work, with the conditions attached.</h2>
           <div class="premise-copy">
@@ -111,7 +129,7 @@
 
       <section class="protocol" id="protocol" aria-labelledby="protocol-title">
         <div class="section-shell">
-          <div class="section-kicker light">03 / Recorded facets</div>
+          <div class="section-kicker light">04 / Recorded facets</div>
           <div class="protocol-head">
             <h2 id="protocol-title">Model. Reasoning. Harness. Evidence.</h2>
             <p>A run is a specific model, reasoning setting, and harness combination. Change any one of them and it becomes a different row.</p>
@@ -120,7 +138,7 @@
             <article><span>MODEL</span><h3>Exact identity</h3><p>Provider, model ID, version, and run date.</p></article>
             <article><span>EFFORT</span><h3>Reasoning setting</h3><p>Native value plus a disclosed normalized band.</p></article>
             <article><span>HARNESS</span><h3>Agent environment</h3><p>Name, version, interface, configuration, and tools.</p></article>
-            <article><span>EVIDENCE</span><h3>Validation trail</h3><p>Commands, outcomes, source classification, and repairs.</p></article>
+            <article><span>EVIDENCE</span><h3>Validation trail</h3><p>Commands, outcomes, token usage, elapsed time, source classification, and repairs.</p></article>
           </div>
           <a class="text-link light" href="https://github.com/ryanbieber/benchmark-real-ai/blob/main/AGENTS.md">Read the collection rules <span>↗</span></a>
         </div>

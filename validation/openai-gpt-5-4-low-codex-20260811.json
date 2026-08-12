@@ -1,6 +1,14 @@
 {
   "runId": "openai-gpt-5-4-low-codex-20260811",
   "passed": true,
+  "usageEvidence": {
+    "capturedFrom": "final Codex session token_count event",
+    "inputTokens": 647281,
+    "cachedInputTokens": 572288,
+    "outputTokens": 13160,
+    "reasoningOutputTokens": 2006,
+    "totalTokens": 660441
+  },
   "checks": [
     {
       "name": "artifact-bytes",

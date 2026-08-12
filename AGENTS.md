@@ -34,12 +34,24 @@ Each run must add all of the following:
    - Full provider and model identifiers.
    - Native reasoning setting and normalized reasoning band.
    - Harness name, version, interface, relevant configuration, and enabled capabilities.
-   - UTC timestamps, duration, token usage, and cost when available; use `null` when unavailable.
+   - UTC start and finish timestamps plus wall-clock duration.
+   - Input, cached-input, output, reasoning-output, and total token counts from the harness's final usage event.
+   - Actual billed cost when available; use `null` when the harness does not report it.
    - Data-source classification: `live`, `historical-snapshot`, `synthetic`, or `undocumented`.
    - Artifact paths and SHA-256 hashes.
    - Manual rubric scores and reviewer notes.
 
 Do not guess unavailable metadata.
+
+Cached input is a subset of input, and reasoning output is a subset of output. Therefore `totalTokens` must equal `inputTokens + outputTokens`; never add cached or reasoning tokens again. Preserve the final harness usage event in validation evidence or identify the exact event source.
+
+## Cost comparison
+
+The homepage cost chart is an API-equivalent estimate, not a Codex subscription charge or a claim about the contributor's bill. It must calculate cost from recorded tokens and a dated OpenAI pricing snapshot:
+
+`((inputTokens - cachedInputTokens) × input rate) + (cachedInputTokens × cached rate) + (outputTokens × output rate)`
+
+Divide by the pricing unit recorded in the manifest. Use only official OpenAI pricing, record the retrieval date, service tier, and context band, and never charge reasoning output separately. Add verified current pricing for a new OpenAI model before publishing its run.
 
 ## Repairs
 

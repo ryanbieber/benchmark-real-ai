@@ -7,13 +7,34 @@
     "schemaVersion": { "const": 1 },
     "benchmark": {
       "type": "object",
-      "required": ["name", "goal", "normalizedReasoningBands", "updatedAt"]
+      "required": ["name", "goal", "normalizedReasoningBands", "updatedAt", "pricing"],
+      "properties": {
+        "pricing": {
+          "type": "object",
+          "required": ["currency", "unitTokens", "serviceTier", "contextBand", "retrievedAt", "source", "models"]
+        }
+      }
     },
     "runs": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "status", "provider", "model", "harness", "reasoning", "run", "dataSource", "summary", "artifacts", "validation", "evaluation"]
+        "required": ["id", "status", "provider", "model", "harness", "reasoning", "timestamps", "usage", "run", "dataSource", "summary", "artifacts", "validation", "evaluation"],
+        "properties": {
+          "usage": {
+            "type": "object",
+            "required": ["inputTokens", "cachedInputTokens", "outputTokens", "reasoningOutputTokens", "totalTokens", "source", "actualCostUsd"],
+            "properties": {
+              "inputTokens": { "type": "integer", "minimum": 0 },
+              "cachedInputTokens": { "type": "integer", "minimum": 0 },
+              "outputTokens": { "type": "integer", "minimum": 0 },
+              "reasoningOutputTokens": { "type": "integer", "minimum": 0 },
+              "totalTokens": { "type": "integer", "minimum": 0 },
+              "source": { "type": "string", "minLength": 1 },
+              "actualCostUsd": { "type": ["number", "null"], "minimum": 0 }
+            }
+          }
+        }
       }
     }
   }

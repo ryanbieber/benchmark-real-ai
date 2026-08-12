@@ -1,6 +1,14 @@
 {
   "runId": "openai-gpt-5-4-mini-max-codex-20260812",
   "passed": true,
+  "usageEvidence": {
+    "capturedFrom": "Codex turn.completed usage event",
+    "inputTokens": 3304222,
+    "cachedInputTokens": 3137024,
+    "outputTokens": 76142,
+    "reasoningOutputTokens": 51208,
+    "totalTokens": 3380364
+  },
   "checks": [
     {
       "name": "artifact-bytes",

@@ -10,7 +10,38 @@
       "high",
       "max"
     ],
-    "updatedAt": "2026-08-12T01:33:42Z"
+    "updatedAt": "2026-08-12T01:49:24Z",
+    "pricing": {
+      "currency": "USD",
+      "unitTokens": 1000000,
+      "serviceTier": "standard",
+      "contextBand": "short",
+      "retrievedAt": "2026-08-12",
+      "source": "https://developers.openai.com/api/docs/pricing/",
+      "notes": "API-equivalent estimates use standard short-context rates. Cached input is a subset of input. Reasoning output is a subset of output and is not charged twice.",
+      "models": {
+        "gpt-5.4": {
+          "inputUsd": 2.5,
+          "cachedInputUsd": 0.25,
+          "outputUsd": 15
+        },
+        "gpt-5.4-mini": {
+          "inputUsd": 0.75,
+          "cachedInputUsd": 0.075,
+          "outputUsd": 4.5
+        },
+        "gpt-5.5": {
+          "inputUsd": 5,
+          "cachedInputUsd": 0.5,
+          "outputUsd": 30
+        },
+        "gpt-5.6-luna": {
+          "inputUsd": 0.2,
+          "cachedInputUsd": 0.02,
+          "outputUsd": 1.2
+        }
+      }
+    }
   },
   "runs": [
     {
@@ -57,9 +88,13 @@
         "completedAt": "2026-08-11T22:15:42.200067Z"
       },
       "usage": {
-        "tokens": 66075,
-        "latencyMs": null,
-        "cost": null
+        "inputTokens": 238545,
+        "cachedInputTokens": 197888,
+        "outputTokens": 25418,
+        "reasoningOutputTokens": 11384,
+        "totalTokens": 263963,
+        "source": "Codex session token_count event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "live",
@@ -74,7 +109,7 @@
           "rawResponse": "12f3b30fdb69ce7b2f7b9e9960418ede2e2b052fe325d5fa1f90598e8495f738",
           "originalHtml": "d53206c798ad977232b1a8c21b79133d4a803319c6be61bb713b8ef6f5b8c1cf",
           "displayHtml": "d53206c798ad977232b1a8c21b79133d4a803319c6be61bb713b8ef6f5b8c1cf",
-          "validationEvidence": "79f1ae7ed86f41b8a204c104fb0427039ffef6b1d1a87d56a87486246cc8e6cf"
+          "validationEvidence": "3b80cdb7cfaf83637410bbfe9f9286dc89639917968ccd256d91c8582d6b9ab5"
         },
         "repaired": false,
         "repairLog": null
@@ -153,9 +188,13 @@
         "completedAt": "2026-08-11T23:58:48.970497Z"
       },
       "usage": {
-        "tokens": 662447,
-        "latencyMs": null,
-        "cost": null
+        "inputTokens": 647281,
+        "cachedInputTokens": 572288,
+        "outputTokens": 13160,
+        "reasoningOutputTokens": 2006,
+        "totalTokens": 660441,
+        "source": "Codex session token_count event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "live",
@@ -170,7 +209,7 @@
           "rawResponse": "2446bf5e1d7f859868753345c2b8d2119567ef0fb30564dc13a298d581296a9c",
           "originalHtml": "cbf14dba5998caac9a70131457889480f6646017ab9060712210966fb0b564d1",
           "displayHtml": "cbf14dba5998caac9a70131457889480f6646017ab9060712210966fb0b564d1",
-          "validationEvidence": "a2d502da1d8b9dacc7ba9b5ffb3903b88a9aa13f7bdae760950c6ee080527dd2"
+          "validationEvidence": "1f7d1f9fad490aabbc9482437bc7e3d21af414fcf41f2b85bf6ccd326379211c"
         },
         "repaired": false,
         "repairLog": null
@@ -248,9 +287,13 @@
         "completedAt": "2026-08-11T23:58:45.978Z"
       },
       "usage": {
-        "tokens": 93141,
-        "latencyMs": 8657,
-        "cost": null
+        "inputTokens": 1012302,
+        "cachedInputTokens": 947072,
+        "outputTokens": 27911,
+        "reasoningOutputTokens": 9324,
+        "totalTokens": 1040213,
+        "source": "Codex session token_count event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "historical-snapshot",
@@ -267,7 +310,7 @@
           "rawResponse": "a274a3cce30595a892a8db16199a934f18755c189a66751beb1940cffa80b676",
           "originalHtml": "e27a39f2aa8bcdd7fd7441ce22c670469c9847831c47b1c79b9a4bc7c24328c1",
           "displayHtml": "e27a39f2aa8bcdd7fd7441ce22c670469c9847831c47b1c79b9a4bc7c24328c1",
-          "validationEvidence": "ef42488002eae3ecf8fa4c8db12f9fd73827b9914c80ec02ec87b45769351e56",
+          "validationEvidence": "37dccc455f11a0169482cc8c8accaef8efcc976b5bb6faf8be7ad721451165b5",
           "snapshotCsv": "46798d1b434df99d95b7b85e2bb03fe547d69409ac4ff068834ac8a5d90c98c5",
           "displaySnapshotCsv": "46798d1b434df99d95b7b85e2bb03fe547d69409ac4ff068834ac8a5d90c98c5"
         },
@@ -350,13 +393,13 @@
         "completedAt": "2026-08-12T00:03:16.554Z"
       },
       "usage": {
-        "tokens": 632854,
         "inputTokens": 608482,
         "cachedInputTokens": 551296,
         "outputTokens": 24372,
         "reasoningOutputTokens": 8369,
-        "latencyMs": null,
-        "cost": null
+        "totalTokens": 632854,
+        "source": "Codex turn.completed usage event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "live",
@@ -371,7 +414,7 @@
           "rawResponse": "a5c3f54b51a35a60e670175b1fb8b28ab3732e18692c8feaa253581ecc9d7e75",
           "originalHtml": "2f124be8a3cf5f2cb14dfe811c3ed1bf4e103a8e6953fab63c0f9a0bf383fc35",
           "displayHtml": "2f124be8a3cf5f2cb14dfe811c3ed1bf4e103a8e6953fab63c0f9a0bf383fc35",
-          "validationEvidence": "9f2b1c0727fb0a9b73c9d80fba09c2141fcb755ea3c10712897d53ec94482eed"
+          "validationEvidence": "cb8e978dddc6ba2dba283a70acf073ed1fc8e7c970110d4bff97741322aef1af"
         },
         "repaired": false,
         "repairLog": null
@@ -465,13 +508,13 @@
         "completedAt": "2026-08-12T00:08:13.465083Z"
       },
       "usage": {
-        "tokens": null,
         "inputTokens": 3400343,
         "cachedInputTokens": 3202432,
         "outputTokens": 45517,
         "reasoningOutputTokens": 24840,
-        "latencyMs": null,
-        "cost": null
+        "totalTokens": 3445860,
+        "source": "Codex turn.completed usage event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "live",
@@ -486,7 +529,7 @@
           "rawResponse": "4a6b4c7689e51f1a7786e80297d927b0563c26869ae5edec2e96bd71305b9b3f",
           "originalHtml": "6401e4fb0002561b02aedfdfac210fdf08bac7ff34e7a648559a8ab20f13da5b",
           "displayHtml": "812d2ac6735e0d2dc6953b01e1c2d7ed24d02db690942e37b169a1df0291397d",
-          "validationEvidence": "db234ffeb815cd5add5da0b99fd46107a582f5022490d04d293132e368129882"
+          "validationEvidence": "57d7e202111ab429d387001bc2c5ba3158e6a4ab76a2813b3334ffc8df8e081f"
         },
         "repaired": true,
         "repairLog": "repairs/openai-gpt-5-4-mini-high-codex-20260811.md"
@@ -575,9 +618,13 @@
         "completedAt": "2026-08-12T00:06:55.000Z"
       },
       "usage": {
-        "tokens": 612801,
-        "latencyMs": 9939,
-        "cost": null
+        "inputTokens": 599733,
+        "cachedInputTokens": 515584,
+        "outputTokens": 13068,
+        "reasoningOutputTokens": 3094,
+        "totalTokens": 612801,
+        "source": "Codex turn.completed usage event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "live",
@@ -672,9 +719,13 @@
         "completedAt": "2026-08-12T00:18:35.442431Z"
       },
       "usage": {
-        "tokens": 76142,
-        "latencyMs": null,
-        "cost": null
+        "inputTokens": 3304222,
+        "cachedInputTokens": 3137024,
+        "outputTokens": 76142,
+        "reasoningOutputTokens": 51208,
+        "totalTokens": 3380364,
+        "source": "Codex turn.completed usage event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "live",
@@ -689,7 +740,7 @@
           "rawResponse": "b768fcf643ecc1f766b6d9c9f70f129b93288e16ba860e92b735982e9d8d1996",
           "originalHtml": "26d128fa1c455fd66d9a1ffb75e50f3ded5ccfcdce9eb4f45385f95acf3f58b1",
           "displayHtml": "2d9a705ed5bd7e5aeaca9afe6e4be8a6db6b9b51ac7965ccbfbba017ad19e2e7",
-          "validationEvidence": "096a8cb2c1d8240f9edc210da192547495a1f851ec2d54da0336a7abdc9caff5"
+          "validationEvidence": "52b8ad7395535b4aba8bfba2e8190804668dc9fe49a0eeedbc5ac45af8956c7a"
         },
         "repaired": true,
         "repairLog": "repairs/openai-gpt-5-4-mini-max-codex-20260812.md"
@@ -773,13 +824,13 @@
         "completedAt": "2026-08-12T01:32:45.293990Z"
       },
       "usage": {
-        "tokens": 195859,
         "inputTokens": 191277,
         "cachedInputTokens": 173312,
         "outputTokens": 4133,
         "reasoningOutputTokens": 449,
-        "latencyMs": null,
-        "cost": null
+        "totalTokens": 195410,
+        "source": "Codex turn.completed usage event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "synthetic",
@@ -794,7 +845,7 @@
           "rawResponse": "4a57e9bb9a44fb1b1641a525572f1de59b08065a6683e1e19fdd7b05b1033c12",
           "originalHtml": "0690b336f8e22cfb1b13903c235a372ca30e71e8c7b5786093f25a939698a20d",
           "displayHtml": "0690b336f8e22cfb1b13903c235a372ca30e71e8c7b5786093f25a939698a20d",
-          "validationEvidence": "98b934860021683cab87d0efb0f4247774414580e81dc086666e08cb2fabad8f"
+          "validationEvidence": "06a00acf6b46e964c7471bca755ef8766d32e3113de665a5cb4ff0223901b842"
         },
         "repaired": false,
         "repairLog": null
@@ -883,13 +934,13 @@
         "completedAt": "2026-08-12T01:33:42.023766Z"
       },
       "usage": {
-        "tokens": 420799,
-        "latencyMs": null,
-        "cost": null,
         "inputTokens": 411462,
         "cachedInputTokens": 350720,
         "outputTokens": 9337,
-        "reasoningOutputTokens": 471
+        "reasoningOutputTokens": 471,
+        "totalTokens": 420799,
+        "source": "Codex turn.completed usage event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "synthetic",
@@ -1008,9 +1059,13 @@
         "completedAt": "2026-08-12T01:41:11.728Z"
       },
       "usage": {
-        "tokens": 1809638,
-        "latencyMs": null,
-        "cost": null
+        "inputTokens": 1780834,
+        "cachedInputTokens": 1671168,
+        "outputTokens": 24303,
+        "reasoningOutputTokens": 4501,
+        "totalTokens": 1805137,
+        "source": "Codex turn.completed usage event",
+        "actualCostUsd": null
       },
       "dataSource": {
         "type": "historical-snapshot",
@@ -1025,7 +1080,7 @@
           "rawResponse": "5ba285c6e8afec77390f75c7ab4aca8442b92f7567f4769a73a48b9025d5ffab",
           "originalHtml": "bedc2a07b8a64f4a726c7c0070d5b4dc6489b0d15fb3d29fd2f51feac417d3b0",
           "displayHtml": "bedc2a07b8a64f4a726c7c0070d5b4dc6489b0d15fb3d29fd2f51feac417d3b0",
-          "validationEvidence": "9297759a3183a1d1622ec024bca226cb6480c35612f8c36446691acdcd8ece55",
+          "validationEvidence": "5472225faf3ddb7112a1d05d488610cac317d23c5d000b3fdf17b98519efbb53",
           "sessionLog": "3e4db7b43e0bf6046d2fe1683f35720b673d9a015b77d04ca7c84faa4192c3f4",
           "desktopScreenshot": "6ab8667c9c38c8761f301695610dca7f826147d70605b4faad5160ebcb156842",
           "mobileScreenshot": "25aed507998a46ce2d2d1cc84908059c61baf397756b0606bffd95d5eae92104"
