@@ -101,13 +101,15 @@ a { color: inherit; }
 .run-table-wrap { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; border: 1px solid var(--ink); border-top: 0; background: var(--white); }
 .run-table { width: 100%; min-width: 1050px; border-collapse: collapse; table-layout: fixed; }
 .run-table th { padding: 13px 15px; color: var(--muted); background: var(--paper-deep); border-right: 1px solid var(--line); border-bottom: 1px solid var(--ink); font: 500 8px/1 var(--mono); text-align: left; text-transform: uppercase; letter-spacing: .1em; }
-.run-table th:nth-child(1) { width: 22%; }
-.run-table th:nth-child(2) { width: 13%; }
-.run-table th:nth-child(3) { width: 17%; }
-.run-table th:nth-child(4) { width: 13%; }
-.run-table th:nth-child(5) { width: 12%; }
-.run-table th:nth-child(6) { width: 10%; }
-.run-table th:nth-child(7) { width: 11%; }
+.run-table th:nth-child(1) { width: 20%; }
+.run-table th:nth-child(2) { width: 11%; }
+.run-table th:nth-child(3) { width: 15%; }
+.run-table th:nth-child(4) { width: 11%; }
+.run-table th:nth-child(5) { width: 10%; }
+.run-table th:nth-child(6) { width: 9%; }
+.run-table th:nth-child(7) { width: 8%; }
+.run-table th:nth-child(8) { width: 9%; }
+.run-table th:nth-child(9) { width: 7%; }
 .run-table th:last-child { width: 42px; border-right: 0; }
 .run-table td { height: 78px; padding: 14px 15px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 11px; vertical-align: middle; }
 .run-table td:last-child { border-right: 0; }
@@ -198,7 +200,9 @@ footer > div:last-child { display: flex; justify-content: end; gap: 22px; font-s
   .run-table th:nth-child(2), .run-table td:nth-child(2),
   .run-table th:nth-child(5), .run-table td:nth-child(5),
   .run-table th:nth-child(6), .run-table td:nth-child(6),
-  .run-table th:nth-child(7), .run-table td:nth-child(7) { display: none; }
+  .run-table th:nth-child(7), .run-table td:nth-child(7),
+  .run-table th:nth-child(8), .run-table td:nth-child(8),
+  .run-table th:nth-child(9), .run-table td:nth-child(9) { display: none; }
   .run-table th, .run-table td { padding-inline: 10px; }
   .premise-grid, .protocol-head { display: grid; grid-template-columns: 1fr; gap: 30px; }
   .clear-button { min-height: 38px; }
