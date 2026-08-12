@@ -296,6 +296,123 @@
         ]
       },
       "summary": "Codex CLI completed a standalone HTML S&P 500 dashboard in a fresh temp workspace, repaired the data path to use a same-origin FRED snapshot CSV and fixed NaN-producing forecast math, validated the final result in headless Chrome, and preserved matching original/display HTML plus the snapshot CSV without any extra import-time repair."
+    },
+    {
+      "id": "openai-gpt-5-4-high-codex-20260811",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.4",
+        "name": "gpt-5.4",
+        "version": "gpt-5.4"
+      },
+      "reasoning": {
+        "native": "high",
+        "normalized": "high"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai.aK0gP7",
+          "ignoreUserConfig": true,
+          "ignoreRules": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.4",
+          "reasoningLevelConfigAttempt": "high",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonOutput": true,
+          "outputLastMessage": true,
+          "sessionCompHash": "2911"
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-11T23:54:38.548Z",
+        "finishedAt": "2026-08-12T00:03:16.554Z",
+        "durationSeconds": 518.007
+      },
+      "run": {
+        "completedAt": "2026-08-12T00:03:16.554Z"
+      },
+      "usage": {
+        "tokens": 632854,
+        "inputTokens": 608482,
+        "cachedInputTokens": 551296,
+        "outputTokens": 24372,
+        "reasoningOutputTokens": 8369,
+        "latencyMs": null,
+        "cost": null
+      },
+      "dataSource": {
+        "type": "live",
+        "notes": "The benchmark run fetched the live FRED SP500 CSV, then bundled the resulting 2016-08-11 through 2026-08-10 history into the final dashboard."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-4-high-codex-20260811.md",
+        "originalHtml": "runs/original/openai-gpt-5-4-high-codex-20260811.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-4-high-codex-20260811.html",
+        "validationEvidence": "validation/openai-gpt-5-4-high-codex-20260811.json",
+        "sha256": {
+          "rawResponse": "a5c3f54b51a35a60e670175b1fb8b28ab3732e18692c8feaa253581ecc9d7e75",
+          "originalHtml": "2f124be8a3cf5f2cb14dfe811c3ed1bf4e103a8e6953fab63c0f9a0bf383fc35",
+          "displayHtml": "2f124be8a3cf5f2cb14dfe811c3ed1bf4e103a8e6953fab63c0f9a0bf383fc35",
+          "validationEvidence": "9f2b1c0727fb0a9b73c9d80fba09c2141fcb755ea3c10712897d53ec94482eed"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 22,
+        "reviewer": "Codex",
+        "notes": "The result fully satisfies the task with strong controls, explicit backtesting, and clear uncertainty framing, but the forecasting methods remain deliberately simple and the standalone page relies on a preserved sibling Plotly bundle."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML hashes matched exactly; no repair was required."
+          },
+          {
+            "name": "benchmark-validation-script",
+            "passed": true,
+            "details": "The benchmark workspace validation script ran in headless Chrome, confirmed the default Holt scenario, switched interactively to the drift scenario, and captured a screenshot."
+          },
+          {
+            "name": "benchmark-dom-ready-state",
+            "passed": true,
+            "details": "The benchmark run's headless Chrome DOM dump showed the dashboard loaded through 2026-08-10 with a true ready state and forecast metrics present."
+          },
+          {
+            "name": "repository-tests",
+            "passed": true,
+            "details": "After import, npm validation and the Playwright/browser test suite passed in the repository."
+          },
+          {
+            "name": "repository-row-open",
+            "passed": true,
+            "details": "A real browser run against the local homepage clicked the new gpt-5.4 high row, opened the rendered dashboard, and observed readyFlag=true."
+          }
+        ]
+      },
+      "summary": "Codex CLI completed a standalone S&P 500 forecasting dashboard in a fresh temp workspace, fetched live FRED history, fixed a holiday-labeling issue during its own validation loop, and published identical original and displayed HTML without a repository-side repair."
     }
   ]
 }
