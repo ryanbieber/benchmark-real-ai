@@ -11,7 +11,7 @@
       "xhigh",
       "max"
     ],
-    "updatedAt": "2026-08-12T13:24:54Z",
+    "updatedAt": "2026-08-12T17:53:49Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -2033,6 +2033,126 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-luna at max reasoning in a fresh temporary workspace, fetched FRED S&P 500 history, produced a self-contained interactive forecast dashboard with rolling holdout validation and CSV upload, and imported byte-identical original and displayed artifacts without a rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-6-terra-high-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-terra",
+        "name": "gpt-5.6-terra",
+        "version": "gpt-5.6-terra"
+      },
+      "reasoning": {
+        "native": "high",
+        "normalized": "high"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/codex-benchmark-gpt-5-6-terra-high-HeoXF1",
+          "ignoreUserConfig": false,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-terra",
+          "reasoningLevel": "high",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "jsonEvents": true,
+          "promptSource": "argv",
+          "outputLastMessage": true,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "local-http-server",
+          "in-app-browser-control (attempted; no target available)"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T17:50:26.637Z",
+        "finishedAt": "2026-08-12T17:53:49.806Z",
+        "durationSeconds": 203.169
+      },
+      "run": {
+        "threadId": "019ff718-c8c9-7613-9772-077272f439dd",
+        "completedAt": "2026-08-12T17:53:49.806Z",
+        "timeToFirstTokenMs": 4757,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 388030,
+        "cachedInputTokens": 354048,
+        "outputTokens": 9721,
+        "reasoningOutputTokens": 1881,
+        "totalTokens": 397751,
+        "source": "Codex session token_count event in validation/openai-gpt-5-6-terra-high-codex-20260812.json",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The original dashboard labels its data as a generated illustration/sample data and generates a deterministic series in the embedded script; no market-data request was made during the benchmark run."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-terra-high-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-terra-high-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-terra-high-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-6-terra-high-codex-20260812.json",
+        "sha256": {
+          "rawResponse": "b48f8a57cf40b74a5e26d8a121c77b2ea109e7e35ebbc2d7af47d16c6e452d09",
+          "originalHtml": "d48edb434c504cf774cf43bf63f49b8a5fa7aefb29a7d875037dc1b1e92549c1",
+          "displayHtml": "d48edb434c504cf774cf43bf63f49b8a5fa7aefb29a7d875037dc1b1e92549c1",
+          "validationEvidence": "da258dc9e82443f58b70852519b4ab617db1b301efc3e8f77fa6aae39a4b3565"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 3
+        },
+        "total": 18,
+        "reviewer": "Codex",
+        "notes": "The original artifact presents a complete standalone scenario dashboard with adjustable method, horizon, lookback, volatility, confidence, chart hover, and checkpoint table. Its deterministic illustrative series and basic drift/volatility model are clearly disclosed, so it is a useful educational demonstration rather than market forecasting. Technical robustness is reduced by the absence of a completed visual browser run; the benchmark nevertheless passed its HTTP and JavaScript syntax checks."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-embedded-javascript-syntax",
+            "passed": true,
+            "details": "The benchmark run's inline JavaScript passed node --check."
+          },
+          {
+            "name": "benchmark-local-http-delivery",
+            "passed": true,
+            "details": "The benchmark run's local HTTP server returned HTTP 200 for index.html."
+          },
+          {
+            "name": "benchmark-interactive-controls-present",
+            "passed": true,
+            "details": "The served original contained the forecast controls, chart hit target, and script."
+          },
+          {
+            "name": "benchmark-in-app-browser-automation",
+            "passed": false,
+            "details": "No in-app browser target was available; this limitation is disclosed in the visible final response and validation evidence."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML SHA-256 hashes match exactly; no rendering repair was required."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-terra at high reasoning in a fresh temporary workspace, built a self-contained interactive S&P 500 scenario dashboard from deterministic illustrative data, passed local HTTP and JavaScript syntax checks, and imported byte-identical original and displayed artifacts without a rendering repair."
     }
   ]
 }

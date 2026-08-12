@@ -66,7 +66,7 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   expect(lunaReasoningOrder).toEqual(['low', 'medium', 'high', 'xhigh', 'max']);
   await expect(page.locator('#cost-chart')).toContainText('Total tokens');
   await expect(page.locator('#premise, #protocol')).toHaveCount(0);
-  await expect(page.locator('#combined-cost')).toHaveText('$7.45');
+  await expect(page.locator('#combined-cost')).toHaveText('$7.71');
   await expect(page.locator('#pricing-note')).toContainText('not actual Codex subscription charges');
   await expect(page.getByRole('heading', { name: 'Cost versus token volume' })).toBeVisible();
   await expect(page.locator('.tradeoff-point')).toHaveCount(publishedRuns.length);
