@@ -9,7 +9,7 @@
     "timeToFirstTokenMs": null
   },
   "usage": {
-    "totalTokens": 1809638,
+    "totalTokens": 1805137,
     "inputTokens": 1780834,
     "cachedInputTokens": 1671168,
     "outputTokens": 24303,

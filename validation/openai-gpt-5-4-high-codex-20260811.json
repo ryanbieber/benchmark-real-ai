@@ -1,6 +1,14 @@
 {
   "runId": "openai-gpt-5-4-high-codex-20260811",
   "passed": true,
+  "usageEvidence": {
+    "capturedFrom": "Codex turn.completed usage event",
+    "inputTokens": 608482,
+    "cachedInputTokens": 551296,
+    "outputTokens": 24372,
+    "reasoningOutputTokens": 8369,
+    "totalTokens": 632854
+  },
   "checks": [
     {
       "name": "artifact-bytes",

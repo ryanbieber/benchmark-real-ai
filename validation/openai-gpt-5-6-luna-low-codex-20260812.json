@@ -1,6 +1,14 @@
 {
   "promptExact": true,
   "passed": true,
+  "usageEvidence": {
+    "capturedFrom": "Codex turn.completed usage event",
+    "inputTokens": 191277,
+    "cachedInputTokens": 173312,
+    "outputTokens": 4133,
+    "reasoningOutputTokens": 449,
+    "totalTokens": 195410
+  },
   "checks": [
     {
       "name": "http-render",

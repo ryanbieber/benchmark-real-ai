@@ -8,6 +8,7 @@ const exactGoal = 'I want to forecast the sp500, show me how to do it in an inte
 const scoreKeys = ['taskFulfillment', 'interactivityUsability', 'forecastingMethodology', 'uncertaintyHonesty', 'technicalRobustness'];
 const reasoningBands = new Set(['default', 'low', 'medium', 'high', 'max']);
 const dataTypes = new Set(['live', 'historical-snapshot', 'synthetic', 'undocumented']);
+const usageKeys = ['inputTokens', 'cachedInputTokens', 'outputTokens', 'reasoningOutputTokens', 'totalTokens'];
 
 function safePath(relativePath) {
   if (typeof relativePath !== 'string' || !relativePath || relativePath.startsWith('/') || relativePath.includes('\\')) return null;
@@ -24,6 +25,13 @@ export function validateManifest(manifest) {
   const ids = new Set();
   if (manifest.schemaVersion !== 1) errors.push('schemaVersion must be 1');
   if (manifest.benchmark?.goal !== exactGoal) errors.push('benchmark goal must match the exact prompt in AGENTS.md');
+  const pricing = manifest.benchmark?.pricing;
+  if (!pricing || pricing.currency !== 'USD' || !Number.isFinite(pricing.unitTokens) || pricing.unitTokens <= 0) {
+    errors.push('benchmark pricing must declare USD and a positive token unit');
+  }
+  if (pricing?.serviceTier !== 'standard' || pricing?.contextBand !== 'short') errors.push('benchmark pricing must disclose the standard short-context rate band');
+  if (!/^https:\/\/developers\.openai\.com\//.test(pricing?.source || '')) errors.push('benchmark pricing source must be an official OpenAI Developers URL');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(pricing?.retrievedAt || '')) errors.push('benchmark pricing must include a YYYY-MM-DD retrieval date');
   if (!Array.isArray(manifest.runs)) return ['runs must be an array'];
 
   manifest.runs.forEach((run, index) => {
@@ -38,6 +46,27 @@ export function validateManifest(manifest) {
     if (!run.reasoning?.native || !reasoningBands.has(run.reasoning?.normalized)) errors.push(`${label}: native and valid normalized reasoning values are required`);
     if (!dataTypes.has(run.dataSource?.type)) errors.push(`${label}: invalid data-source classification`);
     if (!run.summary) errors.push(`${label}: summary is required`);
+
+    const startedAt = Date.parse(run.timestamps?.startedAt);
+    const finishedAt = Date.parse(run.timestamps?.finishedAt);
+    if (!Number.isFinite(startedAt) || !Number.isFinite(finishedAt) || finishedAt < startedAt) errors.push(`${label}: valid ordered UTC timestamps are required`);
+    if (!Number.isFinite(run.timestamps?.durationSeconds) || run.timestamps.durationSeconds < 0) errors.push(`${label}: non-negative durationSeconds is required`);
+
+    const usage = run.usage || {};
+    usageKeys.forEach((key) => {
+      if (!Number.isInteger(usage[key]) || usage[key] < 0) errors.push(`${label}: usage.${key} must be a non-negative integer`);
+    });
+    if (Number.isInteger(usage.cachedInputTokens) && Number.isInteger(usage.inputTokens) && usage.cachedInputTokens > usage.inputTokens) errors.push(`${label}: cached input tokens cannot exceed input tokens`);
+    if (Number.isInteger(usage.reasoningOutputTokens) && Number.isInteger(usage.outputTokens) && usage.reasoningOutputTokens > usage.outputTokens) errors.push(`${label}: reasoning output tokens cannot exceed output tokens`);
+    if (Number.isInteger(usage.totalTokens) && Number.isInteger(usage.inputTokens) && Number.isInteger(usage.outputTokens) && usage.totalTokens !== usage.inputTokens + usage.outputTokens) errors.push(`${label}: total tokens must equal input plus output; cached and reasoning tokens are subsets`);
+    if (!usage.source) errors.push(`${label}: token usage source is required`);
+    if (usage.actualCostUsd !== null && (!Number.isFinite(usage.actualCostUsd) || usage.actualCostUsd < 0)) errors.push(`${label}: actualCostUsd must be null or a non-negative number`);
+
+    const modelRates = pricing?.models?.[run.model?.id];
+    if (!modelRates) errors.push(`${label}: current pricing is required for model ${run.model?.id || 'unknown'}`);
+    else ['inputUsd', 'cachedInputUsd', 'outputUsd'].forEach((key) => {
+      if (!Number.isFinite(modelRates[key]) || modelRates[key] < 0) errors.push(`${label}: pricing ${run.model.id}.${key} must be a non-negative number`);
+    });
 
     const artifacts = run.artifacts || {};
     const artifactKeys = ['rawResponse', 'originalHtml', 'displayHtml', 'validationEvidence'];

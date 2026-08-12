@@ -19,7 +19,7 @@ Use two separate Codex sessions. Do not run the benchmark session from inside th
 
 1. Create and open a fresh, empty workspace.
 2. Select the model and reasoning level you want to test.
-3. Record the model, reasoning level, Codex version, and enabled capabilities.
+3. Record the model, reasoning level, Codex version, and enabled capabilities. Retain the final Codex `token_count` or `turn.completed` usage event.
 4. Paste only this exact prompt:
 
 ```text
@@ -33,7 +33,7 @@ Do not mention this repository and do not send follow-up instructions. Let the m
 Open a new Codex session inside a clone of this repository, then paste the following prompt after replacing the bracketed path:
 
 ```text
-Import the completed benchmark run from [PATH TO THE FRESH WORKSPACE] into this repository. Follow AGENTS.md exactly. Preserve the original artifact, record the model, reasoning level, Codex harness version and capabilities, add validation evidence, update data/runs.json, run all tests, and open a pull request. Do not alter the dashboard except for explicitly documented rendering repairs.
+Import the completed benchmark run from [PATH TO THE FRESH WORKSPACE] into this repository. Follow AGENTS.md exactly. Preserve the original artifact; record the model, reasoning level, Codex harness version and capabilities; recover the final input, cached-input, output, reasoning-output, and total token counts plus start time, finish time, and wall-clock duration from the harness events; add validation evidence; update data/runs.json; run all tests; and open a pull request. Remember that cached input is part of input, reasoning output is part of output, and total tokens equal input plus output. Do not alter the dashboard except for explicitly documented rendering repairs.
 ```
 
 The import session may organize and document the result, but it must not improve the benchmark artifact.
@@ -48,7 +48,16 @@ Use a stable lowercase run ID such as `provider-model-reasoning-harness-yyyymmdd
 - `validation/<id>.json` — structured validation evidence.
 - `repairs/<id>.md` — required only when the displayed artifact differs from the original.
 
-Add the corresponding object to `data/runs.json`. Use `null` for facts the harness did not report. Never estimate tokens, cost, or latency.
+Add the corresponding object to `data/runs.json`. Use `null` for facts the harness did not report. Never estimate measured token counts, actual billed cost, or latency. Homepage cost figures are separately derived from the dated official pricing snapshot and must be labeled API-equivalent estimates.
+
+For Codex JSONL, use the final cumulative `token_count` event's `total_token_usage` or the CLI JSON stream's `turn.completed.usage`. Record:
+
+- `inputTokens`
+- `cachedInputTokens`
+- `outputTokens`
+- `reasoningOutputTokens`
+- `totalTokens`, which must equal input plus output
+- `source`, naming the event used
 
 ## Review
 
