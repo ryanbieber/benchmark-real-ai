@@ -1,0 +1,200 @@
+{
+  "runId": "openai-gpt-5-5-medium-codex-20260812",
+  "workspace": "/home/carnufex/Documents/Codex/bench-temp/benchmark-real-ai-gpt-5.5-medium-5z8yiB",
+  "isolatedCodexHome": "/home/carnufex/Documents/Codex/bench-temp/codex-bench-home-gpt-5.5-medium-lKJVIg",
+  "timestamps": {
+    "startedAt": "2026-08-12T01:30:51.834Z",
+    "finishedAt": "2026-08-12T01:41:11.728Z",
+    "durationMs": 619894,
+    "timeToFirstTokenMs": null
+  },
+  "usage": {
+    "totalTokens": 1809638,
+    "inputTokens": 1780834,
+    "cachedInputTokens": 1671168,
+    "outputTokens": 24303,
+    "reasoningOutputTokens": 4501,
+    "cost": null
+  },
+  "harness": {
+    "command": "CODEX_HOME=\"$BENCH_HOME\" codex --search -a never exec --json --ignore-user-config --skip-git-repo-check -C \"$BENCH_WS\" -m \"gpt-5.5\" -c \"model_reasoning_effort=\\\"medium\\\"\" -s danger-full-access -o \"$BENCH_WS/final-response.md\" \"I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.\"",
+    "version": "codex-cli 0.144.4",
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "local-browser-validation"
+    ]
+  },
+  "dataSource": {
+    "type": "historical-snapshot",
+    "source": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500",
+    "notes": "The benchmark run fetched the FRED SP500 daily series by command line and embedded a 1,500-row snapshot in the final HTML. The final browser-displayed source badge is `Embedded FRED snapshot`; the page also contains an optional live FRED CSV refresh path that falls back when browser CORS blocks it."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "tooling-node",
+        "command": "node --version",
+        "exitCode": 0,
+        "result": "v22.22.2"
+      },
+      {
+        "name": "tooling-browser",
+        "command": "which chromium || which chromium-browser || which google-chrome || which google-chrome-stable || which playwright",
+        "exitCode": 0,
+        "result": "/usr/bin/google-chrome"
+      },
+      {
+        "name": "tooling-npm",
+        "command": "npm --version",
+        "exitCode": 0,
+        "result": "10.9.7"
+      },
+      {
+        "name": "initial-dom-render",
+        "command": "google-chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8000/index.html | rg -n \"Forecast close|Data source|Offline sample|Stooq daily|NaN|undefined|Loading market\"",
+        "exitCode": 0,
+        "result": "Rendered the early page and observed the offline sample fallback path."
+      },
+      {
+        "name": "stooq-fetch-attempt",
+        "command": "curl -L --max-time 20 'https://stooq.com/q/d/l/?s=%5Espx&i=d' | tail -900 > /tmp/spx_tail.csv && wc -l /tmp/spx_tail.csv && head -3 /tmp/spx_tail.csv && tail -3 /tmp/spx_tail.csv",
+        "exitCode": 0,
+        "result": "Returned a JavaScript verification page instead of CSV data, so it was not used as the final source."
+      },
+      {
+        "name": "yahoo-fetch-attempt",
+        "command": "curl -L --max-time 20 'https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=5y&interval=1d' | head -c 500",
+        "exitCode": 0,
+        "result": "Returned `Edge: Too Many Requests`, so it was not used as the final source."
+      },
+      {
+        "name": "fred-tail",
+        "command": "curl -L --max-time 20 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500' | tail -5",
+        "exitCode": 0,
+        "result": "Confirmed FRED rows through `2026-08-11,7728.20`."
+      },
+      {
+        "name": "cors-mirror-check",
+        "command": "node -e \"fetch('https://api.allorigins.win/raw?url=https%3A%2F%2Ffred.stlouisfed.org%2Fgraph%2Ffredgraph.csv%3Fid%3DSP500').then(r=>r.text()).then(t=>console.log(t.slice(0,120))).catch(e=>{console.error(e); process.exit(1)})\"",
+        "exitCode": 0,
+        "result": "Returned a protection page, so the mirror was not reliable enough to be the final data path."
+      },
+      {
+        "name": "embed-fred-snapshot",
+        "command": "curl -L --max-time 20 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500' -o /tmp/fred_sp500.csv && node ...",
+        "exitCode": 0,
+        "result": "Embedded 1,500 recent FRED observations plus header; last row was `2026-08-11,7728.20`."
+      },
+      {
+        "name": "nan-detection-before-parser-fix",
+        "command": "google-chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8000/index.html | rg -n \"Embedded FRED snapshot|7,728.2|Aug 11, 2026|NaN|undefined|Loading market\"",
+        "exitCode": 0,
+        "result": "Validation caught `NaN` values caused by blank FRED holiday rows before the benchmark run fixed its parser."
+      },
+      {
+        "name": "desktop-screenshot-final",
+        "command": "google-chrome --headless=new --disable-gpu --no-sandbox --window-size=1440,1000 --virtual-time-budget=8000 --screenshot=dashboard.png http://127.0.0.1:8000/index.html && file dashboard.png",
+        "exitCode": 0,
+        "result": "`dashboard.png` is a 1440 x 1000 PNG."
+      },
+      {
+        "name": "dom-final-no-bad-values",
+        "command": "google-chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8000/index.html | rg -n \"Embedded FRED snapshot|7,728.2|Aug 11, 2026|NaN|undefined|Loading market\"",
+        "exitCode": 0,
+        "result": "Matched the embedded snapshot, last close, and date; no rendered `NaN` or `undefined` values remained."
+      },
+      {
+        "name": "interaction-check-linear",
+        "command": "Chrome DevTools Protocol script changed model to linear and horizon to 126.",
+        "exitCode": 0,
+        "result": "Source `Embedded FRED snapshot`, forecast changed from `9,244.38` to `8,296.37`, 14 rows, no bad text."
+      },
+      {
+        "name": "interaction-check-moving-nonblank-canvas",
+        "command": "Chrome DevTools Protocol script changed model to moving and confidence to 90, then sampled the whole chart canvas.",
+        "exitCode": 0,
+        "result": "Forecast `8,792.84`, band `6,865.84 - 11,260.67`, 13 rows, no bad text, 5,793 colored canvas samples."
+      },
+      {
+        "name": "mobile-emulation-final",
+        "command": "Chrome DevTools Protocol script with Emulation.setDeviceMetricsOverride width 390 height 900 and Page.captureScreenshot.",
+        "exitCode": 0,
+        "result": "Source `Embedded FRED snapshot`, close `7,728.2`, no bad text, innerWidth 390, scrollWidth 390, single-column metrics, screenshot 390 x 900 PNG."
+      },
+      {
+        "name": "server-head",
+        "command": "curl -I --max-time 5 http://127.0.0.1:8000/index.html",
+        "exitCode": 0,
+        "result": "Local server returned `HTTP/1.0 200 OK` and `Content-Length: 60331`."
+      }
+    ],
+    "warnings": [
+      "The fresh benchmark workspace was intentionally not a git repository, so the final `git status --short` command exited 128.",
+      "Headless Chrome emitted non-fatal GPU/GCM/TensorFlow Lite messages during screenshot and DevTools validation.",
+      "The benchmark run found and fixed its own parser/layout issues before completion; these are not import repairs."
+    ],
+    "observedOutputs": {
+      "datasetCoverage": {
+        "start": "2020-11-11",
+        "end": "2026-08-11",
+        "latestClose": 7728.2,
+        "embeddedRowsIncludingHeader": 1501
+      },
+      "defaultDashboardMetrics": {
+        "forecastHorizonTradingDays": null,
+        "projectedEnd": "9,244.38",
+        "rmse": null,
+        "mapePercent": null,
+        "directionHitRatePercent": null
+      },
+      "interactionMetrics": {
+        "movingForecast": "8,792.84",
+        "movingBand": "6,865.84 - 11,260.67",
+        "coloredCanvasSamples": 5793
+      }
+    }
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "npm-install",
+        "command": "npm install",
+        "exitCode": 0,
+        "result": "Installed/audited dependencies successfully; 0 vulnerabilities reported."
+      },
+      {
+        "name": "manifest-validate",
+        "command": "npm run validate",
+        "exitCode": 0,
+        "result": "Manifest valid: 10 runs checked."
+      },
+      {
+        "name": "full-test-suite",
+        "command": "npm test",
+        "exitCode": 0,
+        "result": "Repository validation, unit tests, and Playwright browser tests passed on the rebased branch: 5 passed, 1 skipped."
+      },
+      {
+        "name": "row-open-check",
+        "command": "Serve repository at http://127.0.0.1:4321/, click the `gpt-5.5` / `medium` / `Historical Snapshot` table row, and inspect the opened artifact with Playwright.",
+        "exitCode": 0,
+        "result": "Opened `http://127.0.0.1:4321/runs/rendered/openai-gpt-5-5-medium-codex-20260812.html`; title `S&P 500 Forecast`, source `Embedded FRED snapshot`, close `7,728.2`, date `Aug 11, 2026`, no `NaN` or `undefined` text."
+      }
+    ],
+    "result": "Repository checks passed on the rebased branch and the new table row opens the standalone dashboard directly."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-5-medium-codex-20260812.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-5-medium-codex-20260812.html",
+    "responseRecord": "responses/openai-gpt-5-5-medium-codex-20260812.md",
+    "validationEvidence": "validation/openai-gpt-5-5-medium-codex-20260812.json",
+    "sessionLog": "validation/openai-gpt-5-5-medium-codex-20260812.session.jsonl",
+    "screenshots": [
+      "validation/openai-gpt-5-5-medium-codex-20260812-dashboard.png",
+      "validation/openai-gpt-5-5-medium-codex-20260812-dashboard-mobile.png"
+    ]
+  },
+  "unresolvedFailures": []
+}
