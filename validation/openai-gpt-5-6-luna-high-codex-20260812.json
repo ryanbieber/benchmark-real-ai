@@ -1,0 +1,112 @@
+{
+  "runId": "openai-gpt-5-6-luna-high-codex-20260812",
+  "prompt": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+  "workspace": {
+    "path": "/tmp/benchmark-real-ai-gpt-5.6-luna-high-clean-olV3yX",
+    "emptyBeforeLaunch": true,
+    "repositoryContextProvided": false,
+    "followUpInstructionsProvided": false
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "model": "gpt-5.6-luna",
+    "nativeReasoning": "high",
+    "normalizedReasoning": "high",
+    "configuration": {
+      "ignoreUserConfig": true,
+      "skipGitRepoCheck": true,
+      "sandbox": "danger-full-access",
+      "approvalPolicy": "never",
+      "webSearch": true,
+      "jsonEvents": true,
+      "normalToolsEnabled": true
+    },
+    "capabilities": ["shell", "file-editing", "web-search", "local-browser-validation"]
+  },
+  "timestamps": {
+    "startedAt": "2026-08-12T03:14:44.847013204Z",
+    "finishedAt": "2026-08-12T03:21:25.530647855Z",
+    "durationSeconds": 400.682621
+  },
+  "usage": {
+    "inputTokens": 515423,
+    "cachedInputTokens": 481024,
+    "outputTokens": 19014,
+    "reasoningOutputTokens": 2823,
+    "totalTokens": 534437,
+    "source": "validation/openai-gpt-5-6-luna-high-codex-20260812.session.jsonl final turn.completed usage event",
+    "actualCostUsd": null
+  },
+  "dataSource": {
+    "type": "synthetic",
+    "notes": "The dashboard visibly labels the default as deterministic demo data. It supports CSV upload for user-supplied S&P 500 history; no external market-data source was fetched or bundled by the run."
+  },
+  "commands": [
+    {
+      "command": "google-chrome --headless --no-sandbox --disable-gpu --dump-dom file:///tmp/benchmark-real-ai-gpt-5.6-luna-high-clean-olV3yX/dashboard.html",
+      "result": "passed: populated source label, hero price, SVG chart, and base forecast metric; Chrome stderr was clean"
+    },
+    {
+      "command": "google-chrome --headless --no-sandbox --disable-gpu --window-size=1440,1000 --screenshot=/tmp/market-lens-dashboard.png file:///tmp/benchmark-real-ai-gpt-5.6-luna-high-clean-olV3yX/dashboard.html",
+      "result": "passed: 1440x1000 PNG captured"
+    },
+    {
+      "command": "Chrome CDP interaction smoke test against dashboard.html",
+      "result": "passed: initial render, 12-month horizon, trend model, and 5-year lookback updated the DOM; final check reported CDP smoke: OK"
+    },
+    {
+      "command": "CSV import validation in the benchmark session",
+      "result": "passed: daily-to-monthly aggregation was implemented and included in the final dashboard"
+    }
+  ],
+  "checks": [
+    {
+      "name": "clean-workspace-and-exact-prompt",
+      "passed": true,
+      "details": "The model saw only the empty temporary workspace and received the exact benchmark prompt once."
+    },
+    {
+      "name": "benchmark-render",
+      "passed": true,
+      "details": "Headless Chrome rendered the final HTML with populated metrics and SVG chart."
+    },
+    {
+      "name": "benchmark-browser-validation",
+      "passed": true,
+      "details": "The final Chrome CDP smoke test passed after an intermediate selector mistake was corrected in-session."
+    },
+    {
+      "name": "artifact-bytes",
+      "passed": true,
+      "details": "Original and displayed dashboard HTML SHA-256 hashes match; no import-time rendering repair was required."
+    },
+    {
+      "name": "data-source-disclosure",
+      "passed": true,
+      "details": "The final dashboard labels its default as deterministic demo data and explains CSV upload for real history."
+    },
+    {
+      "name": "repository-checks",
+      "passed": true,
+      "details": "npm run validate passed for 14 runs; npm test passed 4 unit tests and 5 browser tests with 1 expected mobile-only skip."
+    },
+    {
+      "name": "published-row-open",
+      "passed": true,
+      "details": "Playwright served the repository at http://127.0.0.1:4321/, clicked the gpt-5.6-luna High row, and opened runs/rendered/openai-gpt-5-6-luna-high-codex-20260812/dashboard.html with title Market Lens — S&P 500 Forecast and visible S&P 500 content."
+    },
+    {
+      "name": "in-app-browser",
+      "passed": false,
+      "details": "The in-app browser connector reported no available browser targets; repository Playwright/Chromium validation was used for the local row-open confirmation."
+    }
+  ],
+  "artifacts": {
+    "sessionLog": "validation/openai-gpt-5-6-luna-high-codex-20260812.session.jsonl",
+    "screenshot": null,
+    "intermediateFailedCheck": "An earlier CDP check used selectors not present in the final dashboard and failed with a null textContent lookup; the model corrected the check and the final control-path test passed."
+  },
+  "notes": "This evidence preserves the final turn usage event and visible validation outcomes. Actual billed cost was not reported by the Codex harness and is recorded as null. The in-app browser connector was unavailable, so the repository's declared Playwright/Chromium test path confirmed the actual published row-open behavior."
+}

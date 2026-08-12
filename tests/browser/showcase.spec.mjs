@@ -37,7 +37,7 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   expect(costs).toEqual([...costs].sort((a, b) => a - b));
   await expect(page.getByRole('heading', { name: /What each run would cost/i })).toBeVisible();
   await expect(page.locator('.cost-row')).toHaveCount(publishedRuns.length);
-  await expect(page.locator('#combined-cost')).toHaveText('$7.18');
+  await expect(page.locator('#combined-cost')).toHaveText('$7.22');
   await expect(page.locator('#pricing-note')).toContainText('not actual Codex subscription charges');
   await expect(page.getByRole('heading', { name: 'Cost versus observed outcome' })).toBeVisible();
   await expect(page.locator('.tradeoff-point')).toHaveCount(publishedRuns.length);

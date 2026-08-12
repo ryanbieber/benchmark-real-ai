@@ -1528,6 +1528,143 @@
       "evaluation": { "scores": { "taskFulfillment": 4, "interactivityUsability": 4, "forecastingMethodology": 3, "uncertaintyHonesty": 4, "technicalRobustness": 4 }, "total": 19, "reviewer": "Codex", "notes": "The original artifact is a polished self-contained interactive dashboard with controls, hover chart, CSV import, uncertainty range, and clear disclaimer. Its default history is synthetic and methods are simple heuristics." },
       "validation": { "passed": true, "checks": [ { "name": "artifact-bytes", "passed": true, "details": "Original and rendered HTML SHA-256 hashes match; no rendering repair was required." }, { "name": "embedded-javascript-syntax", "passed": true, "details": "The benchmark run parsed the embedded script with Node's Function constructor." }, { "name": "headless-chrome", "passed": true, "details": "Headless Chrome rendered populated forecast metrics and reported a clean browser console." }, { "name": "interactive-control-path", "passed": true, "details": "The benchmark run completed a final interactive-control-path check." }, { "name": "published-artifact-smoke-test", "passed": true, "details": "The landing page rendered gpt-5.6-terra and its standalone artifact returned HTTP 200." } ] },
       "summary": "Codex CLI ran gpt-5.6-terra at medium reasoning in a fresh temporary workspace, produced and browser-validated a self-contained S&P 500 forecasting dashboard with deterministic synthetic demo data and local CSV import, and imported byte-identical original and display artifacts without a repair."
+    },
+    {
+      "id": "openai-gpt-5-6-luna-high-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-luna",
+        "name": "gpt-5.6-luna",
+        "version": "gpt-5.6-luna"
+      },
+      "reasoning": {
+        "native": "high",
+        "normalized": "high"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5.6-luna-high-clean-olV3yX",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-luna",
+          "reasoningLevel": "high",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "outputLastMessage": "/tmp/benchmark-real-ai-gpt-5.6-luna-high-capture-8DF9DB/final-response.md",
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T03:14:44.847013204Z",
+        "finishedAt": "2026-08-12T03:21:25.530647855Z",
+        "durationSeconds": 400.682621
+      },
+      "run": {
+        "threadId": null,
+        "completedAt": "2026-08-12T03:21:25.530647855Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 515423,
+        "cachedInputTokens": 481024,
+        "outputTokens": 19014,
+        "reasoningOutputTokens": 2823,
+        "totalTokens": 534437,
+        "source": "validation/openai-gpt-5-6-luna-high-codex-20260812.session.jsonl final turn.completed usage event",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The dashboard visibly labels the default as deterministic demo data. It supports CSV upload for user-supplied S&P 500 history; no external market-data source was fetched or bundled by the run."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-luna-high-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-luna-high-codex-20260812/dashboard.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-luna-high-codex-20260812/dashboard.html",
+        "validationEvidence": "validation/openai-gpt-5-6-luna-high-codex-20260812.json",
+        "sessionLog": "validation/openai-gpt-5-6-luna-high-codex-20260812.session.jsonl",
+        "sha256": {
+          "rawResponse": "32392a9c03dc7384aa402592fc1766c9a654f7656a2e4e3deea8bf7bbf31682a",
+          "originalHtml": "d7b145a7645acb09c1eca67d8f1b5dd3e22db315ea34b2f2713ad6c7c4734ea6",
+          "displayHtml": "d7b145a7645acb09c1eca67d8f1b5dd3e22db315ea34b2f2713ad6c7c4734ea6",
+          "validationEvidence": "ae03e3658d1dc77187998fa93ef4435388e682cb7ec1643b9f548d0f4554e3c9",
+          "sessionLog": "9d496bbcb9d70e39f343f9334e98689e315cae9fec70c44519c04ffd05578a58"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 19,
+        "reviewer": "Codex",
+        "notes": "The original artifact is a polished, self-contained interactive dashboard with horizon, model, lookback, scenario, tooltip, forecast-cone, and CSV-import paths. Its deterministic demo data are clearly disclosed, while the forecasts use simple blended/trend/mean-reversion heuristics rather than a rigorous market model. The run completed Chrome rendering and final control-path validation; an intermediate selector mistake was corrected in-session and no import repair was needed."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "clean-workspace-and-exact-prompt",
+            "passed": true,
+            "details": "The model saw only the empty temporary workspace and received the exact benchmark prompt once."
+          },
+          {
+            "name": "benchmark-render",
+            "passed": true,
+            "details": "Headless Chrome rendered the final HTML with populated metrics and SVG chart."
+          },
+          {
+            "name": "benchmark-browser-validation",
+            "passed": true,
+            "details": "The final Chrome CDP smoke test passed after an intermediate selector mistake was corrected in-session."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed dashboard HTML SHA-256 hashes match; no import-time rendering repair was required."
+          },
+          {
+            "name": "data-source-disclosure",
+            "passed": true,
+            "details": "The final dashboard labels its default as deterministic demo data and explains CSV upload for real history."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "npm run validate passed for 14 runs; npm test passed 4 unit tests and 5 browser tests with 1 expected mobile-only skip."
+          },
+          {
+            "name": "published-row-open",
+            "passed": true,
+            "details": "Playwright clicked the new gpt-5.6-luna High row and opened the standalone rendered dashboard with the expected title and S&P 500 content."
+          },
+          {
+            "name": "in-app-browser",
+            "passed": false,
+            "details": "The in-app browser connector reported no available browser targets; repository Playwright/Chromium validation was used for the local row-open confirmation."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-luna at high reasoning in a genuinely empty temporary workspace, built a self-contained interactive S&P 500 forecast dashboard with deterministic demo data and CSV upload, browser-validated its final control paths, and imported identical original and displayed HTML without a rendering repair."
     }
   ]
 }
