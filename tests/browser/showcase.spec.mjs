@@ -23,12 +23,22 @@ const testRun = {
 test('landing page sorts runs by estimated cost and renders the behavior map', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Same task/i })).toBeVisible();
+  const plotPrecedesIndex = await page.evaluate(() => Boolean(document.querySelector('#behavior-map').compareDocumentPosition(document.querySelector('#run-index')) & Node.DOCUMENT_POSITION_FOLLOWING));
+  expect(plotPrecedesIndex).toBe(true);
   await expect(page.getByRole('heading', { name: 'Run index' })).toBeVisible();
   for (const heading of ['Model', 'Harness', 'Reasoning level', 'Input', 'Cached', 'Output', 'Reasoning tokens', 'Total', 'Time', 'Est. cost ↑']) await expect(page.getByRole('columnheader', { name: heading, exact: true })).toBeVisible();
   await expect(page.locator('.run-row')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#result-count')).toContainText(`${publishedRuns.length}`);
-  await expect(page.locator('#filter-reasoning option[value="xhigh"]')).toHaveText('Extra High');
-  await expect(page.locator('#filter-reasoning option[value="max"]')).toHaveText('Max');
+  await expect(page.locator('#facet-panel')).not.toHaveAttribute('open', '');
+  await page.locator('#facet-panel summary').click();
+  await expect(page.locator('#facet-panel')).toHaveAttribute('open', '');
+  await expect(page.locator('#filter-reasoning option[value="xhigh"]')).toHaveText('Extra High (xhigh)');
+  await expect(page.locator('#filter-reasoning option[value="max"]')).toHaveText('Max (max)');
+  await page.locator('#filter-search').fill('xhigh');
+  await expect(page.locator('.run-row')).toHaveCount(2);
+  await expect(page.locator('.run-row')).toContainText(['Extra High', 'Extra High']);
+  await expect(page.locator('#facet-result-count')).toHaveText(`2 of ${publishedRuns.length} runs`);
+  await page.locator('#clear-filters').click();
   await expect(page.locator('.run-row', { hasText: 'gpt-5.4-mini' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
   await expect(page.locator('.run-row', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
   await expect(page.locator('.run-row', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Max' })).toHaveCount(1);
@@ -49,6 +59,8 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('.frontier')).toHaveCount(1);
   await expect(page.locator('#plot-key a')).toHaveCount(publishedRuns.length);
   await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' })).toHaveCount(5);
+  await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Extra High (xhigh)' })).toHaveCount(1);
+  await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Max (max)' })).toHaveCount(1);
   const pointFills = await page.locator('.tradeoff-point circle').evaluateAll((points) => [...new Set(points.map((point) => getComputedStyle(point).fill))]);
   expect(pointFills).toHaveLength(1);
   await expect(page.locator('#tradeoff-svg-desc')).toContainText('Point color has no categorical meaning');

@@ -16,6 +16,7 @@
         <span>Benchmark <em>Real</em> AI</span>
       </a>
       <nav aria-label="Primary navigation">
+        <a href="#behavior-map">Plot</a>
         <a href="#run-index">Run index</a>
         <a href="#cost-comparison">Cost</a>
         <a href="#premise">The premise</a>
@@ -32,7 +33,7 @@
         </div>
         <div class="index-intro">
           <p>Browse completed artifacts by model, harness, and reasoning level. Every row is a specific run; click it to open the model’s standalone HTML dashboard.</p>
-          <a class="text-link" href="#run-index">Browse the index ↓</a>
+          <a class="text-link" href="#behavior-map">Explore the plot ↓</a>
         </div>
       </section>
 
@@ -41,8 +42,34 @@
         <blockquote id="benchmark-prompt">I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.</blockquote>
       </section>
 
+      <section class="behavior-section section-shell" id="behavior-map" aria-labelledby="tradeoff-title">
+        <div class="section-kicker">01 / Behavior map</div>
+        <div class="tradeoff-panel">
+          <div class="tradeoff-head">
+            <div>
+              <span>ALL PUBLISHED RUNS</span>
+              <h2 id="tradeoff-title">Cost versus observed outcome</h2>
+              <p id="tradeoff-description">Higher is a stronger manual rubric result. The dashed line marks the cost–score frontier; these scores are observational and reviewer-assigned, not scientific measurements.</p>
+            </div>
+            <label for="tradeoff-metric">Y-axis
+              <select id="tradeoff-metric">
+                <option value="score">Rubric score / 25</option>
+                <option value="reasoningShare">Reasoning share of output</option>
+                <option value="duration">Elapsed time</option>
+                <option value="tokens">Total tokens</option>
+              </select>
+            </label>
+          </div>
+          <div class="tradeoff-plot-wrap" id="tradeoff-plot" aria-live="polite"></div>
+          <div class="tradeoff-legend">
+            <span>Each number is one model + reasoning + harness run</span><span class="bubble-note">Bubble size = total tokens</span>
+          </div>
+          <div class="plot-key" id="plot-key" aria-label="Plot point details"></div>
+        </div>
+      </section>
+
       <section class="run-index section-shell" id="run-index" aria-labelledby="run-index-title">
-        <div class="section-kicker">01 / Published artifacts</div>
+        <div class="section-kicker">02 / Published artifacts</div>
         <div class="index-heading">
           <div>
             <h2 id="run-index-title">Run index</h2>
@@ -55,13 +82,20 @@
           </dl>
         </div>
 
-        <div class="table-filters" aria-label="Filter benchmark runs">
-          <label>Provider<select id="filter-provider"><option value="all">All providers</option></select></label>
-          <label>Model<select id="filter-model"><option value="all">All models</option></select></label>
-          <label>Harness<select id="filter-harness"><option value="all">All harnesses</option></select></label>
-          <label>Reasoning<select id="filter-reasoning"><option value="all">All levels</option></select></label>
-          <button id="clear-filters" class="clear-button" type="button">Reset</button>
-        </div>
+        <details class="facet-panel" id="facet-panel">
+          <summary><span>Search and filter facets</span><strong id="facet-result-count">All runs</strong></summary>
+          <div class="facet-search">
+            <label for="filter-search">Search all facets</label>
+            <input id="filter-search" type="search" placeholder="Model, provider, harness, reasoning, or run ID" autocomplete="off">
+          </div>
+          <div class="table-filters" aria-label="Filter benchmark runs">
+            <label>Provider<select id="filter-provider"><option value="all">All providers</option></select></label>
+            <label>Model<select id="filter-model"><option value="all">All models</option></select></label>
+            <label>Harness<select id="filter-harness"><option value="all">All harnesses</option></select></label>
+            <label>Reasoning<select id="filter-reasoning"><option value="all">All levels</option></select></label>
+            <button id="clear-filters" class="clear-button" type="button">Reset</button>
+          </div>
+        </details>
 
         <div class="run-table-wrap">
           <table class="run-table">
@@ -95,7 +129,7 @@
       </section>
 
       <section class="cost-section section-shell" id="cost-comparison" aria-labelledby="cost-title">
-        <div class="section-kicker">02 / API-equivalent cost</div>
+        <div class="section-kicker">03 / API-equivalent cost</div>
         <div class="cost-heading">
           <div>
             <h2 id="cost-title">What each run would cost at today’s token rates.</h2>
@@ -107,33 +141,11 @@
           </div>
         </div>
         <div class="cost-chart" id="cost-chart" aria-label="Estimated cost by benchmark run"></div>
-        <div class="tradeoff-panel">
-          <div class="tradeoff-head">
-            <div>
-              <span>BEHAVIOR MAP</span>
-              <h3 id="tradeoff-title">Cost versus observed outcome</h3>
-              <p id="tradeoff-description">Higher is a stronger manual rubric result. The dashed line marks the cost–score frontier; these scores are observational and reviewer-assigned, not scientific measurements.</p>
-            </div>
-            <label for="tradeoff-metric">Y-axis
-              <select id="tradeoff-metric">
-                <option value="score">Rubric score / 25</option>
-                <option value="reasoningShare">Reasoning share of output</option>
-                <option value="duration">Elapsed time</option>
-                <option value="tokens">Total tokens</option>
-              </select>
-            </label>
-          </div>
-          <div class="tradeoff-plot-wrap" id="tradeoff-plot" aria-live="polite"></div>
-          <div class="tradeoff-legend">
-            <span>Each number is one model + reasoning + harness run</span><span class="bubble-note">Bubble size = total tokens</span>
-          </div>
-          <div class="plot-key" id="plot-key" aria-label="Plot point details"></div>
-        </div>
         <div class="pricing-note" id="pricing-note"></div>
       </section>
 
       <section class="premise section-shell" id="premise" aria-labelledby="premise-title">
-        <div class="section-kicker">03 / The premise</div>
+        <div class="section-kicker">04 / The premise</div>
         <div class="premise-grid">
           <h2 id="premise-title">Judge the finished work, with the conditions attached.</h2>
           <div class="premise-copy">
@@ -151,7 +163,7 @@
 
       <section class="protocol" id="protocol" aria-labelledby="protocol-title">
         <div class="section-shell">
-          <div class="section-kicker light">04 / Recorded facets</div>
+          <div class="section-kicker light">05 / Recorded facets</div>
           <div class="protocol-head">
             <h2 id="protocol-title">Model. Reasoning. Harness. Evidence.</h2>
             <p>A run is a specific model, reasoning setting, and harness combination. Change any one of them and it becomes a different row.</p>
