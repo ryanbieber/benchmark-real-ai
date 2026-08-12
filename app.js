@@ -229,11 +229,17 @@ function renderTradeoffPlot() {
   const circles = points.map((point) => {
     const label = `${point.run.model.name}, ${reasoningDescription(point.run)} reasoning, ${point.run.harness.name}: ${formatCost(point.cost)}, ${metric.format(point.value)}`;
     const r = radius(point.run.usage.totalTokens);
-    return `<a class="tradeoff-point" href="${escapeHtml(point.run.artifacts.displayHtml)}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title><circle cx="${x(point.cost)}" cy="${y(point.value)}" r="${r}"/><text x="${x(point.cost)}" y="${y(point.value) + 4}" text-anchor="middle">${point.index}</text></a>`;
+    const pointX = x(point.cost);
+    const pointY = y(point.value);
+    const labelOnLeft = pointX > width - 190;
+    const labelX = labelOnLeft ? pointX - r - 7 : pointX + r + 7;
+    const labelAnchor = labelOnLeft ? 'end' : 'start';
+    const plotLabel = `${point.run.model.name} · ${point.run.reasoning.native}`;
+    return `<a class="tradeoff-point" href="${escapeHtml(point.run.artifacts.displayHtml)}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title><circle cx="${pointX}" cy="${pointY}" r="${r}"/><text class="plot-label" x="${labelX}" y="${pointY + 4}" text-anchor="${labelAnchor}">${escapeHtml(plotLabel)}</text></a>`;
   }).join('');
 
-  $('#tradeoff-plot').innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="tradeoff-svg-title tradeoff-svg-desc"><title id="tradeoff-svg-title">Estimated cost versus ${escapeHtml(metric.label)}</title><desc id="tradeoff-svg-desc">Each numbered bubble is one model, reasoning setting, and harness run. Bubble size represents total tokens. Point color has no categorical meaning.</desc><g class="plot-grid">${grid}${costTicks}</g>${frontierPath}${circles}<text class="axis-title" x="${margin.left + chartWidth / 2}" y="${height - 15}" text-anchor="middle">Estimated API-equivalent cost, USD (log scale)</text><text class="axis-title" transform="translate(18 ${margin.top + chartHeight / 2}) rotate(-90)" text-anchor="middle">${escapeHtml(metric.label)}</text></svg>`;
-  $('#plot-key').innerHTML = points.map((point) => `<a href="${escapeHtml(point.run.artifacts.displayHtml)}"><b>${point.index}</b><span><strong>${escapeHtml(point.run.model.name)}</strong> · Reasoning: ${escapeHtml(reasoningDescription(point.run))} · ${escapeHtml(point.run.harness.name)} · ${formatCost(point.cost)} · ${escapeHtml(metric.format(point.value))}</span></a>`).join('');
+  $('#tradeoff-plot').innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="tradeoff-svg-title tradeoff-svg-desc"><title id="tradeoff-svg-title">Estimated cost versus ${escapeHtml(metric.label)}</title><desc id="tradeoff-svg-desc">Each labeled point is one model, reasoning setting, and harness run. Labels show the model and native reasoning setting. Bubble size represents total tokens. Point color has no categorical meaning.</desc><g class="plot-grid">${grid}${costTicks}</g>${frontierPath}${circles}<text class="axis-title" x="${margin.left + chartWidth / 2}" y="${height - 15}" text-anchor="middle">Estimated API-equivalent cost, USD (log scale)</text><text class="axis-title" transform="translate(18 ${margin.top + chartHeight / 2}) rotate(-90)" text-anchor="middle">${escapeHtml(metric.label)}</text></svg>`;
+  $('#plot-key').innerHTML = points.map((point) => `<a href="${escapeHtml(point.run.artifacts.displayHtml)}"><b class="plot-key-model">${escapeHtml(point.run.model.name)}</b><span>Reasoning: ${escapeHtml(reasoningDescription(point.run))} · ${escapeHtml(point.run.harness.name)} · ${formatCost(point.cost)} · ${escapeHtml(metric.format(point.value))}</span></a>`).join('');
 }
 
 function render() {

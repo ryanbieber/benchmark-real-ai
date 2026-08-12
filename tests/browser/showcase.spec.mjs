@@ -61,6 +61,12 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' })).toHaveCount(5);
   await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Extra High (xhigh)' })).toHaveCount(1);
   await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Max (max)' })).toHaveCount(1);
+  await expect(page.locator('.tradeoff-point .plot-label')).toHaveCount(publishedRuns.length);
+  const plotLabels = await page.locator('.tradeoff-point .plot-label').allTextContents();
+  expect(plotLabels.some((label) => label.includes('gpt-5.4-mini'))).toBe(true);
+  expect(plotLabels.some((label) => label.includes('gpt-5.6-luna · xhigh'))).toBe(true);
+  expect(plotLabels.some((label) => label.includes('gpt-5.6-luna · max'))).toBe(true);
+  await expect(page.locator('#tradeoff-svg-desc')).toContainText('Labels show the model and native reasoning setting');
   const pointFills = await page.locator('.tradeoff-point circle').evaluateAll((points) => [...new Set(points.map((point) => getComputedStyle(point).fill))]);
   expect(pointFills).toHaveLength(1);
   await expect(page.locator('#tradeoff-svg-desc')).toContainText('Point color has no categorical meaning');
