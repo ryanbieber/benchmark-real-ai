@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S&P 500 Forecast Dashboard</title>
+  <script src="./plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --panel: rgba(255, 250, 242, 0.88);
+      --panel-strong: #fffaf2;
+      --ink: #201714;
+      --muted: #5f5149;
+      --accent: #004e64;
+      --accent-2: #ff7d00;
+      --accent-3: #9a031e;
+      --line: rgba(32, 23, 20, 0.1);
+      --shadow: 0 24px 80px rgba(39, 28, 24, 0.12);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 125, 0, 0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(0, 78, 100, 0.14), transparent 35%),
+        linear-gradient(180deg, #f6f1ea 0%, #efe6d8 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1280px, calc(100% - 32px));
+      margin: 24px auto 40px;
+    }
+
+    .hero,
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(32, 23, 20, 0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      padding: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -120px -120px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 78, 100, 0.22), transparent 70%);
+      pointer-events: none;
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.7rem);
+      line-height: 0.95;
+      max-width: 10ch;
+    }
+
+    .lede,
+    .meta,
+    label,
+    .note,
+    .card-label,
+    .metric-label {
+      font-family: Arial, sans-serif;
+    }
+
+    .lede {
+      color: var(--muted);
+      max-width: 60ch;
+      line-height: 1.6;
+      margin: 18px 0 0;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(32, 23, 20, 0.08);
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .hero-side {
+      align-self: stretch;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--panel-strong);
+      border-radius: 20px;
+      padding: 18px;
+      border: 1px solid rgba(32, 23, 20, 0.08);
+      min-height: 118px;
+    }
+
+    .card-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .card-value {
+      font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+      margin-top: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .layout {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 16px;
+    }
+
+    .control-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    select,
+    input[type="range"] {
+      width: 100%;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid rgba(32, 23, 20, 0.16);
+      background: white;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font: inherit;
+      color: var(--ink);
+    }
+
+    input[type="range"] {
+      accent-color: var(--accent);
+    }
+
+    .range-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .range-value {
+      font-family: Arial, sans-serif;
+      color: var(--accent);
+      font-weight: 700;
+      min-width: 72px;
+      text-align: right;
+    }
+
+    .grid-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      background: var(--panel-strong);
+      border: 1px solid rgba(32, 23, 20, 0.08);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 1.35rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chart-stack {
+      display: grid;
+      gap: 22px;
+    }
+
+    .chart {
+      width: 100%;
+      min-height: 440px;
+    }
+
+    .small-chart {
+      min-height: 320px;
+    }
+
+    .note {
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 14px;
+      font-size: 0.92rem;
+    }
+
+    .status {
+      margin-top: 14px;
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+      min-height: 1.3em;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-side {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 16px, 1280px);
+      }
+
+      .hero,
+      .panel {
+        padding: 18px;
+      }
+
+      .hero-side,
+      .grid-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div>
+        <h1>S&amp;P 500 Forecast Studio</h1>
+        <p class="lede">
+          Interactive HTML dashboard that loads local historical data, forecasts the next trading window, and
+          backtests the model against a holdout set so the projection is paired with measurable error.
+        </p>
+        <div class="meta">
+          <div class="chip" id="sourceChip">Source: loading</div>
+          <div class="chip" id="coverageChip">Coverage: loading</div>
+          <div class="chip" id="updatedChip">Generated: loading</div>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div class="card">
+          <div class="card-label">Latest Close</div>
+          <div class="card-value" id="latestClose">...</div>
+        </div>
+        <div class="card">
+          <div class="card-label">As Of</div>
+          <div class="card-value" id="latestDate">...</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Forecast Horizon</div>
+          <div class="card-value" id="headlineHorizon">...</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Projected End</div>
+          <div class="card-value" id="headlineForecast">...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel">
+        <h2>Controls</h2>
+        <div class="controls">
+          <div class="control-group">
+            <label for="method">Forecast method</label>
+            <select id="method">
+              <option value="blended">Blended: Holt + log trend</option>
+              <option value="holt">Holt linear trend</option>
+              <option value="loglinear">Log-linear trend</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <div class="range-row">
+              <label for="lookback">Training lookback</label>
+              <span class="range-value" id="lookbackValue"></span>
+            </div>
+            <input id="lookback" type="range" min="252" max="2016" step="21" value="756" />
+          </div>
+
+          <div class="control-group">
+            <div class="range-row">
+              <label for="horizon">Forecast horizon</label>
+              <span class="range-value" id="horizonValue"></span>
+            </div>
+            <input id="horizon" type="range" min="21" max="252" step="21" value="63" />
+          </div>
+
+          <div class="control-group">
+            <div class="range-row">
+              <label for="holdout">Validation holdout</label>
+              <span class="range-value" id="holdoutValue"></span>
+            </div>
+            <input id="holdout" type="range" min="21" max="252" step="21" value="63" />
+          </div>
+
+          <div class="control-group">
+            <div class="range-row">
+              <label for="bandWidth">Confidence band width</label>
+              <span class="range-value" id="bandValue"></span>
+            </div>
+            <input id="bandWidth" type="range" min="1" max="3" step="0.1" value="1.6" />
+          </div>
+        </div>
+
+        <div class="grid-metrics">
+          <div class="metric">
+            <div class="metric-label">RMSE</div>
+            <div class="metric-value" id="rmseMetric">...</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">MAPE</div>
+            <div class="metric-value" id="mapeMetric">...</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Direction Hit Rate</div>
+            <div class="metric-value" id="hitRateMetric">...</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Annualized Volatility</div>
+            <div class="metric-value" id="volMetric">...</div>
+          </div>
+        </div>
+
+        <p class="note">
+          The forecast is statistical, not fundamental. It uses historical index levels only, so treat it as an
+          educational baseline rather than investment advice.
+        </p>
+        <div class="status" id="status">Loading data...</div>
+      </aside>
+
+      <main class="chart-stack">
+        <section class="panel">
+          <h2>History and Forecast</h2>
+          <div id="historyChart" class="chart"></div>
+        </section>
+        <section class="panel">
+          <h2>Holdout Validation</h2>
+          <div id="validationChart" class="chart small-chart"></div>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const fmtNumber = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+    const fmtPct = new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1 });
+    const fmtDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const tradingDaysPerYear = 252;
+
+    const els = {
+      sourceChip: document.getElementById("sourceChip"),
+      coverageChip: document.getElementById("coverageChip"),
+      updatedChip: document.getElementById("updatedChip"),
+      latestClose: document.getElementById("latestClose"),
+      latestDate: document.getElementById("latestDate"),
+      headlineHorizon: document.getElementById("headlineHorizon"),
+      headlineForecast: document.getElementById("headlineForecast"),
+      rmseMetric: document.getElementById("rmseMetric"),
+      mapeMetric: document.getElementById("mapeMetric"),
+      hitRateMetric: document.getElementById("hitRateMetric"),
+      volMetric: document.getElementById("volMetric"),
+      status: document.getElementById("status"),
+      method: document.getElementById("method"),
+      lookback: document.getElementById("lookback"),
+      horizon: document.getElementById("horizon"),
+      holdout: document.getElementById("holdout"),
+      bandWidth: document.getElementById("bandWidth"),
+      lookbackValue: document.getElementById("lookbackValue"),
+      horizonValue: document.getElementById("horizonValue"),
+      holdoutValue: document.getElementById("holdoutValue"),
+      bandValue: document.getElementById("bandValue"),
+    };
+
+    let dataset = null;
+
+    const addTradingDays = (dateString, count) => {
+      const date = new Date(`${dateString}T00:00:00`);
+      let added = 0;
+      while (added < count) {
+        date.setUTCDate(date.getUTCDate() + 1);
+        const day = date.getUTCDay();
+        if (day !== 0 && day !== 6) {
+          added += 1;
+        }
+      }
+      return date.toISOString().slice(0, 10);
+    };
+
+    const mean = values => values.reduce((sum, value) => sum + value, 0) / values.length;
+
+    const stdev = values => {
+      if (values.length < 2) return 0;
+      const avg = mean(values);
+      const variance = values.reduce((sum, value) => sum + (value - avg) ** 2, 0) / (values.length - 1);
+      return Math.sqrt(variance);
+    };
+
+    function fitLogLinear(series, steps) {
+      const xs = series.map((_, i) => i);
+      const logs = series.map(d => Math.log(d.close));
+      const xMean = mean(xs);
+      const yMean = mean(logs);
+      let numerator = 0;
+      let denominator = 0;
+      for (let i = 0; i < xs.length; i += 1) {
+        numerator += (xs[i] - xMean) * (logs[i] - yMean);
+        denominator += (xs[i] - xMean) ** 2;
+      }
+      const slope = denominator === 0 ? 0 : numerator / denominator;
+      const intercept = yMean - slope * xMean;
+      const fitted = xs.map(x => Math.exp(intercept + slope * x));
+      const residuals = series.map((point, index) => point.close / fitted[index] - 1);
+      const forecast = Array.from({ length: steps }, (_, step) => Math.exp(intercept + slope * (xs.length + step)));
+      return {
+        fitted,
+        forecast,
+        residualSigma: stdev(residuals),
+      };
+    }
+
+    function fitHolt(series, steps) {
+      if (series.length < 3) {
+        return {
+          fitted: series.map(point => point.close),
+          forecast: Array.from({ length: steps }, () => series.at(-1)?.close ?? 0),
+          residualSigma: 0,
+        };
+      }
+
+      let best = null;
+      for (let alpha = 0.2; alpha <= 0.8; alpha += 0.1) {
+        for (let beta = 0.1; beta <= 0.5; beta += 0.1) {
+          let level = series[0].close;
+          let trend = series[1].close - series[0].close;
+          const fitted = [series[0].close];
+          let sse = 0;
+
+          for (let i = 1; i < series.length; i += 1) {
+            const value = series[i].close;
+            const forecastValue = level + trend;
+            fitted.push(forecastValue);
+            const prevLevel = level;
+            level = alpha * value + (1 - alpha) * forecastValue;
+            trend = beta * (level - prevLevel) + (1 - beta) * trend;
+            sse += (value - forecastValue) ** 2;
+          }
+
+          if (!best || sse < best.sse) {
+            best = { alpha, beta, level, trend, fitted, sse };
+          }
+        }
+      }
+
+      const residuals = series.slice(1).map((point, index) => point.close - best.fitted[index + 1]);
+      const forecast = Array.from({ length: steps }, (_, step) => best.level + best.trend * (step + 1));
+      return {
+        fitted: best.fitted,
+        forecast,
+        residualSigma: stdev(residuals) / (series.at(-1)?.close ?? 1),
+      };
+    }
+
+    function buildForecast(series, method, steps) {
+      const loglinear = fitLogLinear(series, steps);
+      const holt = fitHolt(series, steps);
+
+      if (method === "loglinear") return loglinear;
+      if (method === "holt") return holt;
+
+      return {
+        fitted: holt.fitted.map((value, index) => value * 0.6 + loglinear.fitted[index] * 0.4),
+        forecast: holt.forecast.map((value, index) => value * 0.6 + loglinear.forecast[index] * 0.4),
+        residualSigma: holt.residualSigma * 0.6 + loglinear.residualSigma * 0.4,
+      };
+    }
+
+    function evaluateForecast(actual, predicted) {
+      const errors = actual.map((value, index) => value - predicted[index]);
+      const absPct = actual.map((value, index) => Math.abs(errors[index] / value));
+      let hitCount = 0;
+      let opportunities = 0;
+
+      for (let i = 1; i < actual.length; i += 1) {
+        const actualMove = actual[i] - actual[i - 1];
+        const predictedMove = predicted[i] - actual[i - 1];
+        if (actualMove === 0) continue;
+        opportunities += 1;
+        if (Math.sign(actualMove) === Math.sign(predictedMove)) {
+          hitCount += 1;
+        }
+      }
+
+      return {
+        rmse: Math.sqrt(mean(errors.map(value => value ** 2))),
+        mape: mean(absPct),
+        hitRate: opportunities ? hitCount / opportunities : 0,
+      };
+    }
+
+    function annualizedVol(series) {
+      const returns = [];
+      for (let i = 1; i < series.length; i += 1) {
+        returns.push(Math.log(series[i].close / series[i - 1].close));
+      }
+      return stdev(returns) * Math.sqrt(tradingDaysPerYear);
+    }
+
+    function syncControlLabels() {
+      els.lookbackValue.textContent = `${Number(els.lookback.value)}d`;
+      els.horizonValue.textContent = `${Number(els.horizon.value)}d`;
+      els.holdoutValue.textContent = `${Number(els.holdout.value)}d`;
+      els.bandValue.textContent = `${Number(els.bandWidth.value).toFixed(1)}σ`;
+    }
+
+    function render() {
+      if (!dataset) return;
+
+      syncControlLabels();
+      const method = els.method.value;
+      const lookback = Number(els.lookback.value);
+      const horizon = Number(els.horizon.value);
+      const holdout = Number(els.holdout.value);
+      const bandWidth = Number(els.bandWidth.value);
+
+      const safeLookback = Math.min(lookback, dataset.rows.length - holdout - 5);
+      const trainingStart = dataset.rows.length - holdout - safeLookback;
+      const trainingSeries = dataset.rows.slice(trainingStart, dataset.rows.length - holdout);
+      const validationSeries = dataset.rows.slice(dataset.rows.length - holdout);
+      const latestSeries = dataset.rows.slice(-safeLookback);
+
+      const validationModel = buildForecast(trainingSeries, method, holdout);
+      const validationActual = validationSeries.map(point => point.close);
+      const validationPredicted = validationModel.forecast;
+      const metrics = evaluateForecast(validationActual, validationPredicted);
+
+      const productionModel = buildForecast(latestSeries, method, horizon);
+      const latestPoint = dataset.rows.at(-1);
+      const futureDates = Array.from({ length: horizon }, (_, index) => addTradingDays(latestPoint.date, index + 1));
+      const projectedEnd = productionModel.forecast.at(-1);
+      const sigma = productionModel.residualSigma;
+      const upper = productionModel.forecast.map((value, index) => value * (1 + sigma * bandWidth * Math.sqrt((index + 1) / tradingDaysPerYear)));
+      const lower = productionModel.forecast.map((value, index) => value * (1 - sigma * bandWidth * Math.sqrt((index + 1) / tradingDaysPerYear)));
+
+      els.latestClose.textContent = fmtNumber.format(latestPoint.close);
+      els.latestDate.textContent = fmtDate.format(new Date(`${latestPoint.date}T00:00:00Z`));
+      els.headlineHorizon.textContent = `${horizon} trading days`;
+      els.headlineForecast.textContent = fmtNumber.format(projectedEnd);
+      els.rmseMetric.textContent = fmtNumber.format(metrics.rmse);
+      els.mapeMetric.textContent = fmtPct.format(metrics.mape);
+      els.hitRateMetric.textContent = fmtPct.format(metrics.hitRate);
+      els.volMetric.textContent = fmtPct.format(annualizedVol(latestSeries));
+      els.status.textContent = `Validated on the last ${holdout} trading days using a ${safeLookback}-day training window.`;
+
+      const historyTrace = {
+        x: latestSeries.map(point => point.date),
+        y: latestSeries.map(point => point.close),
+        type: "scatter",
+        mode: "lines",
+        name: "History",
+        line: { color: "#004e64", width: 3 },
+      };
+
+      const forecastTrace = {
+        x: futureDates,
+        y: productionModel.forecast,
+        type: "scatter",
+        mode: "lines",
+        name: "Forecast",
+        line: { color: "#ff7d00", width: 3, dash: "dot" },
+      };
+
+      const upperTrace = {
+        x: futureDates,
+        y: upper,
+        type: "scatter",
+        mode: "lines",
+        name: "Upper band",
+        line: { color: "rgba(154, 3, 30, 0.0)" },
+        showlegend: false,
+      };
+
+      const lowerTrace = {
+        x: futureDates,
+        y: lower,
+        type: "scatter",
+        mode: "lines",
+        name: "Confidence band",
+        fill: "tonexty",
+        fillcolor: "rgba(255, 125, 0, 0.16)",
+        line: { color: "rgba(154, 3, 30, 0.0)" },
+      };
+
+      Plotly.react("historyChart", [historyTrace, upperTrace, lowerTrace, forecastTrace], {
+        margin: { l: 56, r: 18, t: 18, b: 48 },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(255,255,255,0.66)",
+        xaxis: { gridcolor: "rgba(32,23,20,0.08)" },
+        yaxis: { gridcolor: "rgba(32,23,20,0.08)", tickformat: ",.0f" },
+        legend: { orientation: "h", y: 1.12 },
+      }, { responsive: true, displaylogo: false });
+
+      Plotly.react("validationChart", [
+        {
+          x: validationSeries.map(point => point.date),
+          y: validationActual,
+          type: "scatter",
+          mode: "lines",
+          name: "Actual",
+          line: { color: "#004e64", width: 3 },
+        },
+        {
+          x: validationSeries.map(point => point.date),
+          y: validationPredicted,
+          type: "scatter",
+          mode: "lines",
+          name: "Predicted",
+          line: { color: "#9a031e", width: 2.5, dash: "dot" },
+        },
+      ], {
+        margin: { l: 56, r: 18, t: 18, b: 48 },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(255,255,255,0.66)",
+        xaxis: { gridcolor: "rgba(32,23,20,0.08)" },
+        yaxis: { gridcolor: "rgba(32,23,20,0.08)", tickformat: ",.0f" },
+        legend: { orientation: "h", y: 1.12 },
+      }, { responsive: true, displaylogo: false });
+    }
+
+    async function init() {
+      try {
+        const response = await fetch("./sp500_data.json");
+        if (!response.ok) {
+          throw new Error(`Unable to load data: ${response.status}`);
+        }
+        dataset = await response.json();
+        const first = dataset.rows[0];
+        const last = dataset.rows.at(-1);
+        els.sourceChip.textContent = `Source: ${dataset.series}`;
+        els.coverageChip.textContent = `Coverage: ${first.date} to ${last.date}`;
+        els.updatedChip.textContent = `Generated: ${fmtDate.format(new Date(dataset.generatedAt))}`;
+
+        [els.method, els.lookback, els.horizon, els.holdout, els.bandWidth].forEach(control => {
+          control.addEventListener("input", render);
+          control.addEventListener("change", render);
+        });
+
+        render();
+      } catch (error) {
+        els.status.textContent = error.message;
+        console.error(error);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
