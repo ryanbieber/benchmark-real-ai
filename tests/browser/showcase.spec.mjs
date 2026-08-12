@@ -61,10 +61,7 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.getByRole('heading', { name: 'Cost versus token volume' })).toBeVisible();
   await expect(page.locator('.tradeoff-point')).toHaveCount(publishedRuns.length);
   await expect(page.locator('.frontier')).toHaveCount(0);
-  await expect(page.locator('#plot-key a')).toHaveCount(publishedRuns.length);
-  await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' })).toHaveCount(5);
-  await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Extra High (xhigh)' })).toHaveCount(1);
-  await expect(page.locator('#plot-key a', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Max (max)' })).toHaveCount(1);
+  await expect(page.locator('#plot-key')).toHaveCount(0);
   await expect(page.locator('.tradeoff-point .plot-label')).toHaveCount(publishedRuns.length);
   const plotLabels = await page.locator('.tradeoff-point .plot-label').allTextContents();
   expect(plotLabels.some((label) => label.includes('gpt-5.4-mini'))).toBe(true);
