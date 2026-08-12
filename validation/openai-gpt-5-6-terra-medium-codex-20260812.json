@@ -1,0 +1,56 @@
+{
+  "runId": "openai-gpt-5-6-terra-medium-codex-20260812",
+  "source": {
+    "eventFile": "/home/carnufex/.codex/sessions/2026/08/12/rollout-2026-08-12T02-11-05-019ff3bc-d09d-7ae3-bbb5-f378638d4c4d.jsonl",
+    "threadId": "019ff3bc-d09d-7ae3-bbb5-f378638d4c4d",
+    "finalUsageEvent": "Codex session token_count event at 2026-08-12T02:13:25.762Z",
+    "note": "This evidence records visible messages, commands, outputs, and usage only; hidden reasoning was not copied."
+  },
+  "timestamps": {
+    "startedAt": "2026-08-12T02:11:02.652Z",
+    "finishedAt": "2026-08-12T02:13:25.765Z",
+    "durationSeconds": 140.2,
+    "timeToFirstTokenMs": 3343
+  },
+  "usage": {
+    "inputTokens": 199452,
+    "cachedInputTokens": 180480,
+    "outputTokens": 6546,
+    "reasoningOutputTokens": 727,
+    "totalTokens": 205998,
+    "actualCostUsd": null
+  },
+  "checks": [
+    {
+      "name": "embedded-javascript-syntax",
+      "command": "node -e \"const fs=require('fs'); const s=fs.readFileSync('index.html','utf8').match(/<script>([\\s\\S]*?)<\\/script>/)[1]; new Function(s); console.log('Embedded JavaScript syntax: OK')\"",
+      "result": "passed",
+      "output": "Embedded JavaScript syntax: OK"
+    },
+    {
+      "name": "headless-chrome-dom-smoke-test",
+      "command": "google-chrome --headless --no-sandbox --disable-gpu --dump-dom file:///tmp/benchmark-real-ai-gpt-5.6-terra-medium-mR8OS5/index.html",
+      "result": "passed",
+      "output": "Rendered metrics included Last close $5,534, Forecast close $5,405, 2.3%, range $4,982–$5,829, 8.5%, and Browser console: clean."
+    },
+    {
+      "name": "headless-chrome-screenshot",
+      "command": "google-chrome --headless --no-sandbox --disable-gpu --window-size=1440,1000 --screenshot=/tmp/sp500-dashboard.png file:///tmp/benchmark-real-ai-gpt-5.6-terra-medium-mR8OS5/index.html",
+      "result": "passed",
+      "output": "Screenshot produced; imported as validation/openai-gpt-5-6-terra-medium-codex-20260812-dashboard.png."
+    },
+    {
+      "name": "interactive-control-path",
+      "command": null,
+      "result": "passed",
+      "output": "The benchmark run reported a final interactive-control-path check before completion; its detailed command was not available in the retained visible evidence."
+    },
+    {
+      "name": "published-table-and-artifact-smoke-test",
+      "command": "python3 -m http.server 4322 --bind 127.0.0.1; curl -fsSI http://127.0.0.1:4322/runs/rendered/openai-gpt-5-6-terra-medium-codex-20260812.html; google-chrome --headless --no-sandbox --disable-gpu --dump-dom http://127.0.0.1:4322/",
+      "result": "passed",
+      "output": "This checkout's own server returned HTTP 200 for the standalone rendered dashboard. Headless Chrome rendered the landing page and exposed gpt-5.6-terra in its Model filter without matching console errors."
+    }
+  ],
+  "unresolvedFailures": []
+}
