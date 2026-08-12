@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive, transparent S&P 500 forecast dashboard.">
+  <title>S&P 500 Forecast / Market Lab</title>
+  <style>
+    :root {
+      --ink: #10212b;
+      --muted: #63727b;
+      --muted-2: #8a979d;
+      --surface: #ffffff;
+      --canvas: #f1f5f5;
+      --line: #dfe8e7;
+      --line-strong: #ccd9d8;
+      --navy: #0d1b24;
+      --navy-2: #132a35;
+      --teal: #0b7e76;
+      --teal-bright: #22b7a8;
+      --teal-soft: #d9f1ed;
+      --amber: #dc8a3e;
+      --amber-soft: #fff0df;
+      --red: #c95e54;
+      --shadow: 0 16px 48px rgba(16, 33, 43, .08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 320px; background: var(--canvas); }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, select, input { font: inherit; }
+
+    button { cursor: pointer; }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 286px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: relative;
+      overflow: hidden;
+      padding: 34px 26px 28px;
+      color: #dbe8e7;
+      background:
+        radial-gradient(circle at 85% 5%, rgba(34, 183, 168, .16), transparent 29%),
+        linear-gradient(158deg, #0c1a22 0%, #122933 58%, #0d1c25 100%);
+    }
+
+    .sidebar::after {
+      content: "";
+      position: absolute;
+      left: -100px;
+      bottom: -160px;
+      width: 390px;
+      height: 390px;
+      border: 1px solid rgba(154, 223, 214, .08);
+      border-radius: 50%;
+      box-shadow: 0 0 0 34px rgba(154, 223, 214, .025), 0 0 0 70px rgba(154, 223, 214, .018);
+      pointer-events: none;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(170, 235, 225, .32);
+      border-radius: 10px;
+      color: #bdf3eb;
+      background: rgba(39, 178, 164, .12);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -.08em;
+    }
+
+    .brand span {
+      color: #a7bdbd;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .18em;
+    }
+
+    .sidebar-intro {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      margin: 66px 0 38px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--teal-bright);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .19em;
+      text-transform: uppercase;
+    }
+
+    .sidebar h1 {
+      max-width: 225px;
+      margin: 0;
+      color: #f2faf9;
+      font-size: 30px;
+      font-weight: 650;
+      letter-spacing: -.055em;
+      line-height: 1.03;
+    }
+
+    .sidebar-intro p {
+      max-width: 220px;
+      margin: 18px 0 0;
+      color: #9eb2b4;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .control-group {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      margin-top: 22px;
+    }
+
+    .control-row { min-width: 0; }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #87a3a4;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .select-wrap { position: relative; }
+
+    .select-wrap::after {
+      content: "⌄";
+      position: absolute;
+      top: 9px;
+      right: 13px;
+      color: #9fb8b9;
+      pointer-events: none;
+    }
+
+    select {
+      width: 100%;
+      appearance: none;
+      padding: 10px 34px 10px 12px;
+      border: 1px solid rgba(176, 213, 211, .18);
+      border-radius: 9px;
+      outline: none;
+      color: #e1efed;
+      background: rgba(255, 255, 255, .055);
+    }
+
+    select:focus { border-color: var(--teal-bright); box-shadow: 0 0 0 3px rgba(34, 183, 168, .15); }
+
+    option { color: var(--ink); background: var(--surface); }
+
+    .run-button {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      margin-top: 30px;
+      padding: 12px 15px;
+      border: 0;
+      border-radius: 10px;
+      color: #062b29;
+      background: #79dfd1;
+      box-shadow: 0 8px 24px rgba(13, 126, 118, .2);
+      font-weight: 800;
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .run-button:hover { transform: translateY(-1px); background: #98ebe0; }
+    .run-button:active { transform: translateY(0); }
+
+    .sidebar-foot {
+      position: absolute;
+      z-index: 1;
+      right: 26px;
+      bottom: 28px;
+      left: 26px;
+    }
+
+    .data-status {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid rgba(176, 213, 211, .13);
+      border-radius: 11px;
+      color: #a8bdbc;
+      background: rgba(4, 11, 15, .18);
+      font-size: 11px;
+      line-height: 1.42;
+    }
+
+    .status-dot {
+      flex: 0 0 auto;
+      width: 7px;
+      height: 7px;
+      margin-top: 4px;
+      border-radius: 50%;
+      background: var(--teal-bright);
+      box-shadow: 0 0 0 4px rgba(34, 183, 168, .1);
+    }
+
+    .status-dot.uploaded { background: #f0b06c; box-shadow: 0 0 0 4px rgba(240, 176, 108, .11); }
+
+    .source-actions { margin-top: 14px; }
+
+    .file-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid rgba(176, 213, 211, .18);
+      border-radius: 9px;
+      color: #c4d6d5;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 700;
+      transition: border-color .18s ease, color .18s ease;
+    }
+
+    .file-label:hover { border-color: rgba(121, 223, 209, .7); color: #ecfffb; }
+    .file-label input { display: none; }
+
+    .sidebar-note {
+      margin: 14px 0 0;
+      color: #71898a;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .main {
+      min-width: 0;
+      padding: 28px clamp(22px, 4vw, 68px) 44px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+
+    .crumbs {
+      color: var(--muted-2);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .crumbs span { color: var(--teal); }
+
+    .updated {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .updated .tiny-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 26px;
+    }
+
+    .hero h2 {
+      max-width: 640px;
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(31px, 4vw, 51px);
+      font-weight: 650;
+      letter-spacing: -.065em;
+      line-height: .98;
+    }
+
+    .hero h2 em { color: var(--teal); font-style: normal; }
+
+    .hero-copy {
+      max-width: 330px;
+      margin: 0 0 3px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 11px;
+      margin-bottom: 16px;
+    }
+
+    .kpi {
+      min-width: 0;
+      min-height: 121px;
+      padding: 18px 17px 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .76);
+      box-shadow: 0 4px 16px rgba(17, 44, 48, .025);
+    }
+
+    .kpi-label {
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .kpi-value {
+      margin-top: 10px;
+      color: var(--navy);
+      font-size: clamp(20px, 2.2vw, 28px);
+      font-weight: 650;
+      letter-spacing: -.045em;
+      line-height: 1.05;
+      white-space: nowrap;
+    }
+
+    .kpi-foot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 9px;
+      color: var(--muted-2);
+      font-size: 11px;
+    }
+
+    .positive { color: var(--teal) !important; }
+    .negative { color: var(--red) !important; }
+    .accent { color: var(--amber) !important; }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .chart-panel { overflow: hidden; margin-bottom: 16px; }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px 23px 0;
+    }
+
+    .panel-kicker {
+      margin: 0 0 4px;
+      color: var(--teal);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.025em;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 13px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .legend-line { width: 17px; height: 2px; border-radius: 2px; background: #1a3a45; }
+    .legend-line.forecast { background: var(--teal-bright); }
+    .legend-band { width: 17px; height: 9px; border-radius: 3px; background: rgba(34, 183, 168, .18); }
+
+    .chart-wrap {
+      position: relative;
+      min-height: 360px;
+      padding: 7px 15px 0;
+    }
+
+    #priceChart {
+      display: block;
+      width: 100%;
+      height: 390px;
+      overflow: visible;
+    }
+
+    .chart-tooltip {
+      position: absolute;
+      z-index: 3;
+      min-width: 147px;
+      padding: 9px 10px;
+      border: 1px solid rgba(30, 65, 70, .13);
+      border-radius: 9px;
+      color: #eaf6f5;
+      background: rgba(13, 27, 36, .94);
+      box-shadow: 0 12px 30px rgba(13, 27, 36, .18);
+      font-size: 11px;
+      line-height: 1.5;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(12px, 12px);
+      transition: opacity .12s ease;
+    }
+
+    .chart-tooltip.visible { opacity: 1; }
+    .tooltip-date { color: #98b4b5; font-size: 10px; }
+    .tooltip-price { margin-top: 2px; font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
+    .tooltip-sub { color: #a8dcd6; }
+
+    .chart-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 23px 18px;
+      color: var(--muted-2);
+      font-size: 11px;
+    }
+
+    .chart-foot strong { color: var(--muted); font-weight: 700; }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.07fr) minmax(0, .93fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .insight-panel { min-width: 0; padding: 22px 23px 20px; }
+
+    .horizon-card {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 23px;
+    }
+
+    .horizon-stat {
+      min-width: 0;
+      padding: 14px 12px;
+      border-radius: 11px;
+      background: var(--canvas);
+    }
+
+    .horizon-stat .stat-label {
+      color: var(--muted-2);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .horizon-stat .stat-value {
+      margin-top: 5px;
+      color: var(--navy);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -.045em;
+    }
+
+    .horizon-stat.center { background: var(--teal-soft); }
+    .horizon-stat.center .stat-value { color: var(--teal); }
+
+    .narrative {
+      min-height: 59px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .backtest-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .backtest-head h3 { max-width: 240px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 20px;
+      color: #8b5b2c;
+      background: var(--amber-soft);
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 23px;
+    }
+
+    .metric {
+      padding: 13px 10px 12px;
+      border-top: 2px solid var(--line-strong);
+    }
+
+    .metric:nth-child(1) { border-color: var(--teal); }
+    .metric:nth-child(2) { border-color: var(--amber); }
+    .metric:nth-child(3) { border-color: #87a9b0; }
+
+    .metric-label { color: var(--muted-2); font-size: 9px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+    .metric-value { margin-top: 4px; color: var(--navy); font-size: 22px; font-weight: 700; letter-spacing: -.04em; }
+    .metric-note { margin-top: 1px; color: var(--muted-2); font-size: 10px; }
+
+    .backtest-bar {
+      display: flex;
+      height: 7px;
+      margin-top: 20px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #edf1f1;
+    }
+
+    .backtest-bar span { width: 0; transition: width .5s ease; }
+    #directionBar { background: var(--teal-bright); }
+    #coverageBar { background: #96c2c4; }
+    .backtest-caption { margin: 8px 0 0; color: var(--muted-2); font-size: 10px; }
+
+    .method-panel {
+      display: grid;
+      grid-template-columns: 1.05fr 1.95fr;
+      gap: 28px;
+      padding: 23px;
+    }
+
+    .method-lede h3 { margin: 0; color: var(--navy); font-size: 18px; letter-spacing: -.025em; }
+    .method-lede p { max-width: 290px; margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+
+    .method-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .method-step { padding-left: 13px; border-left: 1px solid var(--line-strong); }
+    .method-step:first-child { border-left-color: var(--teal-bright); }
+    .step-number { color: var(--teal); font-size: 10px; font-weight: 800; letter-spacing: .15em; }
+    .method-step h4 { margin: 8px 0 5px; color: var(--navy); font-size: 13px; }
+    .method-step p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+
+    .disclaimer {
+      margin: 17px 2px 0;
+      color: #849397;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .error-banner {
+      display: none;
+      margin: -10px 0 16px;
+      padding: 11px 14px;
+      border: 1px solid #efc5bf;
+      border-radius: 10px;
+      color: #9b4c45;
+      background: #fff5f2;
+      font-size: 12px;
+    }
+
+    .error-banner.visible { display: block; }
+
+    @media (max-width: 1120px) {
+      .app-shell { grid-template-columns: 245px minmax(0, 1fr); }
+      .sidebar { padding-right: 20px; padding-left: 20px; }
+      .sidebar-foot { right: 20px; left: 20px; }
+      .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .kpi:nth-child(4), .kpi:nth-child(5) { min-height: 105px; }
+    }
+
+    @media (max-width: 820px) {
+      .app-shell { display: block; }
+      .sidebar { padding: 23px 22px 24px; }
+      .sidebar-intro { margin: 38px 0 27px; }
+      .sidebar h1 { font-size: 27px; }
+      .sidebar-intro p { max-width: 520px; }
+      .control-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .control-group { margin-top: 0; }
+      .run-button { margin-top: 18px; }
+      .sidebar-foot { position: static; margin-top: 22px; }
+      .source-actions { max-width: 350px; }
+      .main { padding-top: 22px; }
+    }
+
+    @media (max-width: 640px) {
+      .main { padding: 20px 14px 32px; }
+      .topbar { align-items: flex-start; margin-bottom: 30px; }
+      .updated { text-align: right; white-space: normal; }
+      .hero { display: block; }
+      .hero-copy { margin-top: 16px; }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kpi { min-height: 112px; padding: 15px 13px 13px; }
+      .kpi-value { font-size: 22px; }
+      .panel-head { display: block; padding: 19px 16px 0; }
+      .legend { justify-content: flex-start; margin-top: 13px; }
+      .chart-wrap { min-height: 278px; padding: 2px 5px 0; }
+      #priceChart { height: 300px; }
+      .chart-foot { display: block; padding: 0 16px 16px; }
+      .chart-foot span + span { display: block; margin-top: 5px; }
+      .insights-grid { grid-template-columns: 1fr; }
+      .insight-panel { padding: 19px 16px 17px; }
+      .method-panel { grid-template-columns: 1fr; gap: 19px; padding: 19px 16px; }
+      .method-lede p { max-width: none; }
+      .method-steps { gap: 9px; }
+      .method-step { padding-left: 9px; }
+    }
+
+    @media (max-width: 410px) {
+      .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .kpi-label { font-size: 9px; letter-spacing: .08em; }
+      .kpi-value { font-size: 20px; }
+      .horizon-card, .metrics { gap: 5px; }
+      .horizon-stat { padding-right: 8px; padding-left: 8px; }
+      .horizon-stat .stat-value { font-size: 17px; }
+      .method-steps { grid-template-columns: 1fr; }
+      .method-step { min-height: 55px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">↗</div>
+        <span>MARKET LAB</span>
+      </div>
+
+      <div class="sidebar-intro">
+        <p class="eyebrow">S&amp;P 500 / baseline model</p>
+        <h1>Forecast the path, not the headline.</h1>
+        <p>A compact, inspectable view of price history, a drift-based projection, and how that baseline behaves out of sample.</p>
+      </div>
+
+      <div class="control-row">
+        <div class="control-group">
+          <label for="lookback">History window</label>
+          <div class="select-wrap">
+            <select id="lookback">
+              <option value="252">1 year</option>
+              <option value="756" selected>3 years</option>
+              <option value="1260">5 years</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="horizon">Forecast horizon</label>
+          <div class="select-wrap">
+            <select id="horizon">
+              <option value="10">10 sessions</option>
+              <option value="30" selected>30 sessions</option>
+              <option value="60">60 sessions</option>
+              <option value="90">90 sessions</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="confidence">Uncertainty band</label>
+        <div class="select-wrap">
+          <select id="confidence">
+            <option value="1.2816" selected>80% interval</option>
+            <option value="1.96">95% interval</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="run-button" id="runForecast" type="button">Run forecast&nbsp; ↗</button>
+
+      <div class="sidebar-foot">
+        <div class="data-status" id="dataStatus">
+          <span class="status-dot"></span>
+          <span><strong id="dataStatusTitle">Embedded snapshot</strong><br><span id="dataStatusDetail">Loading daily closes…</span></span>
+        </div>
+        <div class="source-actions">
+          <label class="file-label" for="csvInput">Load a CSV snapshot <input id="csvInput" type="file" accept=".csv,text/csv"></label>
+        </div>
+        <p class="sidebar-note">Expected CSV columns: <code>observation_date, SP500</code>. Data are daily closes; dividends are not included.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="crumbs">Overview <span>/</span> S&amp;P 500</div>
+        <div class="updated"><span class="tiny-dot"></span><span id="updatedText">Preparing model</span></div>
+      </div>
+
+      <div class="hero">
+        <h2>Signal, <em>not certainty.</em></h2>
+        <p class="hero-copy">A clear baseline forecast you can interrogate. Change the lookback, horizon, or uncertainty assumption and watch every output update.</p>
+      </div>
+
+      <div class="error-banner" id="errorBanner" role="alert"></div>
+
+      <section class="kpi-grid" aria-label="Key forecast statistics">
+        <article class="kpi">
+          <div class="kpi-label">Latest close</div>
+          <div class="kpi-value" id="latestValue">—</div>
+          <div class="kpi-foot"><span id="latestDate">—</span></div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label">1D move</div>
+          <div class="kpi-value" id="dayMove">—</div>
+          <div class="kpi-foot" id="dayMoveNote">vs prior close</div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label">Forecast close</div>
+          <div class="kpi-value positive" id="forecastValue">—</div>
+          <div class="kpi-foot" id="forecastDate">—</div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label">Projected return</div>
+          <div class="kpi-value" id="forecastReturn">—</div>
+          <div class="kpi-foot" id="forecastHorizonNote">selected horizon</div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label">Annualized volatility</div>
+          <div class="kpi-value accent" id="annualVol">—</div>
+          <div class="kpi-foot">sample standard deviation</div>
+        </article>
+      </section>
+
+      <section class="panel chart-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-kicker">Price path</p>
+            <h3>History, baseline, and the range of outcomes</h3>
+          </div>
+          <div class="legend" aria-label="Chart legend">
+            <span class="legend-item"><i class="legend-line"></i>Observed</span>
+            <span class="legend-item"><i class="legend-line forecast"></i>Forecast</span>
+            <span class="legend-item"><i class="legend-band"></i>Uncertainty</span>
+          </div>
+        </div>
+        <div class="chart-wrap" id="chartWrap">
+          <svg id="priceChart" viewBox="0 0 1000 390" role="img" aria-label="S&P 500 observed and forecast price chart"></svg>
+          <div class="chart-tooltip" id="chartTooltip"></div>
+        </div>
+        <div class="chart-foot">
+          <span id="chartRange">—</span>
+          <span>Hover the chart to inspect each session · <strong id="chartModelNote">drift + volatility</strong></span>
+        </div>
+      </section>
+
+      <div class="insights-grid">
+        <section class="panel insight-panel">
+          <p class="panel-kicker">At the horizon</p>
+          <h3 class="panel-headline" id="snapshotTitle">What the model is saying</h3>
+          <div class="horizon-card">
+            <div class="horizon-stat">
+              <div class="stat-label">Lower</div>
+              <div class="stat-value" id="lowerValue">—</div>
+            </div>
+            <div class="horizon-stat center">
+              <div class="stat-label">Central</div>
+              <div class="stat-value" id="centralValue">—</div>
+            </div>
+            <div class="horizon-stat">
+              <div class="stat-label">Upper</div>
+              <div class="stat-value" id="upperValue">—</div>
+            </div>
+          </div>
+          <p class="narrative" id="forecastNarrative">—</p>
+        </section>
+
+        <section class="panel insight-panel">
+          <div class="backtest-head">
+            <div>
+              <p class="panel-kicker">Rolling holdout</p>
+              <h3>Does the baseline travel well out of sample?</h3>
+            </div>
+            <span class="badge" id="backtestBadge">validation</span>
+          </div>
+          <div class="metrics">
+            <div class="metric">
+              <div class="metric-label">Direction</div>
+              <div class="metric-value" id="directionMetric">—</div>
+              <div class="metric-note">same-sign calls</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">MAPE</div>
+              <div class="metric-value" id="mapeMetric">—</div>
+              <div class="metric-note">absolute price error</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Coverage</div>
+              <div class="metric-value" id="coverageMetric">—</div>
+              <div class="metric-note">inside selected band</div>
+            </div>
+          </div>
+          <div class="backtest-bar" aria-hidden="true"><span id="directionBar"></span><span id="coverageBar"></span></div>
+          <p class="backtest-caption" id="backtestCaption">—</p>
+        </section>
+      </div>
+
+      <section class="panel method-panel">
+        <div class="method-lede">
+          <p class="panel-kicker">Under the hood</p>
+          <h3>Simple enough to challenge.</h3>
+          <p>The model is deliberately modest: it exposes its assumptions so the dashboard is useful for learning, scenario planning, and comparison.</p>
+        </div>
+        <div class="method-steps">
+          <div class="method-step">
+            <div class="step-number">01 / PREPARE</div>
+            <h4>Daily closes</h4>
+            <p>Compute log returns from the selected trailing history window.</p>
+          </div>
+          <div class="method-step">
+            <div class="step-number">02 / ESTIMATE</div>
+            <h4>Drift + risk</h4>
+            <p>Estimate mean return and sample volatility, annualized over 252 sessions.</p>
+          </div>
+          <div class="method-step">
+            <div class="step-number">03 / PROJECT</div>
+            <h4>Scenario band</h4>
+            <p>Compound drift forward; scale the interval with volatility × √time.</p>
+          </div>
+        </div>
+      </section>
+
+      <p class="disclaimer">Educational scenario model, not investment advice. The S&amp;P 500 series is a price index and excludes dividends. Forecast intervals are model-based, not guarantees; market regimes can change abruptly. Source: S&amp;P Dow Jones Indices LLC via FRED, series SP500.</p>
+    </main>
+  </div>
+
+  <script src="sp500-data.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const Z = { "1.2816": "80%", "1.96": "95%" };
+      const state = {
+        rows: [],
+        source: "embedded",
+        sourceLabel: "Embedded snapshot",
+        lastForecast: null,
+        runTimer: null
+      };
+
+      const $ = (id) => document.getElementById(id);
+      const money = (value, digits = 0) => Number(value).toLocaleString("en-US", { maximumFractionDigits: digits, minimumFractionDigits: digits });
+      const percent = (value, digits = 1) => `${value >= 0 ? "+" : ""}${(value * 100).toFixed(digits)}%`;
+      const shortDate = (iso) => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
+      const compactDate = (iso) => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+      function parseCsv(text) {
+        const rows = [];
+        const seen = new Map();
+        const lines = String(text || "").trim().split(/\r?\n/);
+        if (!lines.length || !lines[0]) return rows;
+
+        const headers = lines[0].split(",").map((value) => value.trim().toLowerCase());
+        const dateIndex = headers.findIndex((value) => /date|time/.test(value));
+        const valueIndex = headers.findIndex((value) => /sp500|value|close|price|observation/.test(value) && value !== headers[dateIndex]);
+        const dIndex = dateIndex >= 0 ? dateIndex : 0;
+        const vIndex = valueIndex >= 0 ? valueIndex : 1;
+
+        for (let i = 1; i < lines.length; i += 1) {
+          const line = lines[i].trim();
+          if (!line) continue;
+          const parts = line.split(",");
+          const date = (parts[dIndex] || "").trim().slice(0, 10);
+          const value = Number((parts[vIndex] || "").trim());
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(value) || value <= 0) continue;
+          seen.set(date, value);
+        }
+
+        [...seen.entries()].sort((a, b) => a[0].localeCompare(b[0])).forEach(([date, value]) => rows.push({ date, value }));
+        return rows;
+      }
+
+      function mean(values) {
+        return values.reduce((sum, value) => sum + value, 0) / values.length;
+      }
+
+      function sampleStd(values) {
+        if (values.length < 2) return 0;
+        const center = mean(values);
+        return Math.sqrt(values.reduce((sum, value) => sum + (value - center) ** 2, 0) / (values.length - 1));
+      }
+
+      function businessDates(lastDate, count) {
+        const dates = [];
+        const cursor = new Date(`${lastDate}T12:00:00Z`);
+        while (dates.length < count) {
+          cursor.setUTCDate(cursor.getUTCDate() + 1);
+          const day = cursor.getUTCDay();
+          if (day !== 0 && day !== 6) dates.push(cursor.toISOString().slice(0, 10));
+        }
+        return dates;
+      }
+
+      function estimate(prices) {
+        const returns = [];
+        for (let i = 1; i < prices.length; i += 1) {
+          const value = Math.log(prices[i] / prices[i - 1]);
+          if (Number.isFinite(value)) returns.push(value);
+        }
+        const drift = returns.length ? mean(returns) : 0;
+        const volatility = sampleStd(returns);
+        return { drift, volatility, returnsCount: returns.length };
+      }
+
+      function makeForecast(rows, lookback, horizon, z) {
+        const usedRows = rows.slice(Math.max(0, rows.length - lookback));
+        const prices = usedRows.map((row) => row.value);
+        const last = rows[rows.length - 1];
+        const params = estimate(prices);
+        const dates = businessDates(last.date, horizon);
+        const points = dates.map((date, index) => {
+          const steps = index + 1;
+          const central = last.value * Math.exp(params.drift * steps);
+          const spread = z * params.volatility * Math.sqrt(steps);
+          return { date, value: central, lower: central * Math.exp(-spread), upper: central * Math.exp(spread), steps };
+        });
+        const final = points[points.length - 1];
+        return {
+          usedRows,
+          params,
+          points,
+          final,
+          horizon,
+          z,
+          annualReturn: Math.exp(params.drift * 252) - 1,
+          annualVol: params.volatility * Math.sqrt(252),
+          horizonReturn: final.value / last.value - 1
+        };
+      }
+
+      function evaluateBacktest(rows, lookback, horizon, z) {
+        const n = rows.length;
+        const testHorizon = Math.min(horizon, Math.max(5, Math.floor(n * .12)));
+        const trainingWindow = Math.min(lookback, Math.max(60, Math.floor(n * .55)));
+        const end = n - testHorizon;
+        const start = Math.max(trainingWindow, end - Math.min(504, Math.floor(n * .32)));
+        const step = Math.max(5, Math.round(testHorizon / 4));
+        const results = [];
+
+        for (let origin = start; origin <= end; origin += step) {
+          const trainPrices = rows.slice(origin - trainingWindow, origin).map((row) => row.value);
+          if (trainPrices.length < 30) continue;
+          const params = estimate(trainPrices);
+          const initial = rows[origin - 1].value;
+          const actual = rows[origin + testHorizon - 1].value;
+          const predicted = initial * Math.exp(params.drift * testHorizon);
+          const spread = z * params.volatility * Math.sqrt(testHorizon);
+          const lower = predicted * Math.exp(-spread);
+          const upper = predicted * Math.exp(spread);
+          const actualMove = actual - initial;
+          const predictedMove = predicted - initial;
+          results.push({
+            error: Math.abs(predicted / actual - 1),
+            direction: actualMove === 0 || Math.sign(actualMove) === Math.sign(predictedMove),
+            covered: actual >= lower && actual <= upper
+          });
+        }
+
+        if (!results.length) return { count: 0, direction: 0, mape: 0, coverage: 0, testHorizon };
+        return {
+          count: results.length,
+          direction: results.filter((item) => item.direction).length / results.length,
+          mape: mean(results.map((item) => item.error)),
+          coverage: results.filter((item) => item.covered).length / results.length,
+          testHorizon
+        };
+      }
+
+      function setText(id, value) { $(id).textContent = value; }
+
+      function setClass(id, className) {
+        const node = $(id);
+        node.classList.remove("positive", "negative", "accent");
+        if (className) node.classList.add(className);
+      }
+
+      function svgElement(name, attrs = {}) {
+        const node = document.createElementNS(SVG_NS, name);
+        Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+        return node;
+      }
+
+      function pathFor(points, x, y, valueKey = "value") {
+        return points.map((point, index) => `${index ? "L" : "M"}${x(index).toFixed(2)},${y(point[valueKey]).toFixed(2)}`).join(" ");
+      }
+
+      function drawChart(rows, forecast, lookback) {
+        const svg = $("priceChart");
+        const tooltip = $("chartTooltip");
+        const chartWrap = $("chartWrap");
+        const history = rows.slice(Math.max(0, rows.length - lookback));
+        const points = history.concat(forecast.points);
+        const historyLength = history.length;
+        const width = 1000;
+        const height = 390;
+        const margin = { top: 24, right: 26, bottom: 42, left: 69 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const values = points.flatMap((point, index) => {
+          if (index < historyLength) return [point.value];
+          return [point.lower, point.upper];
+        });
+        let minValue = Math.min(...values);
+        let maxValue = Math.max(...values);
+        const padding = (maxValue - minValue || maxValue * .04) * .1;
+        minValue -= padding;
+        maxValue += padding;
+        const x = (index) => margin.left + (index / Math.max(1, points.length - 1)) * plotWidth;
+        const y = (value) => margin.top + (1 - (value - minValue) / (maxValue - minValue)) * plotHeight;
+        const axis = "#adbcbd";
+        const grid = "#e9efee";
+
+        svg.innerHTML = "";
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+        const defs = svgElement("defs");
+        const gradient = svgElement("linearGradient", { id: "bandGradient", x1: "0", x2: "0", y1: "0", y2: "1" });
+        gradient.appendChild(svgElement("stop", { offset: "0%", "stop-color": "#22b7a8", "stop-opacity": ".22" }));
+        gradient.appendChild(svgElement("stop", { offset: "100%", "stop-color": "#22b7a8", "stop-opacity": ".04" }));
+        defs.appendChild(gradient);
+        svg.appendChild(defs);
+
+        const forecastX = x(historyLength - 1);
+        svg.appendChild(svgElement("rect", { x: forecastX, y: margin.top, width: Math.max(0, width - margin.right - forecastX), height: plotHeight, fill: "#f4fbfa" }));
+
+        for (let i = 0; i <= 4; i += 1) {
+          const value = minValue + ((maxValue - minValue) * i / 4);
+          const yPos = y(value);
+          svg.appendChild(svgElement("line", { x1: margin.left, x2: width - margin.right, y1: yPos, y2: yPos, stroke: grid, "stroke-width": "1" }));
+          const label = svgElement("text", { x: margin.left - 11, y: yPos + 4, fill: axis, "font-size": "11", "text-anchor": "end", "font-family": "Inter, sans-serif" });
+          label.textContent = money(value);
+          svg.appendChild(label);
+        }
+
+        const bandPoints = forecast.points;
+        const bandPath = bandPoints.map((point, index) => `${index ? "L" : "M"}${x(historyLength + index).toFixed(2)},${y(point.upper).toFixed(2)}`).join(" ")
+          + " " + bandPoints.slice().reverse().map((point, index) => `L${x(historyLength + bandPoints.length - 1 - index).toFixed(2)},${y(point.lower).toFixed(2)}`).join(" ") + " Z";
+        svg.appendChild(svgElement("path", { d: bandPath, fill: "url(#bandGradient)", stroke: "none" }));
+
+        svg.appendChild(svgElement("path", { d: pathFor(history, (index) => x(index), y), fill: "none", stroke: "#1e414b", "stroke-width": "2.25", "stroke-linejoin": "round", "stroke-linecap": "round" }));
+        const forecastPathPoints = [{ value: history[history.length - 1].value }].concat(forecast.points);
+        svg.appendChild(svgElement("path", { d: pathFor(forecastPathPoints, (index) => x(historyLength - 1 + index), y), fill: "none", stroke: "#0b9e93", "stroke-width": "2.5", "stroke-linejoin": "round", "stroke-linecap": "round" }));
+
+        svg.appendChild(svgElement("line", { x1: forecastX, x2: forecastX, y1: margin.top, y2: height - margin.bottom, stroke: "#80aaa9", "stroke-width": "1", "stroke-dasharray": "4 5" }));
+        const dividerLabel = svgElement("text", { x: forecastX + 8, y: margin.top - 7, fill: "#5c8785", "font-size": "10", "font-weight": "700", "font-family": "Inter, sans-serif" });
+        dividerLabel.textContent = "NOW";
+        svg.appendChild(dividerLabel);
+
+        const axisLabels = [
+          { index: 0, text: shortDate(history[0].date), anchor: "start" },
+          { index: points.length - 1, text: shortDate(forecast.points[forecast.points.length - 1].date), anchor: "end" }
+        ];
+        axisLabels.forEach((item) => {
+          const label = svgElement("text", { x: x(item.index), y: height - 14, fill: axis, "font-size": "11", "text-anchor": item.anchor, "font-family": "Inter, sans-serif" });
+          label.textContent = item.text;
+          svg.appendChild(label);
+        });
+
+        const hover = svgElement("rect", { x: margin.left, y: margin.top, width: plotWidth, height: plotHeight, fill: "transparent", "pointer-events": "all" });
+        hover.addEventListener("mousemove", (event) => {
+          const rect = svg.getBoundingClientRect();
+          const svgX = ((event.clientX - rect.left) / rect.width) * width;
+          const index = clamp(Math.round(((svgX - margin.left) / plotWidth) * (points.length - 1)), 0, points.length - 1);
+          const dataPoint = index < historyLength ? history[index] : forecast.points[index - historyLength];
+          const forecastPoint = index >= historyLength ? dataPoint : null;
+          tooltip.innerHTML = `<div class="tooltip-date">${shortDate(dataPoint.date)} · ${forecastPoint ? "FORECAST" : "OBSERVED"}</div><div class="tooltip-price">${money(dataPoint.value, 2)}</div>${forecastPoint ? `<div class="tooltip-sub">${money(forecastPoint.lower)} — ${money(forecastPoint.upper)}</div>` : ""}`;
+          const localX = (event.clientX - chartWrap.getBoundingClientRect().left);
+          const localY = (event.clientY - chartWrap.getBoundingClientRect().top);
+          tooltip.style.left = `${clamp(localX, 5, chartWrap.clientWidth - 160)}px`;
+          tooltip.style.top = `${clamp(localY, 5, chartWrap.clientHeight - 88)}px`;
+          tooltip.classList.add("visible");
+        });
+        hover.addEventListener("mouseleave", () => tooltip.classList.remove("visible"));
+        svg.appendChild(hover);
+      }
+
+      function updateStatus(rows) {
+        const latest = rows[rows.length - 1];
+        const statusDot = document.querySelector(".status-dot");
+        statusDot.classList.toggle("uploaded", state.source === "uploaded");
+        setText("dataStatusTitle", state.sourceLabel);
+        setText("dataStatusDetail", `${rows.length.toLocaleString()} sessions · through ${shortDate(latest.date)}`);
+        setText("updatedText", `${state.source === "uploaded" ? "Loaded" : "Snapshot"} ${shortDate(latest.date)}`);
+      }
+
+      function render() {
+        const error = $("errorBanner");
+        error.classList.remove("visible");
+        if (state.rows.length < 35) {
+          error.textContent = "At least 35 valid daily observations are needed to estimate volatility. Load a larger CSV snapshot.";
+          error.classList.add("visible");
+          return;
+        }
+
+        const requestedLookback = Number($("lookback").value);
+        const requestedHorizon = Number($("horizon").value);
+        const lookback = Math.min(requestedLookback, state.rows.length);
+        const horizon = requestedHorizon;
+        const z = Number($("confidence").value);
+        const forecast = makeForecast(state.rows, lookback, horizon, z);
+        const backtest = evaluateBacktest(state.rows, lookback, horizon, z);
+        state.lastForecast = forecast;
+
+        const latest = state.rows[state.rows.length - 1];
+        const prior = state.rows[state.rows.length - 2];
+        const dayMove = latest.value / prior.value - 1;
+        setText("latestValue", money(latest.value, 2));
+        setText("latestDate", shortDate(latest.date));
+        setText("dayMove", percent(dayMove));
+        setClass("dayMove", dayMove >= 0 ? "positive" : "negative");
+        setText("forecastValue", money(forecast.final.value, 2));
+        setText("forecastDate", shortDate(forecast.final.date));
+        setText("forecastReturn", percent(forecast.horizonReturn));
+        setClass("forecastReturn", forecast.horizonReturn >= 0 ? "positive" : "negative");
+        setText("forecastHorizonNote", `${horizon} trading sessions`);
+        setText("annualVol", `${(forecast.annualVol * 100).toFixed(1)}%`);
+        setText("lowerValue", money(forecast.final.lower));
+        setText("centralValue", money(forecast.final.value));
+        setText("upperValue", money(forecast.final.upper));
+        setText("snapshotTitle", `${horizon}-session scenario range`);
+        setText("forecastNarrative", `Using ${lookback.toLocaleString()} sessions, the baseline compounds a ${(forecast.annualReturn * 100).toFixed(1)}% annualized drift. At ${Z[String(z)] || "the selected"} confidence, the model spans ${money(forecast.final.lower)} to ${money(forecast.final.upper)} by ${shortDate(forecast.final.date)}. That range reflects historical volatility—not a promise.`);
+        setText("chartRange", `${shortDate(forecast.usedRows[0].date)} — ${shortDate(forecast.final.date)} · ${lookback.toLocaleString()} observed sessions + ${horizon} forecast sessions`);
+        setText("chartModelNote", `drift + volatility · ${Z[String(z)] || "custom"} band`);
+        setText("directionMetric", backtest.count ? `${(backtest.direction * 100).toFixed(0)}%` : "n/a");
+        setText("mapeMetric", backtest.count ? `${(backtest.mape * 100).toFixed(1)}%` : "n/a");
+        setText("coverageMetric", backtest.count ? `${(backtest.coverage * 100).toFixed(0)}%` : "n/a");
+        setText("backtestBadge", backtest.count ? `${backtest.count} windows` : "too little data");
+        setText("backtestCaption", backtest.count ? `Each window trains on a trailing sample and tests the next ${backtest.testHorizon} sessions. This is a diagnostic, not a guarantee of future performance.` : "Add more history to run a rolling holdout test.");
+        $("directionBar").style.width = `${backtest.direction * 100}%`;
+        $("coverageBar").style.width = `${backtest.coverage * 100}%`;
+        drawChart(state.rows, forecast, lookback);
+        updateStatus(state.rows);
+      }
+
+      function run() {
+        $("runForecast").textContent = "Recalculating…";
+        window.clearTimeout(state.runTimer);
+        state.runTimer = window.setTimeout(() => {
+          render();
+          $("runForecast").innerHTML = "Run forecast&nbsp; ↗";
+        }, 120);
+      }
+
+      function init() {
+        state.rows = parseCsv(window.EMBEDDED_SP500_CSV);
+        if (!state.rows.length) {
+          $("errorBanner").textContent = "The embedded snapshot could not be read.";
+          $("errorBanner").classList.add("visible");
+        } else {
+          render();
+        }
+
+        $("runForecast").addEventListener("click", run);
+        ["lookback", "horizon", "confidence"].forEach((id) => $(id).addEventListener("change", run));
+        $("csvInput").addEventListener("change", async (event) => {
+          const file = event.target.files && event.target.files[0];
+          if (!file) return;
+          try {
+            const rows = parseCsv(await file.text());
+            if (rows.length < 35) throw new Error("That file contains fewer than 35 valid daily observations.");
+            state.rows = rows;
+            state.source = "uploaded";
+            state.sourceLabel = "Uploaded CSV";
+            render();
+          } catch (fileError) {
+            $("errorBanner").textContent = fileError.message || "Could not read that CSV file.";
+            $("errorBanner").classList.add("visible");
+          }
+        });
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

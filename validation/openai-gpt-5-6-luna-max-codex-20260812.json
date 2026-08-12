@@ -1,0 +1,144 @@
+{
+  "promptExact": true,
+  "prompt": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+  "passed": true,
+  "usageEvidence": {
+    "capturedFrom": "Codex turn.completed usage event in validation/openai-gpt-5-6-luna-max-codex-20260812.session.jsonl",
+    "inputTokens": 1902665,
+    "cachedInputTokens": 1775232,
+    "outputTokens": 38742,
+    "reasoningOutputTokens": 13061,
+    "totalTokens": 1941407,
+    "actualCostUsd": null
+  },
+  "timestamps": {
+    "startedAt": "2026-08-12T03:07:45.527640Z",
+    "finishedAt": "2026-08-12T03:21:42.069233Z",
+    "durationMs": 836541.593,
+    "source": "Filesystem birth time of the captured session.jsonl for start and final-response.md for finish; the Codex JSONL events do not contain wall-clock timestamps."
+  },
+  "harness": {
+    "version": "codex-cli 0.144.4",
+    "name": "Codex CLI",
+    "interface": "exec",
+    "command": "codex --search -a never exec --json --ignore-user-config --skip-git-repo-check -C /tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt -m gpt-5.6-luna -c 'model_reasoning_effort=\"max\"' -s danger-full-access -o /tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt/final-response.md",
+    "configuration": {
+      "cd": "/tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt",
+      "ignoreUserConfig": true,
+      "skipGitRepoCheck": true,
+      "model": "gpt-5.6-luna",
+      "reasoningLevel": "max",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": "never",
+      "webSearch": true,
+      "jsonEvents": true,
+      "promptSource": "stdin",
+      "outputLastMessage": "/tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt/final-response.md"
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "browser-validation"
+    ]
+  },
+  "dataSource": {
+    "type": "historical-snapshot",
+    "source": "https://fred.stlouisfed.org/series/SP500",
+    "notes": "The run fetched FRED's SP500 CSV live, then embedded 1,254 daily observations from 2021-08-12 through 2026-08-11 in sp500-data.js. The published dashboard loads that fixed sibling snapshot; it does not require a runtime network request for the default view."
+  },
+  "checks": [
+    {
+      "name": "benchmark-javascript-syntax",
+      "command": "node --check sp500-data.js; extract the inline script from index.html; node --check the extracted script",
+      "passed": true,
+      "result": "Syntax validation completed successfully."
+    },
+    {
+      "name": "benchmark-headless-render",
+      "command": "google-chrome --headless --no-sandbox --disable-gpu --allow-file-access-from-files --virtual-time-budget=3000 --dump-dom file:///tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt/index.html",
+      "passed": true,
+      "result": "Chrome rendered the local dashboard with populated forecast metrics, rolling holdout metrics, the embedded FRED data status, and no reported browser log errors."
+    },
+    {
+      "name": "benchmark-desktop-screenshot",
+      "command": "google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,1200 --screenshot=/tmp/sp500-dashboard.png --virtual-time-budget=3000 file:///tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt/index.html",
+      "passed": true,
+      "result": "Wrote a 1440x1200 PNG after the dashboard rendered."
+    },
+    {
+      "name": "benchmark-mobile-render",
+      "command": "google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,1000 --screenshot=/tmp/sp500-mobile-2.png --virtual-time-budget=3000 file:///tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt/index.html",
+      "passed": true,
+      "result": "Wrote a 390x1000 PNG and the mobile render completed."
+    },
+    {
+      "name": "benchmark-responsive-layout",
+      "command": "Chrome DevTools Protocol emulation at 390px followed by Runtime.evaluate of document.documentElement.scrollWidth and document.body.scrollWidth",
+      "passed": true,
+      "rawExitCode": 1,
+      "result": "The assertion output was innerWidth=390, document width=390, body width=390, and no overflowing elements. The shell exit code was caused by cleanup failing to remove a Chrome profile directory after the assertion."
+    },
+    {
+      "name": "benchmark-control-recalculation-and-hover",
+      "command": "Chrome DevTools Protocol navigation, change lookback/horizon/confidence controls, then dispatch a chart mousemove",
+      "passed": true,
+      "rawExitCode": 1,
+      "result": "The dashboard changed from a 30-session 80% forecast to a 60-session 95% forecast, displayed a visible chart tooltip, and reported no exceptions. Cleanup then returned exit code 1 for the same Chrome profile-directory removal issue."
+    },
+    {
+      "name": "benchmark-csv-upload",
+      "command": "Chrome DevTools Protocol File/DataTransfer upload of a 60-row date,value CSV",
+      "passed": true,
+      "rawExitCode": 1,
+      "result": "The dashboard reported Uploaded CSV, 60 sessions through Mar 1, 2020, with latest value 3,236.00. Cleanup then returned exit code 1 for the same Chrome profile-directory removal issue."
+    },
+    {
+      "name": "benchmark-http-assets",
+      "command": "python -m http.server 8765; curl -fsSI http://127.0.0.1:8765/index.html; curl -fsSI http://127.0.0.1:8765/sp500-data.js",
+      "passed": true,
+      "result": "Both assets returned HTTP/1.0 200 OK with the expected content types."
+    },
+    {
+      "name": "artifact-bytes",
+      "command": "sha256sum and cmp across the imported original/displayed HTML and sibling data assets",
+      "passed": true,
+      "result": "Original and displayed HTML hashes match; original and displayed data-asset hashes match. No rendering repair was applied."
+    },
+    {
+      "name": "repository-validate",
+      "command": "npm run validate",
+      "passed": true,
+      "result": "Manifest valid: 14 runs checked."
+    },
+    {
+      "name": "repository-test",
+      "command": "npm test",
+      "passed": true,
+      "result": "On the final rebased 16-run tree, all 4 unit tests and 5 browser tests passed; 1 intentional mobile-project skip remained. The final combined API-equivalent estimate is $7.32; before rebasing, the 14-run tree showed $7.20."
+    },
+    {
+      "name": "new-table-row-standalone-open",
+      "command": "Serve the repository on port 4322, use Playwright with Google Chrome, select the row whose data-artifact is runs/rendered/openai-gpt-5-6-luna-max-codex-20260812/index.html, and click its model link",
+      "passed": true,
+      "result": "The new row count was 1; the click opened http://127.0.0.1:4322/runs/rendered/openai-gpt-5-6-luna-max-codex-20260812/index.html with title S&P 500 Forecast / Market Lab, source Embedded snapshot, forecast 7,894.78, chart present, and no page errors."
+    }
+  ],
+  "repositoryFixtureUpdate": {
+    "path": "tests/browser/showcase.spec.mjs",
+    "details": "Updated the hard-coded combined API-equivalent estimate as the manifest grew: $7.09 at initial import, $7.20 before rebasing, and $7.32 on the final 16-run tree after preserving a concurrent high-reasoning run already on main."
+  },
+  "observedHarnessIssues": [
+    "Codex emitted an apply_patch verification error while first attempting to write the data snapshot, then recovered and produced the complete snapshot.",
+    "The first CDP interaction attempt failed before page evaluation; subsequent desktop, mobile, control, hover, CSV, and HTTP checks produced the recorded successful assertions.",
+    "Several successful CDP checks returned shell exit code 1 only because their cleanup trap could not remove a Chrome profile directory; no dashboard assertion failed."
+  ],
+  "unresolvedFailures": [],
+  "evidenceFiles": [
+    "validation/openai-gpt-5-6-luna-max-codex-20260812.session.jsonl",
+    "validation/openai-gpt-5-6-luna-max-codex-20260812.stderr.txt",
+    "validation/openai-gpt-5-6-luna-max-codex-20260812.final-response.md",
+    "responses/openai-gpt-5-6-luna-max-codex-20260812.md"
+  ]
+}

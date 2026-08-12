@@ -10,7 +10,7 @@
       "high",
       "max"
     ],
-    "updatedAt": "2026-08-12T03:18:28Z",
+    "updatedAt": "2026-08-12T03:22:05Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -1516,17 +1516,122 @@
     },
     {
       "id": "openai-gpt-5-6-terra-medium-codex-20260812",
-      "status": "benchmark", "provider": "openai",
-      "model": { "id": "gpt-5.6-terra", "name": "gpt-5.6-terra", "version": "gpt-5.6-terra" },
-      "reasoning": { "native": "medium", "normalized": "medium" },
-      "harness": { "name": "Codex CLI", "version": "0.144.4", "interface": "exec", "configuration": { "cd": "/tmp/benchmark-real-ai-gpt-5.6-terra-medium-mR8OS5", "ignoreUserConfig": true, "skipGitRepoCheck": true, "model": "gpt-5.6-terra", "reasoningLevelConfigAttempt": "medium", "reasoningLevelConfigKey": "model_reasoning_effort", "sandbox": "danger-full-access", "approvalPolicy": null, "webSearch": null, "jsonEvents": true, "outputLastMessage": true, "normalToolsEnabled": true }, "capabilities": ["shell", "file-editing", "local-browser-validation"] },
-      "timestamps": { "startedAt": "2026-08-12T02:11:02.652Z", "finishedAt": "2026-08-12T02:13:25.765Z", "durationSeconds": 140.2 },
-      "run": { "threadId": "019ff3bc-d09d-7ae3-bbb5-f378638d4c4d", "completedAt": "2026-08-12T02:13:25.765Z", "timeToFirstTokenMs": 3343, "latencyMs": 140200 },
-      "usage": { "inputTokens": 199452, "cachedInputTokens": 180480, "outputTokens": 6546, "reasoningOutputTokens": 727, "totalTokens": 205998, "source": "Codex session token_count event at 2026-08-12T02:13:25.762Z", "actualCostUsd": null },
-      "dataSource": { "type": "synthetic", "notes": "The default dashboard generates deterministic synthetic demonstration history; users may import a local CSV, and no external market data was fetched or embedded." },
-      "artifacts": { "rawResponse": "responses/openai-gpt-5-6-terra-medium-codex-20260812.md", "originalHtml": "runs/original/openai-gpt-5-6-terra-medium-codex-20260812.html", "displayHtml": "runs/rendered/openai-gpt-5-6-terra-medium-codex-20260812.html", "validationEvidence": "validation/openai-gpt-5-6-terra-medium-codex-20260812.json", "sha256": { "rawResponse": "ea9fbca3fc0bd9742c41562c72929225295ff22fc755e2af8e5976f66f870b17", "originalHtml": "30682309a4b7535b49d2b7920654701c9799579d2bba0d1f285c6f92d05e9d10", "displayHtml": "30682309a4b7535b49d2b7920654701c9799579d2bba0d1f285c6f92d05e9d10", "validationEvidence": "8c2d45491ec801e0aa602fd7ef334c4301c0addd19a7434397c519c839f1304f", "desktopScreenshot": "9e3194984392d7181c474e5ce1f3d63dd3c6088078a2b9a35977a786d51e0908" }, "repaired": false, "repairLog": null },
-      "evaluation": { "scores": { "taskFulfillment": 4, "interactivityUsability": 4, "forecastingMethodology": 3, "uncertaintyHonesty": 4, "technicalRobustness": 4 }, "total": 19, "reviewer": "Codex", "notes": "The original artifact is a polished self-contained interactive dashboard with controls, hover chart, CSV import, uncertainty range, and clear disclaimer. Its default history is synthetic and methods are simple heuristics." },
-      "validation": { "passed": true, "checks": [ { "name": "artifact-bytes", "passed": true, "details": "Original and rendered HTML SHA-256 hashes match; no rendering repair was required." }, { "name": "embedded-javascript-syntax", "passed": true, "details": "The benchmark run parsed the embedded script with Node's Function constructor." }, { "name": "headless-chrome", "passed": true, "details": "Headless Chrome rendered populated forecast metrics and reported a clean browser console." }, { "name": "interactive-control-path", "passed": true, "details": "The benchmark run completed a final interactive-control-path check." }, { "name": "published-artifact-smoke-test", "passed": true, "details": "The landing page rendered gpt-5.6-terra and its standalone artifact returned HTTP 200." } ] },
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-terra",
+        "name": "gpt-5.6-terra",
+        "version": "gpt-5.6-terra"
+      },
+      "reasoning": {
+        "native": "medium",
+        "normalized": "medium"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5.6-terra-medium-mR8OS5",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-terra",
+          "reasoningLevelConfigAttempt": "medium",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": null,
+          "webSearch": null,
+          "jsonEvents": true,
+          "outputLastMessage": true,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T02:11:02.652Z",
+        "finishedAt": "2026-08-12T02:13:25.765Z",
+        "durationSeconds": 140.2
+      },
+      "run": {
+        "threadId": "019ff3bc-d09d-7ae3-bbb5-f378638d4c4d",
+        "completedAt": "2026-08-12T02:13:25.765Z",
+        "timeToFirstTokenMs": 3343,
+        "latencyMs": 140200
+      },
+      "usage": {
+        "inputTokens": 199452,
+        "cachedInputTokens": 180480,
+        "outputTokens": 6546,
+        "reasoningOutputTokens": 727,
+        "totalTokens": 205998,
+        "source": "Codex session token_count event at 2026-08-12T02:13:25.762Z",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The default dashboard generates deterministic synthetic demonstration history; users may import a local CSV, and no external market data was fetched or embedded."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-terra-medium-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-terra-medium-codex-20260812.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-terra-medium-codex-20260812.html",
+        "validationEvidence": "validation/openai-gpt-5-6-terra-medium-codex-20260812.json",
+        "sha256": {
+          "rawResponse": "ea9fbca3fc0bd9742c41562c72929225295ff22fc755e2af8e5976f66f870b17",
+          "originalHtml": "30682309a4b7535b49d2b7920654701c9799579d2bba0d1f285c6f92d05e9d10",
+          "displayHtml": "30682309a4b7535b49d2b7920654701c9799579d2bba0d1f285c6f92d05e9d10",
+          "validationEvidence": "8c2d45491ec801e0aa602fd7ef334c4301c0addd19a7434397c519c839f1304f",
+          "desktopScreenshot": "9e3194984392d7181c474e5ce1f3d63dd3c6088078a2b9a35977a786d51e0908"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 19,
+        "reviewer": "Codex",
+        "notes": "The original artifact is a polished self-contained interactive dashboard with controls, hover chart, CSV import, uncertainty range, and clear disclaimer. Its default history is synthetic and methods are simple heuristics."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered HTML SHA-256 hashes match; no rendering repair was required."
+          },
+          {
+            "name": "embedded-javascript-syntax",
+            "passed": true,
+            "details": "The benchmark run parsed the embedded script with Node's Function constructor."
+          },
+          {
+            "name": "headless-chrome",
+            "passed": true,
+            "details": "Headless Chrome rendered populated forecast metrics and reported a clean browser console."
+          },
+          {
+            "name": "interactive-control-path",
+            "passed": true,
+            "details": "The benchmark run completed a final interactive-control-path check."
+          },
+          {
+            "name": "published-artifact-smoke-test",
+            "passed": true,
+            "details": "The landing page rendered gpt-5.6-terra and its standalone artifact returned HTTP 200."
+          }
+        ]
+      },
       "summary": "Codex CLI ran gpt-5.6-terra at medium reasoning in a fresh temporary workspace, produced and browser-validated a self-contained S&P 500 forecasting dashboard with deterministic synthetic demo data and local CSV import, and imported byte-identical original and display artifacts without a repair."
     },
     {
@@ -1665,6 +1770,147 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-luna at high reasoning in a genuinely empty temporary workspace, built a self-contained interactive S&P 500 forecast dashboard with deterministic demo data and CSV upload, browser-validated its final control paths, and imported identical original and displayed HTML without a rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-6-luna-max-codex-20260812",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-luna",
+        "name": "gpt-5.6-luna",
+        "version": "gpt-5.6-luna"
+      },
+      "reasoning": {
+        "native": "max",
+        "normalized": "max"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-luna",
+          "reasoningLevel": "max",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "promptSource": "stdin",
+          "outputLastMessage": "/tmp/benchmark-real-ai-gpt-5.6-luna-max-Qeiamt/final-response.md",
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-12T03:07:45.527640Z",
+        "finishedAt": "2026-08-12T03:21:42.069233Z",
+        "durationSeconds": 836.542
+      },
+      "run": {
+        "threadId": "019ff3f0-b878-7be1-b1ba-a7dfa9ca46a1",
+        "completedAt": "2026-08-12T03:21:42.069233Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 1902665,
+        "cachedInputTokens": 1775232,
+        "outputTokens": 38742,
+        "reasoningOutputTokens": 13061,
+        "totalTokens": 1941407,
+        "source": "Codex turn.completed usage event in validation/openai-gpt-5-6-luna-max-codex-20260812.session.jsonl",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "The run fetched FRED's SP500 CSV live, then embedded 1,254 daily observations from 2021-08-12 through 2026-08-11 in sp500-data.js. The published dashboard loads that fixed sibling snapshot; it does not require a runtime network request for the default view."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-luna-max-codex-20260812.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-luna-max-codex-20260812/index.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-luna-max-codex-20260812/index.html",
+        "validationEvidence": "validation/openai-gpt-5-6-luna-max-codex-20260812.json",
+        "originalDataAsset": "runs/original/openai-gpt-5-6-luna-max-codex-20260812/sp500-data.js",
+        "displayDataAsset": "runs/rendered/openai-gpt-5-6-luna-max-codex-20260812/sp500-data.js",
+        "sessionLog": "validation/openai-gpt-5-6-luna-max-codex-20260812.session.jsonl",
+        "stderrLog": "validation/openai-gpt-5-6-luna-max-codex-20260812.stderr.txt",
+        "visibleResponse": "validation/openai-gpt-5-6-luna-max-codex-20260812.final-response.md",
+        "sha256": {
+          "rawResponse": "2f3ce6c61147e331c6d1138251480f395f2c12374796624cd347232f12fa42cb",
+          "originalHtml": "ba921abfdea415eff1bf7edfbc6667e009243e459ef323bf144fc230a75fe3c7",
+          "displayHtml": "ba921abfdea415eff1bf7edfbc6667e009243e459ef323bf144fc230a75fe3c7",
+          "validationEvidence": "03a2b7e8386300820f94ed475004c62a0273783a5731b4895dc2389703b23cbc",
+          "originalDataAsset": "03401d9b67fdfd882a5a1a6fffd98175d5f40e447499c4c528f409f7dfe02e6b",
+          "displayDataAsset": "03401d9b67fdfd882a5a1a6fffd98175d5f40e447499c4c528f409f7dfe02e6b",
+          "sessionLog": "935d0f0267a120dea32b7ddf8fdc5966be1317c5a15906e640142a21ed8cbef6",
+          "stderrLog": "8118f8ebe54f79dd7b51664d3247a121b3eb244dcfb9f137fd79946593993fc6",
+          "visibleResponse": "3775a097b0f3021ae0b6466991cac75116c941661941d80798c0d9a6bf9016a3"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 21,
+        "reviewer": "Codex",
+        "notes": "The original artifact fully satisfies the request with live-fetched FRED history bundled for standalone use, configurable lookback, horizon, and confidence controls, hover tooltips, rolling holdout metrics, CSV upload, desktop/mobile rendering, and clear educational caveats. The mean log-return drift plus volatility-band baseline is transparent and useful for demonstration, but it is not a rigorous market model; technical robustness is strong, with minor harness cleanup failures disclosed in validation evidence."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-javascript-syntax",
+            "passed": true,
+            "details": "Embedded data and inline dashboard JavaScript passed Node syntax checks."
+          },
+          {
+            "name": "benchmark-browser-render",
+            "passed": true,
+            "details": "Headless Chrome rendered the dashboard locally at desktop and mobile sizes with populated metrics and no reported browser errors."
+          },
+          {
+            "name": "benchmark-interactions",
+            "passed": true,
+            "details": "Control recalculation, chart hover, and CSV upload checks produced the expected state changes; cleanup-only exit-code caveats are disclosed in the evidence record."
+          },
+          {
+            "name": "benchmark-http-assets",
+            "passed": true,
+            "details": "The HTML and sibling data asset both served HTTP 200 from a local server."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed HTML and data assets are byte-identical; no repair was required."
+          },
+          {
+            "name": "repository-validate-and-test",
+            "passed": true,
+            "details": "On the final rebased tree, npm run validate passed for 16 runs; npm test passed all 4 unit tests and 5 browser tests with 1 intentional mobile-project skip."
+          },
+          {
+            "name": "table-row-open",
+            "passed": true,
+            "details": "The new max-reasoning row opened its standalone rendered index.html with the embedded snapshot, forecast 7,894.78, chart present, and no page errors."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-luna at max reasoning in a fresh temporary workspace, fetched FRED S&P 500 history, produced a self-contained interactive forecast dashboard with rolling holdout validation and CSV upload, and imported byte-identical original and displayed artifacts without a rendering repair."
     }
   ]
 }
