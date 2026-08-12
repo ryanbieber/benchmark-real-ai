@@ -1,4 +1,7 @@
+import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
+
+const publishedRuns = JSON.parse(readFileSync('data/runs.json', 'utf8')).runs.filter((run) => run.status === 'benchmark');
 
 const testRun = {
   id: 'test-model-high-codex-20260811',
@@ -21,10 +24,8 @@ test('landing page renders the published run index', async ({ page, isMobile }) 
   for (const heading of headings) {
     await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
   }
-  await expect(page.locator('.run-row')).toHaveCount(3);
-  await expect(page.locator('.run-table')).toContainText('gpt-5.4-mini');
-  await expect(page.locator('.run-table')).toContainText('gpt-5.4');
-  await expect(page.locator('.run-table')).toContainText('openai');
+  await expect(page.locator('.run-row')).toHaveCount(publishedRuns.length);
+  await expect(page.locator('.model-cell strong')).toHaveText(publishedRuns.map((run) => run.model.name));
 });
 
 test('a populated table exposes facets and opens the standalone artifact', async ({ page }) => {

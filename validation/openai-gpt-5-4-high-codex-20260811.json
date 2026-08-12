@@ -1,0 +1,57 @@
+{
+  "runId": "openai-gpt-5-4-high-codex-20260811",
+  "passed": true,
+  "checks": [
+    {
+      "name": "artifact-bytes",
+      "command": "sha256sum runs/original/openai-gpt-5-4-high-codex-20260811.html runs/rendered/openai-gpt-5-4-high-codex-20260811.html",
+      "result": "original and rendered HTML matched exactly; no rendering repair was required"
+    },
+    {
+      "name": "benchmark-browser-dom-dump",
+      "command": "google-chrome --headless --disable-gpu --virtual-time-budget=20000 --dump-dom file:///tmp/benchmark-real-ai.aK0gP7/index.html",
+      "result": "completed successfully during the benchmark run; the DOM showed the dashboard loaded with bundled data and a ready state"
+    },
+    {
+      "name": "benchmark-validation-script",
+      "command": "node /tmp/benchmark-real-ai.aK0gP7/validate-dashboard.mjs",
+      "result": "completed successfully during the benchmark run; default Holt and interactive drift reruns both returned ready-state metrics and captured a screenshot"
+    },
+    {
+      "name": "repository-validate",
+      "command": "npm run validate",
+      "result": "completed successfully in the repository after import; manifest validation passed with 2 runs checked"
+    },
+    {
+      "name": "repository-tests",
+      "command": "npm test",
+      "result": "completed successfully in the repository after updating the browser test to read the manifest dynamically; 5 browser checks passed and 1 mobile-only desktop skip remained expected"
+    },
+    {
+      "name": "published-row-open",
+      "command": "node --input-type=module - <<'NODE' ... playwright row-open check ... NODE",
+      "result": "completed successfully against http://127.0.0.1:4173/; clicking the new row opened /runs/rendered/openai-gpt-5-4-high-codex-20260811.html and the dashboard reached readyFlag=true"
+    }
+  ],
+  "artifacts": {
+    "sessionLog": "validation/openai-gpt-5-4-high-codex-20260811.session.jsonl",
+    "validationScript": "validation/openai-gpt-5-4-high-codex-20260811.mjs",
+    "validationScreenshot": "validation/openai-gpt-5-4-high-codex-20260811.png",
+    "validationStderr": "validation/openai-gpt-5-4-high-codex-20260811.log"
+  },
+  "benchmarkSession": {
+    "sessionId": "019ff33f-e40f-7051-847d-0e940d46dfae",
+    "startedAt": "2026-08-11T23:54:38.548Z",
+    "finishedAt": "2026-08-12T00:03:16.554Z",
+    "durationMs": 518007,
+    "timeToFirstTokenMs": 7247,
+    "usage": {
+      "inputTokens": 608482,
+      "cachedInputTokens": 551296,
+      "outputTokens": 24372,
+      "reasoningOutputTokens": 8369,
+      "totalTokens": 632854
+    }
+  },
+  "notes": "The validation stderr log contained only Chrome's DevTools listener line. The benchmark session also corrected a holiday-labeling bug before its final validation pass."
+}
