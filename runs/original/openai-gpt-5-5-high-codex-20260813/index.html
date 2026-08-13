@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>S&P 500 Forecast Dashboard</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f6f2;
+        --panel: #ffffff;
+        --ink: #16201b;
+        --muted: #64706a;
+        --line: #d9dfd8;
+        --blue: #2563eb;
+        --green: #0f8b6f;
+        --red: #c2412d;
+        --gold: #b7770e;
+        --shadow: 0 12px 32px rgba(22, 32, 27, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1480px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 22px 0 28px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0 0 6px;
+        font-size: clamp(1.65rem, 2.2vw, 2.45rem);
+        line-height: 1.08;
+        letter-spacing: 0;
+      }
+
+      .subhead,
+      .source {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .source a {
+        color: var(--blue);
+      }
+
+      .status {
+        justify-self: end;
+        min-width: 220px;
+        padding: 12px 14px;
+        background: #e9f3ef;
+        border: 1px solid #cbe2d9;
+        border-radius: 8px;
+        color: #205344;
+      }
+
+      .status b {
+        display: block;
+        color: var(--ink);
+        font-size: 0.9rem;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(130px, 1fr));
+        gap: 10px;
+        padding: 12px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        margin-bottom: 14px;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      select,
+      input[type="range"] {
+        width: 100%;
+      }
+
+      select {
+        height: 38px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--ink);
+      }
+
+      input[type="range"] {
+        accent-color: var(--green);
+      }
+
+      .value {
+        color: var(--ink);
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: none;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 6px;
+        align-items: end;
+      }
+
+      .button-row button,
+      .export {
+        height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .button-row button {
+        flex: 1;
+        min-width: 42px;
+      }
+
+      .button-row button.active,
+      .export:hover,
+      .button-row button:hover {
+        border-color: var(--green);
+        color: #075f4c;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .metric,
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .metric {
+        min-height: 92px;
+        padding: 13px 14px;
+      }
+
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 8px;
+        font-size: clamp(1.15rem, 1.7vw, 1.75rem);
+        line-height: 1.1;
+      }
+
+      .metric small {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 2.1fr) minmax(360px, 0.9fr);
+        gap: 14px;
+      }
+
+      .panel {
+        min-width: 0;
+        padding: 14px;
+      }
+
+      .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1rem;
+        letter-spacing: 0;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .legend span {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        white-space: nowrap;
+      }
+
+      .swatch {
+        width: 20px;
+        height: 3px;
+        border-radius: 99px;
+        background: var(--blue);
+      }
+
+      .swatch.forecast {
+        background: var(--green);
+      }
+
+      .swatch.band {
+        height: 9px;
+        background: rgba(15, 139, 111, 0.2);
+        border: 1px solid rgba(15, 139, 111, 0.25);
+      }
+
+      .chart-shell {
+        position: relative;
+        height: 520px;
+      }
+
+      .side-chart {
+        height: 238px;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .tooltip {
+        position: absolute;
+        z-index: 3;
+        pointer-events: none;
+        min-width: 168px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: rgba(22, 32, 27, 0.92);
+        color: #fff;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        transform: translate(12px, -50%);
+        opacity: 0;
+        transition: opacity 120ms ease;
+      }
+
+      .tooltip b {
+        display: block;
+        font-size: 0.82rem;
+      }
+
+      .stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86rem;
+      }
+
+      th,
+      td {
+        padding: 9px 4px;
+        border-bottom: 1px solid var(--line);
+        text-align: right;
+      }
+
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+      }
+
+      .note {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .positive {
+        color: var(--green);
+      }
+
+      .negative {
+        color: var(--red);
+      }
+
+      .warning {
+        color: var(--gold);
+      }
+
+      @media (max-width: 1100px) {
+        .controls,
+        .metrics {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .shell {
+          width: min(100% - 20px, 1480px);
+          padding-top: 12px;
+        }
+
+        header,
+        .controls,
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+
+        .status {
+          justify-self: stretch;
+        }
+
+        .chart-shell {
+          height: 420px;
+        }
+
+        .side-chart {
+          height: 220px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <div>
+          <h1>S&P 500 Forecast Dashboard</h1>
+          <p class="subhead">
+            Interactive statistical scenarios from daily close history.
+          </p>
+        </div>
+        <div class="status" id="dataStatus">
+          <b>Loading data</b>
+          Waiting for sp500-data.json
+        </div>
+      </header>
+
+      <section class="controls" aria-label="Forecast controls">
+        <label>
+          Model
+          <select id="model">
+            <option value="drift">Drift + volatility</option>
+            <option value="momentum">Momentum adjusted</option>
+            <option value="reversion">Mean reversion</option>
+          </select>
+        </label>
+
+        <label>
+          Horizon
+          <span class="value" id="horizonValue">12 months</span>
+          <input id="horizon" type="range" min="1" max="24" value="12" />
+        </label>
+
+        <label>
+          Lookback
+          <span class="value" id="lookbackValue">5 years</span>
+          <input id="lookback" type="range" min="1" max="10" value="5" />
+        </label>
+
+        <label>
+          Confidence
+          <select id="confidence">
+            <option value="0.5">50%</option>
+            <option value="0.7">70%</option>
+            <option value="0.8">80%</option>
+            <option value="0.9" selected>90%</option>
+            <option value="0.95">95%</option>
+          </select>
+        </label>
+
+        <label>
+          Scenario shock
+          <span class="value" id="shockValue">0%</span>
+          <input id="shock" type="range" min="-20" max="20" value="0" />
+        </label>
+
+        <label>
+          Volatility
+          <span class="value" id="volValue">1.0x</span>
+          <input id="volatility" type="range" min="50" max="200" value="100" />
+        </label>
+
+        <label>
+          Presets
+          <span class="button-row">
+            <button type="button" data-horizon="3">3M</button>
+            <button type="button" data-horizon="6">6M</button>
+            <button type="button" data-horizon="12" class="active">12M</button>
+          </span>
+        </label>
+
+        <label>
+          Output
+          <button type="button" class="export" id="exportCsv">Export CSV</button>
+        </label>
+      </section>
+
+      <section class="metrics" aria-label="Key metrics">
+        <div class="metric">
+          <span>Last close</span>
+          <strong id="lastClose">-</strong>
+          <small id="lastDate">-</small>
+        </div>
+        <div class="metric">
+          <span>Trailing 1Y</span>
+          <strong id="oneYear">-</strong>
+          <small>close-to-close</small>
+        </div>
+        <div class="metric">
+          <span>Ann. return</span>
+          <strong id="annReturn">-</strong>
+          <small>selected lookback</small>
+        </div>
+        <div class="metric">
+          <span>Ann. volatility</span>
+          <strong id="annVol">-</strong>
+          <small>selected lookback</small>
+        </div>
+        <div class="metric">
+          <span>Forecast median</span>
+          <strong id="forecastMedian">-</strong>
+          <small id="forecastDate">-</small>
+        </div>
+        <div class="metric">
+          <span>Prob. above today</span>
+          <strong id="probPositive">-</strong>
+          <small>model-implied</small>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Price and Forecast Range</h2>
+            <div class="legend">
+              <span><i class="swatch"></i>History</span>
+              <span><i class="swatch forecast"></i>Median</span>
+              <span><i class="swatch band"></i>Confidence band</span>
+            </div>
+          </div>
+          <div class="chart-shell">
+            <canvas id="priceChart"></canvas>
+            <div class="tooltip" id="priceTip"></div>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Terminal Distribution</h2>
+            </div>
+            <div class="chart-shell side-chart">
+              <canvas id="distributionChart"></canvas>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Historical Drawdown</h2>
+            </div>
+            <div class="chart-shell side-chart">
+              <canvas id="drawdownChart"></canvas>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Forecast Table</h2>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Point</th>
+                  <th>Median</th>
+                  <th>Lower</th>
+                  <th>Upper</th>
+                </tr>
+              </thead>
+              <tbody id="forecastRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <p class="note source" id="sourceLine">
+        Research tool only. Forecasts are statistical scenarios, not investment
+        advice.
+      </p>
+    </main>
+
+    <script>
+      const state = {
+        rows: [],
+        model: "drift",
+        horizonMonths: 12,
+        lookbackYears: 5,
+        confidence: 0.9,
+        shockPct: 0,
+        volScale: 1,
+        forecast: null,
+      };
+
+      const els = {
+        model: document.querySelector("#model"),
+        horizon: document.querySelector("#horizon"),
+        lookback: document.querySelector("#lookback"),
+        confidence: document.querySelector("#confidence"),
+        shock: document.querySelector("#shock"),
+        volatility: document.querySelector("#volatility"),
+        horizonValue: document.querySelector("#horizonValue"),
+        lookbackValue: document.querySelector("#lookbackValue"),
+        shockValue: document.querySelector("#shockValue"),
+        volValue: document.querySelector("#volValue"),
+        lastClose: document.querySelector("#lastClose"),
+        lastDate: document.querySelector("#lastDate"),
+        oneYear: document.querySelector("#oneYear"),
+        annReturn: document.querySelector("#annReturn"),
+        annVol: document.querySelector("#annVol"),
+        forecastMedian: document.querySelector("#forecastMedian"),
+        forecastDate: document.querySelector("#forecastDate"),
+        probPositive: document.querySelector("#probPositive"),
+        forecastRows: document.querySelector("#forecastRows"),
+        price: document.querySelector("#priceChart"),
+        distribution: document.querySelector("#distributionChart"),
+        drawdown: document.querySelector("#drawdownChart"),
+        tip: document.querySelector("#priceTip"),
+        status: document.querySelector("#dataStatus"),
+        sourceLine: document.querySelector("#sourceLine"),
+        exportCsv: document.querySelector("#exportCsv"),
+      };
+
+      init();
+
+      async function init() {
+        bindControls();
+        try {
+          const response = await fetch("sp500-data.json", { cache: "no-store" });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json();
+          state.rows = data.rows.map((row) => ({
+            ...row,
+            time: new Date(`${row.date}T00:00:00Z`).getTime(),
+          }));
+          els.status.innerHTML = `<b>${data.name}</b>${data.rows.length.toLocaleString()} daily closes through ${formatDate(data.lastDate)}`;
+          els.sourceLine.innerHTML = `Data: <a href="${data.sourceUrl}">${data.source}</a>, generated ${new Date(data.generatedAt).toLocaleString()}. Research tool only. Forecasts are statistical scenarios, not investment advice.`;
+          update();
+          window.addEventListener("resize", update);
+        } catch (error) {
+          els.status.innerHTML = `<b>Data load failed</b>${error.message}`;
+          els.status.classList.add("warning");
+        }
+      }
+
+      function bindControls() {
+        els.model.addEventListener("change", () => {
+          state.model = els.model.value;
+          update();
+        });
+        els.horizon.addEventListener("input", () => {
+          state.horizonMonths = Number(els.horizon.value);
+          syncLabels();
+          markPreset();
+          update();
+        });
+        els.lookback.addEventListener("input", () => {
+          state.lookbackYears = Number(els.lookback.value);
+          syncLabels();
+          update();
+        });
+        els.confidence.addEventListener("change", () => {
+          state.confidence = Number(els.confidence.value);
+          update();
+        });
+        els.shock.addEventListener("input", () => {
+          state.shockPct = Number(els.shock.value);
+          syncLabels();
+          update();
+        });
+        els.volatility.addEventListener("input", () => {
+          state.volScale = Number(els.volatility.value) / 100;
+          syncLabels();
+          update();
+        });
+        document.querySelectorAll("[data-horizon]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.horizonMonths = Number(button.dataset.horizon);
+            els.horizon.value = state.horizonMonths;
+            syncLabels();
+            markPreset();
+            update();
+          });
+        });
+        els.exportCsv.addEventListener("click", exportForecast);
+        syncLabels();
+      }
+
+      function syncLabels() {
+        els.horizonValue.textContent = `${state.horizonMonths} month${state.horizonMonths === 1 ? "" : "s"}`;
+        els.lookbackValue.textContent = `${state.lookbackYears} year${state.lookbackYears === 1 ? "" : "s"}`;
+        els.shockValue.textContent = `${state.shockPct > 0 ? "+" : ""}${state.shockPct}%`;
+        els.volValue.textContent = `${state.volScale.toFixed(1)}x`;
+      }
+
+      function markPreset() {
+        document.querySelectorAll("[data-horizon]").forEach((button) => {
+          button.classList.toggle(
+            "active",
+            Number(button.dataset.horizon) === state.horizonMonths,
+          );
+        });
+      }
+
+      function update() {
+        if (!state.rows.length) return;
+        const selected = state.rows.slice(-state.lookbackYears * 252);
+        const forecast = buildForecast(selected);
+        state.forecast = forecast;
+
+        updateMetrics(selected, forecast);
+        drawPriceChart(selected, forecast);
+        drawDistribution(forecast);
+        drawDrawdown(selected);
+        updateForecastTable(forecast);
+      }
+
+      function buildForecast(selected) {
+        const closes = selected.map((row) => row.close);
+        const returns = [];
+        for (let i = 1; i < closes.length; i += 1) {
+          returns.push(Math.log(closes[i] / closes[i - 1]));
+        }
+
+        const mean = average(returns);
+        const vol = stddev(returns) * state.volScale;
+        const recent = returns.slice(-63);
+        const recentMean = recent.length ? average(recent) : mean;
+        const longMean = average(
+          state.rows
+            .slice(-Math.min(state.rows.length, 2520))
+            .map((row, index, all) =>
+              index === 0 ? null : Math.log(row.close / all[index - 1].close),
+            )
+            .filter(Number.isFinite),
+        );
+        const last = selected.at(-1);
+        const ema200 = ema(closes, Math.min(200, closes.length));
+        const stretch = Math.log(last.close / ema200);
+
+        let drift = mean;
+        if (state.model === "momentum") {
+          drift = mean * 0.65 + recentMean * 0.35;
+        }
+        if (state.model === "reversion") {
+          drift = longMean - stretch / 420;
+        }
+
+        const days = Math.max(21, Math.round(state.horizonMonths * 21));
+        const z = zScore(state.confidence);
+        const start = last.close * (1 + state.shockPct / 100);
+        const future = [];
+        let date = new Date(`${last.date}T00:00:00Z`);
+        for (let t = 1; t <= days; t += 1) {
+          date = nextBusinessDay(date);
+          const spread = z * vol * Math.sqrt(t);
+          future.push({
+            date: date.toISOString().slice(0, 10),
+            median: start * Math.exp(drift * t),
+            lower: start * Math.exp(drift * t - spread),
+            upper: start * Math.exp(drift * t + spread),
+          });
+        }
+
+        const terminal = future.at(-1);
+        const sims = simulateTerminal(start, drift, vol, days, 2200);
+        return {
+          selected,
+          last,
+          start,
+          drift,
+          vol,
+          days,
+          future,
+          terminal,
+          sims,
+          annReturn: Math.exp(mean * 252) - 1,
+          annVol: stddev(returns) * Math.sqrt(252),
+          oneYearReturn: closes.length > 252 ? closes.at(-1) / closes.at(-253) - 1 : null,
+          maxDrawdown: maxDrawdown(closes),
+          probAboveToday: probabilityGreaterThan(last.close, start, drift, vol, days),
+        };
+      }
+
+      function updateMetrics(selected, forecast) {
+        els.lastClose.textContent = number(forecast.last.close);
+        els.lastDate.textContent = formatDate(forecast.last.date);
+        els.oneYear.textContent = pct(forecast.oneYearReturn);
+        colorize(els.oneYear, forecast.oneYearReturn);
+        els.annReturn.textContent = pct(forecast.annReturn);
+        colorize(els.annReturn, forecast.annReturn);
+        els.annVol.textContent = pct(forecast.annVol);
+        els.forecastMedian.textContent = number(forecast.terminal.median);
+        els.forecastDate.textContent = formatDate(forecast.terminal.date);
+        els.probPositive.textContent = pct(forecast.probAboveToday);
+        colorize(els.probPositive, forecast.probAboveToday - 0.5);
+      }
+
+      function drawPriceChart(selected, forecast) {
+        const ctx = prepareCanvas(els.price);
+        const width = els.price.clientWidth;
+        const height = els.price.clientHeight;
+        const pad = { left: 64, right: 26, top: 20, bottom: 46 };
+        const plotW = width - pad.left - pad.right;
+        const plotH = height - pad.top - pad.bottom;
+        const allValues = [
+          ...selected.map((row) => row.close),
+          ...forecast.future.flatMap((row) => [row.lower, row.upper]),
+        ];
+        const min = Math.min(...allValues);
+        const max = Math.max(...allValues);
+        const padding = (max - min) * 0.08 || max * 0.02;
+        const yMin = min - padding;
+        const yMax = max + padding;
+        const total = selected.length + forecast.future.length - 1;
+        const split = selected.length - 1;
+        const x = (index) => pad.left + (index / total) * plotW;
+        const y = (value) => pad.top + ((yMax - value) / (yMax - yMin)) * plotH;
+
+        clear(ctx, width, height);
+        drawGrid(ctx, width, height, pad, yMin, yMax);
+
+        ctx.beginPath();
+        forecast.future.forEach((row, i) => {
+          const px = x(split + i + 1);
+          const py = y(row.upper);
+          if (i === 0) ctx.moveTo(x(split), y(forecast.start));
+          ctx.lineTo(px, py);
+        });
+        [...forecast.future].reverse().forEach((row) => {
+          ctx.lineTo(x(split + forecast.future.indexOf(row) + 1), y(row.lower));
+        });
+        ctx.lineTo(x(split), y(forecast.start));
+        ctx.closePath();
+        ctx.fillStyle = "rgba(15, 139, 111, 0.16)";
+        ctx.fill();
+
+        drawLine(
+          ctx,
+          selected.map((row, i) => [x(i), y(row.close)]),
+          "#2563eb",
+          2.3,
+        );
+
+        ctx.save();
+        ctx.setLineDash([7, 6]);
+        drawLine(
+          ctx,
+          [[x(split), y(forecast.start)], ...forecast.future.map((row, i) => [x(split + i + 1), y(row.median)])],
+          "#0f8b6f",
+          2.4,
+        );
+        ctx.restore();
+
+        ctx.strokeStyle = "rgba(100, 112, 106, 0.65)";
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.moveTo(x(split), pad.top);
+        ctx.lineTo(x(split), pad.top + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        drawXAxis(ctx, selected, forecast.future, pad, plotW, height);
+        attachPriceTooltip(selected, forecast, { x, y, pad, plotW, plotH, width, height, split, total });
+      }
+
+      function attachPriceTooltip(selected, forecast, scale) {
+        const canvas = els.price;
+        canvas.onmousemove = (event) => {
+          const rect = canvas.getBoundingClientRect();
+          const mouseX = event.clientX - rect.left;
+          if (mouseX < scale.pad.left || mouseX > scale.width - scale.pad.right) {
+            els.tip.style.opacity = 0;
+            return;
+          }
+          const index = Math.round(
+            ((mouseX - scale.pad.left) / scale.plotW) * scale.total,
+          );
+          let html;
+          let px = scale.x(Math.max(0, Math.min(scale.total, index)));
+          let py;
+          if (index <= scale.split) {
+            const row = selected[index];
+            py = scale.y(row.close);
+            html = `<b>${formatDate(row.date)}</b>Close ${number(row.close)}`;
+          } else {
+            const row = forecast.future[index - scale.split - 1];
+            py = scale.y(row.median);
+            html = `<b>${formatDate(row.date)}</b>Median ${number(row.median)}<br>Band ${number(row.lower)} - ${number(row.upper)}`;
+          }
+          els.tip.innerHTML = html;
+          els.tip.style.left = `${Math.min(px, scale.width - 210)}px`;
+          els.tip.style.top = `${Math.max(28, Math.min(py, scale.height - 28))}px`;
+          els.tip.style.opacity = 1;
+        };
+        canvas.onmouseleave = () => {
+          els.tip.style.opacity = 0;
+        };
+      }
+
+      function drawDistribution(forecast) {
+        const ctx = prepareCanvas(els.distribution);
+        const width = els.distribution.clientWidth;
+        const height = els.distribution.clientHeight;
+        const pad = { left: 44, right: 16, top: 12, bottom: 34 };
+        clear(ctx, width, height);
+
+        const sims = forecast.sims;
+        const min = percentile(sims, 0.01);
+        const max = percentile(sims, 0.99);
+        const bins = 24;
+        const counts = Array.from({ length: bins }, () => 0);
+        sims.forEach((value) => {
+          const bucket = Math.max(
+            0,
+            Math.min(bins - 1, Math.floor(((value - min) / (max - min)) * bins)),
+          );
+          counts[bucket] += 1;
+        });
+        const maxCount = Math.max(...counts);
+        const plotW = width - pad.left - pad.right;
+        const plotH = height - pad.top - pad.bottom;
+        drawPanelGrid(ctx, width, height, pad);
+        counts.forEach((count, i) => {
+          const barW = plotW / bins - 2;
+          const barH = (count / maxCount) * plotH;
+          const x = pad.left + i * (plotW / bins) + 1;
+          const y = pad.top + plotH - barH;
+          ctx.fillStyle = i % 2 ? "rgba(37, 99, 235, 0.72)" : "rgba(15, 139, 111, 0.72)";
+          ctx.fillRect(x, y, barW, barH);
+        });
+        label(ctx, number(min), pad.left, height - 10, "left");
+        label(ctx, number(max), width - pad.right, height - 10, "right");
+        label(ctx, `Median ${number(forecast.terminal.median)}`, width / 2, 20, "center");
+      }
+
+      function drawDrawdown(selected) {
+        const ctx = prepareCanvas(els.drawdown);
+        const width = els.drawdown.clientWidth;
+        const height = els.drawdown.clientHeight;
+        const pad = { left: 44, right: 16, top: 12, bottom: 34 };
+        clear(ctx, width, height);
+        const closes = selected.map((row) => row.close);
+        let peak = closes[0];
+        const dds = closes.map((close) => {
+          peak = Math.max(peak, close);
+          return close / peak - 1;
+        });
+        const min = Math.min(...dds, -0.02);
+        const plotW = width - pad.left - pad.right;
+        const plotH = height - pad.top - pad.bottom;
+        const x = (index) => pad.left + (index / (dds.length - 1)) * plotW;
+        const y = (value) => pad.top + ((0 - value) / (0 - min)) * plotH;
+        drawPanelGrid(ctx, width, height, pad);
+        const points = dds.map((dd, i) => [x(i), y(dd)]);
+        ctx.beginPath();
+        ctx.moveTo(points[0][0], y(0));
+        points.forEach(([px, py]) => ctx.lineTo(px, py));
+        ctx.lineTo(points.at(-1)[0], y(0));
+        ctx.closePath();
+        ctx.fillStyle = "rgba(194, 65, 45, 0.16)";
+        ctx.fill();
+        drawLine(ctx, points, "#c2412d", 2);
+        label(ctx, "0%", pad.left, y(0) - 4, "left");
+        label(ctx, pct(min), pad.left, y(min) - 4, "left");
+        label(ctx, `Max ${pct(maxDrawdown(closes))}`, width / 2, 20, "center");
+      }
+
+      function updateForecastTable(forecast) {
+        const marks = [0.25, 0.5, 0.75, 1].map((ratio) =>
+          forecast.future[Math.max(0, Math.round((forecast.future.length - 1) * ratio))],
+        );
+        els.forecastRows.innerHTML = marks
+          .map(
+            (row) => `<tr><td>${formatDate(row.date)}</td><td>${number(row.median)}</td><td>${number(row.lower)}</td><td>${number(row.upper)}</td></tr>`,
+          )
+          .join("");
+      }
+
+      function exportForecast() {
+        if (!state.forecast) return;
+        const rows = [
+          ["date", "median", "lower", "upper"],
+          ...state.forecast.future.map((row) => [
+            row.date,
+            row.median.toFixed(2),
+            row.lower.toFixed(2),
+            row.upper.toFixed(2),
+          ]),
+        ];
+        const blob = new Blob([rows.map((row) => row.join(",")).join("\n")], {
+          type: "text/csv",
+        });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "sp500-forecast.csv";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
+      function prepareCanvas(canvas) {
+        const dpr = window.devicePixelRatio || 1;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
+          canvas.width = Math.round(width * dpr);
+          canvas.height = Math.round(height * dpr);
+        }
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return ctx;
+      }
+
+      function clear(ctx, width, height) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      function drawGrid(ctx, width, height, pad, yMin, yMax) {
+        ctx.strokeStyle = "#e7ebe5";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#64706a";
+        ctx.font = "12px Inter, system-ui, sans-serif";
+        for (let i = 0; i <= 5; i += 1) {
+          const y = pad.top + ((height - pad.top - pad.bottom) / 5) * i;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(width - pad.right, y);
+          ctx.stroke();
+          const value = yMax - ((yMax - yMin) / 5) * i;
+          ctx.fillText(number(value), 8, y + 4);
+        }
+      }
+
+      function drawPanelGrid(ctx, width, height, pad) {
+        ctx.strokeStyle = "#e7ebe5";
+        for (let i = 0; i <= 3; i += 1) {
+          const y = pad.top + ((height - pad.top - pad.bottom) / 3) * i;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(width - pad.right, y);
+          ctx.stroke();
+        }
+      }
+
+      function drawXAxis(ctx, selected, future, pad, plotW, height) {
+        const labels = [
+          selected[0].date,
+          selected[Math.floor(selected.length / 2)].date,
+          selected.at(-1).date,
+          future.at(-1).date,
+        ];
+        const xs = [pad.left, pad.left + plotW * 0.42, pad.left + plotW * 0.78, pad.left + plotW];
+        ctx.fillStyle = "#64706a";
+        ctx.font = "12px Inter, system-ui, sans-serif";
+        labels.forEach((text, i) => label(ctx, shortDate(text), xs[i], height - 16, i === 0 ? "left" : i === labels.length - 1 ? "right" : "center"));
+      }
+
+      function drawLine(ctx, points, stroke, width) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = width;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        points.forEach(([x, y], index) => {
+          if (index === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+
+      function label(ctx, text, x, y, align) {
+        ctx.save();
+        ctx.fillStyle = "#64706a";
+        ctx.font = "12px Inter, system-ui, sans-serif";
+        ctx.textAlign = align;
+        ctx.fillText(text, x, y);
+        ctx.restore();
+      }
+
+      function average(values) {
+        return values.reduce((sum, value) => sum + value, 0) / values.length;
+      }
+
+      function stddev(values) {
+        const mean = average(values);
+        const variance =
+          values.reduce((sum, value) => sum + (value - mean) ** 2, 0) /
+          Math.max(1, values.length - 1);
+        return Math.sqrt(variance);
+      }
+
+      function ema(values, period) {
+        const k = 2 / (period + 1);
+        return values.reduce((avg, value, index) => (index === 0 ? value : value * k + avg * (1 - k)), values[0]);
+      }
+
+      function maxDrawdown(values) {
+        let peak = values[0];
+        let worst = 0;
+        values.forEach((value) => {
+          peak = Math.max(peak, value);
+          worst = Math.min(worst, value / peak - 1);
+        });
+        return worst;
+      }
+
+      function zScore(confidence) {
+        return { 0.5: 0.674, 0.7: 1.036, 0.8: 1.282, 0.9: 1.645, 0.95: 1.96 }[
+          confidence
+        ];
+      }
+
+      function simulateTerminal(start, drift, vol, days, count) {
+        const rand = seededRandom(314159);
+        const sims = [];
+        for (let i = 0; i < count; i += 1) {
+          const z = normalSample(rand);
+          sims.push(start * Math.exp(drift * days + vol * Math.sqrt(days) * z));
+        }
+        return sims.sort((a, b) => a - b);
+      }
+
+      function probabilityGreaterThan(target, start, drift, vol, days) {
+        if (vol <= 0) return start * Math.exp(drift * days) > target ? 1 : 0;
+        const z = (Math.log(target / start) - drift * days) / (vol * Math.sqrt(days));
+        return 1 - normalCdf(z);
+      }
+
+      function percentile(sorted, p) {
+        return sorted[Math.max(0, Math.min(sorted.length - 1, Math.round((sorted.length - 1) * p)))];
+      }
+
+      function seededRandom(seed) {
+        return function random() {
+          seed |= 0;
+          seed = (seed + 0x6d2b79f5) | 0;
+          let value = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          value ^= value + Math.imul(value ^ (value >>> 7), 61 | value);
+          return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function normalSample(rand) {
+        const u = Math.max(Number.EPSILON, rand());
+        const v = Math.max(Number.EPSILON, rand());
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+      }
+
+      function normalCdf(x) {
+        const t = 1 / (1 + 0.2316419 * Math.abs(x));
+        const d = 0.3989423 * Math.exp((-x * x) / 2);
+        const p =
+          d *
+          t *
+          (0.3193815 +
+            t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+        return x > 0 ? 1 - p : p;
+      }
+
+      function nextBusinessDay(date) {
+        const next = new Date(date);
+        do {
+          next.setUTCDate(next.getUTCDate() + 1);
+        } while (next.getUTCDay() === 0 || next.getUTCDay() === 6);
+        return next;
+      }
+
+      function number(value) {
+        return Math.round(value).toLocaleString("en-US");
+      }
+
+      function pct(value) {
+        if (!Number.isFinite(value)) return "-";
+        return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(1)}%`;
+      }
+
+      function formatDate(value) {
+        return new Date(`${value}T00:00:00Z`).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          timeZone: "UTC",
+        });
+      }
+
+      function shortDate(value) {
+        return new Date(`${value}T00:00:00Z`).toLocaleDateString("en-US", {
+          month: "short",
+          year: "2-digit",
+          timeZone: "UTC",
+        });
+      }
+
+      function colorize(element, value) {
+        element.classList.toggle("positive", value > 0);
+        element.classList.toggle("negative", value < 0);
+      }
+    </script>
+  </body>
+</html>

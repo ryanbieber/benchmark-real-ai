@@ -12,7 +12,7 @@
       "max",
       "ultra"
     ],
-    "updatedAt": "2026-08-13T12:20:54Z",
+    "updatedAt": "2026-08-13T13:39:28.558Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -3332,6 +3332,129 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-terra at native Ultra reasoning in a fresh temporary workspace, built and comprehensively browser-validated a self-contained interactive S&P 500 forecasting dashboard from synthetic illustrative data with CSV import/export, then imported byte-identical original and displayed HTML without a rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-5-high-codex-20260813",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.5",
+        "name": "gpt-5.5",
+        "version": "gpt-5.5"
+      },
+      "reasoning": {
+        "native": "high",
+        "normalized": "high"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/home/carnufex/Documents/Codex/bench-temp/benchmark-real-ai-gpt-5.5-high-uk9WdE",
+          "isolatedCodexHome": "/home/carnufex/Documents/Codex/bench-temp/codex-bench-home-gpt-5.5-high-SFH9NH",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.5",
+          "reasoningLevelConfigAttempt": "high",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "outputLastMessage": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-13T13:32:18.783Z",
+        "finishedAt": "2026-08-13T13:39:28.558Z",
+        "durationSeconds": 429.775
+      },
+      "run": {
+        "completedAt": "2026-08-13T13:39:28.558Z"
+      },
+      "usage": {
+        "inputTokens": 436257,
+        "cachedInputTokens": 395904,
+        "outputTokens": 20081,
+        "reasoningOutputTokens": 4494,
+        "totalTokens": 456338,
+        "source": "Codex turn.completed usage event",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "Final dashboard loads a local Yahoo Finance chart endpoint snapshot from sp500-data.json, generated during the benchmark run with 2513 rows covering 2016-08-15 through 2026-08-13."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-5-high-codex-20260813.md",
+        "originalHtml": "runs/original/openai-gpt-5-5-high-codex-20260813/index.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-5-high-codex-20260813/index.html",
+        "validationEvidence": "validation/openai-gpt-5-5-high-codex-20260813.json",
+        "sha256": {
+          "rawResponse": "7e057a29748af308b3d5b3dcebc457e8a65fc7e797b029654ba76a84e7e6682d",
+          "originalHtml": "99f852e68d650030bc7f09b911ac4734c79f0662052843aa9a8388369ee5bcc9",
+          "displayHtml": "99f852e68d650030bc7f09b911ac4734c79f0662052843aa9a8388369ee5bcc9",
+          "validationEvidence": "00bfbcb041e8105bc0152efbf7dfa2ae3785ecf5810dc6a651778e9d5e9e3125",
+          "originalData": "3c0e7f7d5d80347f6ee01af4d48fa59ab53bcb83f10aac4873d16ccb731388de",
+          "displayData": "3c0e7f7d5d80347f6ee01af4d48fa59ab53bcb83f10aac4873d16ccb731388de",
+          "originalFetchScript": "cb15b36a5c9e5cb8d133809320e985e3e1f4fd1120dba17920227427177d6a3e",
+          "displayFetchScript": "cb15b36a5c9e5cb8d133809320e985e3e1f4fd1120dba17920227427177d6a3e",
+          "originalValidationScript": "6a3e7d6ed2001e5f6406151c466518fa1064abd6f4bb78368e3a8d90be792f05",
+          "displayValidationScript": "6a3e7d6ed2001e5f6406151c466518fa1064abd6f4bb78368e3a8d90be792f05",
+          "sessionLog": "bf41184b55494ca6ed6e2d1fbe26d6fd36edb82747c39451f4de3d6ba5deafc8",
+          "finalResponse": "94599f884b66764202691f97d89bcdcf6a8f84ebc721b99d8c64b8f72f3ecc28",
+          "stderr": "2f31a04ceaf6806d56ee30febf8cdb74cea015d842829fa4e3072bfb623e116d",
+          "validationScreenshot": "3ca15b138359d741776ca21d39c202093e3878f8137d38fd2e5daf6f5901b927",
+          "rowOpenScreenshot": "e78fe030c17b37dcc44a0655b33385899b9c5859351e12cff71eef3e221a4c9e"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 21,
+        "reviewer": "Codex",
+        "notes": "The original run produced a polished interactive dashboard with multiple forecast controls, three charts, CSV export, a Yahoo Finance historical snapshot, and automated browser validation. Forecasting remains lightweight scenario modeling rather than a rigorous market model; robustness is good, but the dashboard depends on a sibling JSON snapshot rather than being a single self-contained HTML file."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered artifact directories were copied byte-identically; no import repair was required."
+          },
+          {
+            "name": "benchmark-browser-validation",
+            "passed": true,
+            "details": "The benchmark run used headless Chrome to verify populated metrics, forecast table rows, scripted control changes, and nonblank output for all three canvases."
+          },
+          {
+            "name": "data-source",
+            "passed": true,
+            "details": "The final dashboard loads local ^GSPC historical-snapshot data generated from Yahoo Finance's chart endpoint through 2026-08-13."
+          },
+          {
+            "name": "row-open-check",
+            "passed": true,
+            "details": "The showcase table row was filtered and clicked in Playwright, opening the rendered standalone dashboard with populated metrics, initialized canvases, Yahoo Finance snapshot source disclosure, and no bad numeric text."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.5 at high reasoning in an empty temp workspace, fetched a Yahoo Finance ^GSPC historical snapshot, produced an interactive multi-file S&P 500 forecast dashboard, browser-validated chart rendering and controls, and imported byte-identical original and displayed artifacts without a rendering repair."
     }
   ]
 }
