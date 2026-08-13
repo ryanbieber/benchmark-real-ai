@@ -2302,6 +2302,140 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-terra at native xhigh (extra high) reasoning in a fresh temporary workspace, built and browser-validated a multi-file interactive S&P 500 GBM dashboard with seeded illustrative default data, CSV import, and an optional live refresh path, then imported byte-identical original and display artifact sets without a repair."
+    },
+    {
+      "id": "openai-gpt-5-6-sol-low-codex-20260813",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-sol",
+        "name": "gpt-5.6-sol",
+        "version": "gpt-5.6-sol"
+      },
+      "reasoning": {
+        "native": "low",
+        "normalized": "low"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-6-sol-low-d73PJ5",
+          "ignoreUserConfig": false,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-sol",
+          "reasoningLevel": "low",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "outputLastMessage": true,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "mcp-tools",
+          "in-app-browser connector"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-13T11:31:10.169Z",
+        "finishedAt": "2026-08-13T11:34:16.473Z",
+        "durationSeconds": 186.304
+      },
+      "run": {
+        "threadId": "019ffae3-f899-7fb0-aebc-c1c34a1416b8",
+        "completedAt": "2026-08-13T11:34:16.473Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 162580,
+        "cachedInputTokens": 142080,
+        "outputTokens": 7909,
+        "reasoningOutputTokens": 696,
+        "totalTokens": 170489,
+        "source": "Final turn.completed usage event in validation/openai-gpt-5-6-sol-low-codex-20260813.session.jsonl; totalTokens is inputTokens plus outputTokens.",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The dashboard generates a deterministic 66-row illustrative monthly series in seededData(), visibly labels it `Illustrative monthly data`, and permits CSV replacement. It does not bundle or fetch external market history."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-sol-low-codex-20260813.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-sol-low-codex-20260813.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-sol-low-codex-20260813.html",
+        "validationEvidence": "validation/openai-gpt-5-6-sol-low-codex-20260813.json",
+        "sessionLog": "validation/openai-gpt-5-6-sol-low-codex-20260813.session.jsonl",
+        "stderrLog": "validation/openai-gpt-5-6-sol-low-codex-20260813.stderr.log",
+        "screenshots": [
+          "validation/openai-gpt-5-6-sol-low-codex-20260813-dashboard.png"
+        ],
+        "sha256": {
+          "rawResponse": "ce08186c385177424122ef9a134ad5e1f9dd07706a6e2fbd90747aea92bbce80",
+          "originalHtml": "c44da111e0e74450003c0ea9bcca23e3447d7ae1fd153cde44c14d6815e1785c",
+          "displayHtml": "c44da111e0e74450003c0ea9bcca23e3447d7ae1fd153cde44c14d6815e1785c",
+          "validationEvidence": "e2dec836acb93656dfe668c234c906e669b33517acfa764e228c3fee0d82f88d",
+          "sessionLog": "1e4cd0398938c8d1def7856ed10063f90773500bdf01f231fbb8a90fe04e9066",
+          "stderrLog": "bf815d7362ca74065d4680165f4378c512fefb0d03087756676f800b0b818a78",
+          "screenshot": "a91a178dd0ef31ceecabf4e18dc71fe31932eb79411976381d9091cae9a638fa"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 4
+        },
+        "total": 20,
+        "reviewer": "Codex",
+        "notes": "The untouched artifact is a polished, responsive, dependency-free dashboard with adjustable horizon, lookback, confidence, scenario analysis, CSV import, SVG hover inspection, and clear sample-data and educational-use disclosures. Its log-linear trend and residual uncertainty band are transparent baseline techniques, but it provides no holdout or backtest metrics and the confidence construction is heuristic rather than a calibrated market forecast. Benchmark structure, syntax, HTTP, and math checks passed; independent Chrome interaction and mobile checks also passed."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-structure-syntax-http-math",
+            "passed": true,
+            "details": "The benchmark session passed HTML structure and required-control assertions, inline JavaScript syntax checking, local HTTP byte comparison, and a deterministic finite-positive forecast calculation."
+          },
+          {
+            "name": "benchmark-in-app-browser-automation",
+            "passed": false,
+            "details": "No in-app browser target was available; this limitation is disclosed in the visible final response and validation evidence."
+          },
+          {
+            "name": "independent-browser-validation",
+            "passed": true,
+            "details": "Playwright with Google Chrome loaded the displayed artifact, changed the horizon and scenario, observed a recalculated target and forecast series, captured a screenshot, found no page errors, and confirmed no horizontal overflow at 390px."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed HTML are byte-identical; no rendering repair was required."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "npm run validate and npm test passed."
+          },
+          {
+            "name": "table-row-open",
+            "passed": true,
+            "details": "The gpt-5.6-sol low table row opened the standalone rendered HTML with the expected title, illustrative-data disclosure, populated forecast, and rendered chart."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-sol at low reasoning in an empty temporary workspace, produced a responsive standalone synthetic S&P 500 forecasting dashboard with scenario controls and CSV import, and required no rendering repair."
     }
   ]
 }
