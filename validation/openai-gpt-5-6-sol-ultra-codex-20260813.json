@@ -1,0 +1,298 @@
+{
+  "runId": "openai-gpt-5-6-sol-ultra-codex-20260813",
+  "workspace": "/tmp/benchmark-real-ai-gpt-5-6-sol-ultra-VfNKYz",
+  "captureDirectory": "/tmp/benchmark-real-ai-capture-gpt-5-6-sol-ultra-KyTKqJ",
+  "prompt": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+  "promptExact": true,
+  "isolation": {
+    "freshWorkspace": true,
+    "repositoryContextProvided": false,
+    "captureOutsideWorkspace": true,
+    "evidence": "The first benchmark command printed only /tmp/benchmark-real-ai-gpt-5-6-sol-ultra-VfNKYz; its rg and find scans returned no files. Session JSONL, stderr, timestamp markers, and the final-response capture were written to a separate temporary directory."
+  },
+  "reasoning": {
+    "native": "ultra",
+    "normalized": "max",
+    "nativeSupportEvidence": {
+      "source": "/home/carnufex/.codex/models_cache.json",
+      "modelCacheFetchedAt": "2026-08-13T11:37:12.642679945Z",
+      "model": "gpt-5.6-sol",
+      "description": "Maximum reasoning with automatic task delegation"
+    },
+    "normalizationNotes": "The model natively supports ultra. The repository's fixed normalized bands end at max, so ultra is mapped to max while native ultra remains visible and distinct from native max."
+  },
+  "timestamps": {
+    "startedAt": "2026-08-13T11:39:21.413Z",
+    "finishedAt": "2026-08-13T11:54:39.313Z",
+    "durationMs": 917900,
+    "durationSeconds": 917.9,
+    "timeToFirstTokenMs": null,
+    "latencyMs": null,
+    "source": "The outer recorder wrote startedAt immediately before the successful Codex invocation and finishedAt immediately after Codex exited 0. Both marker files are preserved. Codex reported no time-to-first-token or standalone latency field."
+  },
+  "usage": {
+    "inputTokens": 1711415,
+    "cachedInputTokens": 1620736,
+    "outputTokens": 44234,
+    "reasoningOutputTokens": 12002,
+    "totalTokens": 1755649,
+    "actualCostUsd": null,
+    "source": "Final turn.completed usage event in validation/openai-gpt-5-6-sol-ultra-codex-20260813.session.jsonl. totalTokens is inputTokens + outputTokens; cached input and reasoning output are subsets."
+  },
+  "apiEquivalentEstimate": {
+    "usd": 2.590783,
+    "actualBilledCost": false,
+    "formula": "((inputTokens - cachedInputTokens) * 5 + cachedInputTokens * 0.5 + outputTokens * 30) / 1000000",
+    "pricing": {
+      "model": "gpt-5.6-sol",
+      "inputUsdPerMillion": 5,
+      "cachedInputUsdPerMillion": 0.5,
+      "outputUsdPerMillion": 30,
+      "serviceTier": "standard",
+      "contextBand": "short",
+      "retrievedAt": "2026-08-12",
+      "source": "https://developers.openai.com/api/docs/pricing/"
+    }
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "command": "codex --search -a never -s danger-full-access -m gpt-5.6-sol -c 'model_reasoning_effort=\"ultra\"' -C /tmp/benchmark-real-ai-gpt-5-6-sol-ultra-VfNKYz exec --ephemeral --skip-git-repo-check --json -o /tmp/benchmark-real-ai-capture-gpt-5-6-sol-ultra-KyTKqJ/final-response.md [exact benchmark prompt passed as argv]",
+    "configuration": {
+      "cd": "/tmp/benchmark-real-ai-gpt-5-6-sol-ultra-VfNKYz",
+      "ignoreUserConfig": false,
+      "ignoreRules": false,
+      "skipGitRepoCheck": true,
+      "ephemeral": true,
+      "model": "gpt-5.6-sol",
+      "reasoningLevel": "ultra",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": "never",
+      "webSearch": true,
+      "jsonEvents": true,
+      "promptSource": "argv",
+      "outputLastMessage": "/tmp/benchmark-real-ai-capture-gpt-5-6-sol-ultra-KyTKqJ/final-response.md",
+      "normalToolsEnabled": true
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "network-access",
+      "web-search",
+      "MCP tools",
+      "local-http-server",
+      "DOM interaction validation",
+      "in-app-browser-control (attempted; no target available)",
+      "automatic-task-delegation (attempted; collaboration spawn failed)"
+    ]
+  },
+  "dataSource": {
+    "type": "historical-snapshot",
+    "source": "Federal Reserve Bank of St. Louis (FRED), series SP500",
+    "sourceUrl": "https://fred.stlouisfed.org/series/SP500",
+    "retrievedAt": "2026-08-13",
+    "firstObservation": "2018-01-02",
+    "lastObservation": "2026-08-12",
+    "observations": 2164,
+    "notes": "The run fetched the FRED CSV and embedded every non-empty close in data.js. The published default loads this fixed sibling snapshot locally; CSV import can replace it within the browser tab."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "fresh-workspace",
+        "command": "pwd && rg --files -g '!node_modules' -g '!dist' | sed -n '1,240p' && find . -maxdepth 2 -type f -printf '%p\\n' | sed -n '1,240p'",
+        "exitCode": 0,
+        "result": "Printed only /tmp/benchmark-real-ai-gpt-5-6-sol-ultra-VfNKYz; no workspace files were found."
+      },
+      {
+        "name": "market-data-fetch",
+        "command": "curl FRED fredgraph.csv for SP500 from 2018-01-01 through 2026-08-13",
+        "exitCode": 0,
+        "result": "FRED returned the CSV. The run filtered empty values and wrote 2,164 observations through 2026-08-12 to data.js. An earlier Stooq probe returned an anti-bot page and was not used."
+      },
+      {
+        "name": "benchmark-in-app-browser",
+        "command": "Use the installed Codex browser skill, request browser id iab, read troubleshooting guidance, and list browser targets",
+        "exitCode": null,
+        "result": "The iab request reported Browser is not available and the browser list was empty. The model disclosed this limitation and continued with local numerical and DOM checks.",
+        "passed": false
+      },
+      {
+        "name": "JavaScript-and-model-validation",
+        "command": "node --check app.js, then load data.js/app.js under Node and validate ensemble, damped, and momentum forecasts across 20/60/120/252-day horizons",
+        "exitCode": 0,
+        "result": "MODEL_VALIDATION_OK. All endpoints were finite, interval bounds were ordered, forecast dates skipped weekends, and each configuration produced valid walk-forward metrics."
+      },
+      {
+        "name": "first-DOM-interaction-suite",
+        "command": "Install jsdom@26 under /tmp/northstar-jsdom and evaluate data.js/app.js against index.html",
+        "exitCode": 0,
+        "result": "DOM_INTERACTION_VALIDATION_OK: last close 7,749; base/bear/bull targets 8,069/7,917/8,224; 95 backtest cases; 4 forecast-chart paths; 3 validation-chart paths. Model, confidence, horizon, range, scenario, and reset controls passed."
+      },
+      {
+        "name": "HTML-validation",
+        "command": "node /tmp/northstar-validator/node_modules/html-validate/bin/html-validate.mjs index.html",
+        "exitCode": 0,
+        "result": "The first lint pass found eight issues. The model corrected them during the benchmark; the final rerun returned no findings."
+      },
+      {
+        "name": "final-DOM-interaction-and-data-suite",
+        "command": "Re-evaluate the final files in jsdom, including a 350-row CSV import, bundled-data restore, and forecast export",
+        "exitCode": 0,
+        "result": "FULL_DOM_INTERACTION_VALIDATION_OK: last close 7,749; base/bear/bull 8,069/7,917/8,224; 95 cases; imported 350 rows; export filename sp500-forecast-2026-08-12-60d.csv."
+      },
+      {
+        "name": "final-static-and-HTTP-checks",
+        "command": "node --check app.js; html-validate index.html; curl index.html and app.js from the local server",
+        "exitCode": 0,
+        "result": "FINAL_STATIC_AND_HTTP_CHECKS_OK. A separate asset loop also returned HTTP 200 for index.html, styles.css, app.js, and data.js."
+      },
+      {
+        "name": "default-forecast-observation",
+        "command": "Load the final model under Node and print the default 60-day blended forecast and backtest",
+        "exitCode": 0,
+        "result": "Last 7,748.50; target 8,069.0137; range 7,152.1050–9,103.4712; annualized drift 18.56%; volatility 15.03%; median error 3.75%; direction hit rate 81.05%; interval coverage 95.79%; 95 cases; end 2026-11-04."
+      }
+    ],
+    "warnings": [
+      "The benchmark session's in-app browser list was empty, so the run could not perform visual browser validation; this is disclosed in its final response.",
+      "Native ultra attempted automatic task delegation twice, but both collaboration-spawn calls failed at the harness layer because the ephemeral thread was unavailable. The model continued autonomously and completed the run.",
+      "An early apply_patch call was malformed and failed verification; the model retried and produced the intended file.",
+      "Port 4173 was occupied by another isolated benchmark server. The model verified that process's working directory was unrelated and used port 8765 for its own successful HTTP checks.",
+      "The first html-validate command used a .js path that did not exist; the model found the installed .mjs executable, ran it, fixed all reported HTML issues, and passed the final run.",
+      "Codex stderr includes plugin-manifest, keyring, state-database, file-watcher, and telemetry warnings that did not prevent the run from completing."
+    ],
+    "observedOutputs": {
+      "defaultDashboard": {
+        "dataWindow": "2018 — 2026",
+        "observations": 2164,
+        "lastClose": 7748.5,
+        "lastDate": "2026-08-12",
+        "target60Day": 8069.013691413951,
+        "range90": [
+          7152.105045322423,
+          9103.471151449037
+        ],
+        "forecastEnd": "2026-11-04",
+        "medianBacktestErrorPercent": 3.751110889524219,
+        "directionHitRatePercent": 81.05263157894737,
+        "intervalCoveragePercent": 95.78947368421052,
+        "backtestCases": 95
+      }
+    }
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "npm-install",
+        "command": "npm install",
+        "exitCode": 0,
+        "result": "Added 3 packages and audited 4 packages; npm reported 0 vulnerabilities."
+      },
+      {
+        "name": "artifact-byte-preservation",
+        "command": "diff -qr temporary-workspace runs/original/<id>; diff -qr runs/original/<id> runs/rendered/<id>; cmp benchmark final response with imported final response",
+        "exitCode": 0,
+        "result": "ARTIFACT_TREE_AND_FINAL_RESPONSE_BYTE_CHECK_OK. All five files and the final response are unchanged; no rendering repair was required."
+      },
+      {
+        "name": "independent-model-validation",
+        "command": "node --check app.js and run four forecast/backtest configurations from the imported original tree",
+        "exitCode": 0,
+        "result": "INDEPENDENT_MODEL_VALIDATION_OK observations=2164 first=2018-01-02 last=2026-08-12. Ensemble 20d/60d, damped 120d, and momentum 252d all produced finite ordered forecasts and valid backtests."
+      },
+      {
+        "name": "independent-HTTP-assets",
+        "command": "Serve the repository on 127.0.0.1:4398 and curl displayed index.html, styles.css, app.js, data.js, and README.md",
+        "exitCode": 0,
+        "result": "All five files returned HTTP 200."
+      },
+      {
+        "name": "independent-in-app-browser-render-and-interactions",
+        "command": "Open the displayed artifact in the Codex in-app browser and exercise scenario, model, confidence, horizon, lookback, history range, reset, and pointer-tooltip paths",
+        "exitCode": 0,
+        "result": "Default last close/target/range rendered as 7,749 / 8,069 / 7,152–9,103. Bear/base/bull targets ordered 7,917 < 8,069 < 8,224. Damped model, 95% confidence, 120-day horizon, 5Y lookback, ALL chart range, and reset updated expected state. Pointer hover showed Aug 22, 2024, value 5,571, Historical close. The main SVG was 851x455 with 4 paths, validation SVG was 566.3125x245 with 3 paths, and no page-origin error or warning logs were present."
+      },
+      {
+        "name": "independent-mobile-browser-validation",
+        "command": "Set the in-app browser viewport to 390x844 and inspect layout plus charts",
+        "exitCode": 0,
+        "result": "No horizontal overflow; document width 375 within viewport width 390; populated target 8,069; chart 337x365; controls 355 pixels wide. Desktop and mobile screenshots were preserved."
+      },
+      {
+        "name": "forecast-export-browser-event",
+        "command": "Click Export forecast while awaiting the in-app browser download event",
+        "exitCode": null,
+        "result": "The in-app browser did not surface a download event before its 10-second timeout. The benchmark's completed DOM suite independently asserted export generation and the exact CSV filename; no page error was logged.",
+        "passed": false
+      },
+      {
+        "name": "new-table-row-opens-standalone-dashboard",
+        "command": "Serve the repository, locate .run-row[data-artifact=\"runs/rendered/openai-gpt-5-6-sol-ultra-codex-20260813/index.html\"], click its unique model link, and inspect the resulting page in the in-app browser",
+        "exitCode": 0,
+        "result": "Exactly one row and one scoped model link were found. The row showed gpt-5.6-sol, historical-snapshot, Max, Native: ultra, 1,755,649 total tokens, 15m 18s, and $2.59 API estimate. Clicking opened the exact standalone displayed index.html with title Northstar — S&P 500 Forecast Lab, last close 7,749, target 8,069, FRED source, 4 chart paths, and no page errors."
+      }
+    ],
+    "repositoryChecks": {
+      "commands": [
+        {
+          "name": "manifest-validate",
+          "command": "npm run validate",
+          "exitCode": 0,
+          "result": "Manifest valid: 25 runs checked."
+        },
+        {
+          "name": "full-test-suite",
+          "command": "npm test",
+          "exitCode": 0,
+          "result": "The nested manifest validation passed; all 5 unit tests passed; 5 Playwright browser tests passed and 1 mobile-only project test was intentionally skipped."
+        }
+      ],
+      "pass": true
+    },
+    "result": "The imported artifact tree is unchanged, independently renders and responds correctly in the in-app browser, opens directly from its unique showcase row, and passes the repository validator and complete test suite."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-6-sol-ultra-codex-20260813/index.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-6-sol-ultra-codex-20260813/index.html",
+    "responseRecord": "responses/openai-gpt-5-6-sol-ultra-codex-20260813.md",
+    "sessionLog": "validation/openai-gpt-5-6-sol-ultra-codex-20260813.session.jsonl",
+    "stderrLog": "validation/openai-gpt-5-6-sol-ultra-codex-20260813.stderr.txt",
+    "visibleResponse": "validation/openai-gpt-5-6-sol-ultra-codex-20260813.final-response.md",
+    "startedAtEvidence": "validation/openai-gpt-5-6-sol-ultra-codex-20260813.started-at.txt",
+    "finishedAtEvidence": "validation/openai-gpt-5-6-sol-ultra-codex-20260813.finished-at.txt",
+    "desktopScreenshot": "validation/openai-gpt-5-6-sol-ultra-codex-20260813-dashboard.png",
+    "mobileScreenshot": "validation/openai-gpt-5-6-sol-ultra-codex-20260813-mobile.png",
+    "supportFiles": [
+      "README.md",
+      "app.js",
+      "data.js",
+      "styles.css"
+    ],
+    "sha256": {
+      "responseRecord": "28f21995039e834df1810e02db8e23143d9b74d0dac4bd2b7eb33160906cbb75",
+      "originalHtml": "1d744c232efd6dbde4941286513860ae44f969ab5d90618282672caa0c048615",
+      "displayHtml": "1d744c232efd6dbde4941286513860ae44f969ab5d90618282672caa0c048615",
+      "sessionLog": "220a044377f6feffa1405fca072f060a0dbe1790429f8a9dd43b8fce3f5264a5",
+      "stderrLog": "1654403e9bad82470968c40b633e8e9dd77df8714e528413130b9fffffc0c355",
+      "visibleResponse": "2428f675ee3d794c2db1dfe2e3d08000cfe947a9124bdd89dae3f912d17ac5a1",
+      "startedAtEvidence": "d3a7b523557160459756d24326ae1bc442c414e0dc46d20fc31bfeea0c90e4c8",
+      "finishedAtEvidence": "734882227836e5bf6ae163e6ba8002d55294b483e506f4b7d576e20d3c163ffe",
+      "desktopScreenshot": "77dc3267e49f88d660065e7a9de172766f9897ecffd32c7d00d81923c21537cd",
+      "mobileScreenshot": "983f2001d2aa77b2bcdf05d48167f9fde865f2251b9d0c685ee8498d5c140ae1",
+      "originalReadme": "ccc00edbf95008a37c498b5f1073e050adf9eec33c588d744e8ab31a8c660823",
+      "displayReadme": "ccc00edbf95008a37c498b5f1073e050adf9eec33c588d744e8ab31a8c660823",
+      "originalAppJs": "136b9476824b5d9c0c9717ad2ed70cc39be2357a97f9f350c1d6c0fda67b63bc",
+      "displayAppJs": "136b9476824b5d9c0c9717ad2ed70cc39be2357a97f9f350c1d6c0fda67b63bc",
+      "originalDataJs": "0aa2360c8705b5897916895737f88b7f6f44092e5c06b47c571455d3efe0e05a",
+      "displayDataJs": "0aa2360c8705b5897916895737f88b7f6f44092e5c06b47c571455d3efe0e05a",
+      "originalStylesCss": "85483c1d687338635b87a7ea3cef975c6be21d58831a29e35b7fd031277e7b8b",
+      "displayStylesCss": "85483c1d687338635b87a7ea3cef975c6be21d58831a29e35b7fd031277e7b8b"
+    },
+    "repaired": false,
+    "repairLog": null
+  },
+  "unresolvedFailures": []
+}
