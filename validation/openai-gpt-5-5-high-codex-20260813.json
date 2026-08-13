@@ -1,0 +1,269 @@
+{
+  "runId": "openai-gpt-5-5-high-codex-20260813",
+  "workspace": "/home/carnufex/Documents/Codex/bench-temp/benchmark-real-ai-gpt-5.5-high-uk9WdE",
+  "isolatedCodexHome": "/home/carnufex/Documents/Codex/bench-temp/codex-bench-home-gpt-5.5-high-SFH9NH",
+  "timestamps": {
+    "startedAt": "2026-08-13T13:32:18.783Z",
+    "finishedAt": "2026-08-13T13:39:28.558Z",
+    "durationMs": 429775,
+    "timeToFirstTokenMs": null
+  },
+  "usage": {
+    "totalTokens": 456338,
+    "inputTokens": 436257,
+    "cachedInputTokens": 395904,
+    "outputTokens": 20081,
+    "reasoningOutputTokens": 4494,
+    "cost": null
+  },
+  "harness": {
+    "command": "CODEX_HOME=\"$BENCH_HOME\" codex --search -a never exec --json --ignore-user-config --skip-git-repo-check -C \"$BENCH_WS\" -m \"gpt-5.5\" -c \"model_reasoning_effort=\\\"high\\\"\" -s danger-full-access -o \"$FINAL_RESPONSE\" \"I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.\"",
+    "version": "codex-cli 0.144.4",
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "local-browser-validation"
+    ]
+  },
+  "dataSource": {
+    "type": "historical-snapshot",
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=10y&interval=1d",
+    "notes": "The benchmark run fetched Yahoo Finance chart endpoint data for ^GSPC by command line and wrote 2513 rows to sp500-data.json. The rendered dashboard loads that local JSON snapshot covering 2016-08-15 through 2026-08-13; it does not fetch live market data at display time."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "item_1",
+        "command": "/bin/bash -lc \"pwd && rg --files -g '\"'!*node_modules*'\"' -g '\"'!*.png'\"' -g '\"'!*.jpg'\"' -g '\"'!*.jpeg'\"' -g '\"'!*.gif'\"' -g '\"'!*.webp'\"' | head -80\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "/home/carnufex/Documents/Codex/bench-temp/benchmark-real-ai-gpt-5.5-high-uk9WdE\n"
+      },
+      {
+        "name": "item_2",
+        "command": "/bin/bash -lc 'git status --short'",
+        "exitCode": 128,
+        "status": "failed",
+        "result": "fatal: not a git repository (or any of the parent directories): .git\n"
+      },
+      {
+        "name": "item_3",
+        "command": "/bin/bash -lc \"find . -maxdepth 2 -type f | sed 's#\"'^./##'\"' | sort | head -120\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": ""
+      },
+      {
+        "name": "item_7",
+        "command": "/bin/bash -lc \"curl -L --fail --silent 'https://stooq.com/q/d/l/?s=%5Espx&i=d' | tail -n 8\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex,nofollow\"></head><body><noscript>This site requires JavaScript to verify your browser. Please enable JavaScript and reload.</noscript><script nonce=\"nmPwn-XSBm78qyZ_FzHBtA\">\n(async()=>{const c=\"AAAAAGp9x99RoSYf7YLheniP4rqaBaRyrRHaLrYKggOPZbIQ-UhpMi-odJo\",d=4,t=\"0\".repeat(d),e=new TextEncoder;let n=0;while(1){const h=await crypto.subtle.digest(\"SHA-256\",e.encode(c+n)),x=Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,\"0\")).join(\"\");if(x.startsWith(t))break;n++}const r=await fetch(\"/__verify\",{method:\"POST\",headers:{\"Content-Type\":\"application/x-www-form-urlencoded\"},body:\"c=\"+encodeURIComponent(c)+\"&n=\"+n,credentials:\"same-origin\"});if(r.ok)location.reload()})();\n</script></body></html>\n"
+      },
+      {
+        "name": "item_9",
+        "command": "/bin/bash -lc \"node -e \\\"fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=5y&interval=1d').then(r=>{console.log(r.status,r.headers.get('content-type')); return r.text()}).then(t=>console.log(t.slice(0,200))).catch(e=>{console.error(e); process.exit(1)})\\\"\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "200 application/json;charset=utf-8\n{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"^GSPC\",\"exchangeName\":\"SNP\",\"fullExchangeName\":\"SNP\",\"instrumentType\":\"INDEX\",\"firstTradeDate\":-1325583000,\"regularMarketTime\":1786627991,\"hasPr\n"
+      },
+      {
+        "name": "item_11",
+        "command": "/bin/bash -lc 'which chromium-browser || which chromium || which google-chrome || which npx || true'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "/usr/bin/google-chrome\n"
+      },
+      {
+        "name": "item_12",
+        "command": "/bin/bash -lc 'node --version && npm --version'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "v22.22.2\n10.9.7\n"
+      },
+      {
+        "name": "item_14",
+        "command": "/bin/bash -lc 'which identify || which magick || true'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": ""
+      },
+      {
+        "name": "item_15",
+        "command": "/bin/bash -lc \"npm list -g --depth=0 2>/dev/null | rg 'playwright|puppeteer' || true\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": ""
+      },
+      {
+        "name": "item_19",
+        "command": "/bin/bash -lc 'node fetch-data.mjs'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "Wrote sp500-data.json with 2513 rows (2016-08-15 to 2026-08-13)\n"
+      },
+      {
+        "name": "item_21",
+        "command": "/bin/bash -lc 'node validate-dashboard.mjs'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "Dashboard validation passed\n{\n  \"metrics\": [\n    \"7,783\",\n    \"7,912\",\n    \"+55.4%\"\n  ],\n  \"rows\": 4,\n  \"canvasesReady\": true,\n  \"nonBlank\": [\n    true,\n    true,\n    true\n  ],\n  \"horizon\": \"6 months\",\n  \"model\": \"momentum\"\n}\n"
+      },
+      {
+        "name": "item_23",
+        "command": "/bin/bash -lc \"nohup python3 -m http.server 4173 --bind 127.0.0.1 > dashboard-server.log 2>&1 & printf '%s\\\\n' \"'$!'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "728625\n"
+      },
+      {
+        "name": "item_25",
+        "command": "/bin/bash -lc 'curl -I --silent http://127.0.0.1:4173/index.html | head -5'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": ""
+      },
+      {
+        "name": "item_26",
+        "command": "/bin/bash -lc 'ls -lh index.html sp500-data.json dashboard-validation.png dashboard-server.log'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "-rw-rw-r-- 1 carnufex carnufex    0 Aug 13 13:38 dashboard-server.log\n-rw-rw-r-- 1 carnufex carnufex 176K Aug 13 13:38 dashboard-validation.png\n-rw-rw-r-- 1 carnufex carnufex  35K Aug 13 13:38 index.html\n-rw-rw-r-- 1 carnufex carnufex 324K Aug 13 13:38 sp500-data.json\n"
+      },
+      {
+        "name": "item_28",
+        "command": "/bin/bash -lc 'curl --silent --show-error --max-time 3 http://127.0.0.1:4173/index.html | head -5'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "curl: (7) Failed to connect to 127.0.0.1 port 4173 after 0 ms: Connection refused\n"
+      },
+      {
+        "name": "item_29",
+        "command": "/bin/bash -lc 'ps -p 728625 -o pid,cmd'",
+        "exitCode": 1,
+        "status": "failed",
+        "result": "    PID CMD\n"
+      },
+      {
+        "name": "item_30",
+        "command": "/bin/bash -lc 'tail -20 dashboard-server.log'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": ""
+      },
+      {
+        "name": "item_34",
+        "command": "/bin/bash -lc 'curl --silent --show-error --max-time 3 http://127.0.0.1:4173/index.html | head -5'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\ncurl: (23) Failed writing body\n"
+      },
+      {
+        "name": "item_36",
+        "command": "/bin/bash -lc 'curl -I --silent --show-error --max-time 3 http://127.0.0.1:4173/index.html | head -5'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "HTTP/1.0 200 OK\r\nServer: SimpleHTTP/0.6 Python/3.11.5\r\nDate: Thu, 13 Aug 2026 13:39:11 GMT\r\nContent-type: text/html\r\nContent-Length: 35817\r\n"
+      },
+      {
+        "name": "item_37",
+        "command": "/bin/bash -lc 'wc -c index.html sp500-data.json dashboard-validation.png'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": " 35817 index.html\n330918 sp500-data.json\n179804 dashboard-validation.png\n546539 total\n"
+      }
+    ],
+    "warnings": [
+      "Stooq returned a JavaScript verification page and was not used as the final data source.",
+      "The first background Python server attempt exited immediately with an empty log; the benchmark run relaunched the server as a managed long-running command and confirmed HTTP 200.",
+      "The final curl body check reported curl: (23) because head closed the pipe after the first lines; the subsequent HEAD request returned HTTP/1.0 200 OK."
+    ],
+    "observedOutputs": {
+      "datasetCoverage": {
+        "source": "Yahoo Finance chart endpoint",
+        "symbol": "^GSPC",
+        "generatedAt": "2026-08-13T13:38:22.103Z",
+        "start": "2016-08-15",
+        "end": "2026-08-13",
+        "rows": 2513,
+        "latestClose": 7782.94
+      },
+      "validationScript": {
+        "metrics": [
+          "7,783",
+          "7,912",
+          "+55.4%"
+        ],
+        "rows": 4,
+        "canvasesReady": true,
+        "nonBlank": [
+          true,
+          true,
+          true
+        ],
+        "horizon": "6 months",
+        "model": "momentum"
+      }
+    }
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "npm-install",
+        "command": "npm install",
+        "exitCode": 0,
+        "result": "Installed/audited dependencies successfully; 0 vulnerabilities reported."
+      },
+      {
+        "name": "manifest-validate",
+        "command": "npm run validate",
+        "exitCode": 0,
+        "result": "Manifest valid: 27 runs checked."
+      },
+      {
+        "name": "full-test-suite",
+        "command": "npm test",
+        "exitCode": 0,
+        "result": "Repository validation, unit tests, and Playwright browser tests passed: 5 passed, 1 skipped."
+      },
+      {
+        "name": "row-open-check-initial",
+        "command": "Serve repository at http://127.0.0.1:4322/, fill #filter-search, and click the new gpt-5.5 high row.",
+        "exitCode": 1,
+        "result": "Playwright timed out because #filter-search is inside the closed facets panel and was not visible. This was a test-script issue, not a dashboard failure."
+      },
+      {
+        "name": "row-open-check",
+        "command": "Serve repository at http://127.0.0.1:4322/, open the facets panel, filter for openai-gpt-5-5-high-codex-20260813, click the table row link, and inspect the rendered dashboard with Playwright.",
+        "exitCode": 0,
+        "result": "Opened http://127.0.0.1:4322/runs/rendered/openai-gpt-5-5-high-codex-20260813/index.html; title S&P 500 Forecast Dashboard; last close 7,783; forecast median 8,710; Yahoo Finance snapshot source line present; no NaN, undefined, or Infinity text; three canvases initialized at 946x520, 388x238, and 388x238."
+      }
+    ],
+    "result": "Repository checks passed and the new table row opens the standalone rendered dashboard directly."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-5-high-codex-20260813/index.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-5-high-codex-20260813/index.html",
+    "originalSupportFiles": [
+      "runs/original/openai-gpt-5-5-high-codex-20260813/sp500-data.json",
+      "runs/original/openai-gpt-5-5-high-codex-20260813/fetch-data.mjs",
+      "runs/original/openai-gpt-5-5-high-codex-20260813/validate-dashboard.mjs"
+    ],
+    "displayedSupportFiles": [
+      "runs/rendered/openai-gpt-5-5-high-codex-20260813/sp500-data.json",
+      "runs/rendered/openai-gpt-5-5-high-codex-20260813/fetch-data.mjs",
+      "runs/rendered/openai-gpt-5-5-high-codex-20260813/validate-dashboard.mjs"
+    ],
+    "responseRecord": "responses/openai-gpt-5-5-high-codex-20260813.md",
+    "validationEvidence": "validation/openai-gpt-5-5-high-codex-20260813.json",
+    "sessionLog": "validation/openai-gpt-5-5-high-codex-20260813.session.jsonl",
+    "finalResponse": "validation/openai-gpt-5-5-high-codex-20260813.final-response.md",
+    "stderr": "validation/openai-gpt-5-5-high-codex-20260813.stderr.txt",
+    "screenshots": [
+      "validation/openai-gpt-5-5-high-codex-20260813-dashboard-validation.png",
+      "validation/openai-gpt-5-5-high-codex-20260813-row-open.png"
+    ]
+  },
+  "unresolvedFailures": []
+}
