@@ -1,0 +1,171 @@
+{
+  "runId": "openai-gpt-5-6-sol-high-codex-20260813",
+  "workspace": "/tmp/benchmark-real-ai-gpt-5-6-sol-high-SCgkMT",
+  "captureDirectory": "/tmp/benchmark-real-ai-capture-gpt-5-6-sol-high-ZklQxN",
+  "timestamps": {
+    "startedAt": "2026-08-13T11:32:24.086Z",
+    "finishedAt": "2026-08-13T11:41:24.419Z",
+    "durationMs": 540333,
+    "timeToFirstTokenMs": null,
+    "latencyMs": null
+  },
+  "usage": {
+    "inputTokens": 706111,
+    "cachedInputTokens": 637440,
+    "outputTokens": 25221,
+    "reasoningOutputTokens": 3726,
+    "totalTokens": 731332,
+    "source": "Codex CLI final turn.completed usage event",
+    "actualCostUsd": null
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "threadId": "019ffae5-1879-7d11-a1a5-e60790d71555",
+    "command": "codex --search -m gpt-5.6-sol -c 'model_reasoning_effort=\"high\"' --dangerously-bypass-approvals-and-sandbox -C /tmp/benchmark-real-ai-gpt-5-6-sol-high-SCgkMT exec --skip-git-repo-check --json -o /tmp/benchmark-real-ai-capture-gpt-5-6-sol-high-ZklQxN/final-response.txt 'I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.'",
+    "configuration": {
+      "freshWorkspace": true,
+      "ignoreUserConfig": false,
+      "ignoreRules": false,
+      "skipGitRepoCheck": true,
+      "model": "gpt-5.6-sol",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "reasoningLevel": "high",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": "never",
+      "webSearch": true,
+      "jsonEvents": true,
+      "outputLastMessage": true,
+      "promptSource": "argv",
+      "normalToolsEnabled": true
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "network-access",
+      "web-search",
+      "mcp-tools",
+      "local-http-server",
+      "in-app-browser-control (attempted; no target available)"
+    ]
+  },
+  "dataSource": {
+    "type": "historical-snapshot",
+    "source": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500",
+    "notes": "The benchmark run fetched the FRED SP500 daily CSV, selected the last valid observation of each month, and embedded 121 month-end closes from August 2016 through August 12, 2026. The published default view uses this fixed snapshot and does not fetch market data at runtime."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "workspace-inspection",
+        "command": "pwd && rg --files -g '!node_modules' | sed -n '1,120p' && find . -maxdepth 2 -type f -printf '%p %s bytes\\n' | sed -n '1,120p'",
+        "exitCode": 0,
+        "result": "The fresh workspace was empty and contained no repository files or AGENTS.md context."
+      },
+      {
+        "name": "fred-data-download",
+        "command": "curl -L --fail --silent --show-error 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500' -o /tmp/sp500.csv",
+        "exitCode": 0,
+        "result": "Downloaded 2,609 CSV lines; the final valid row was 2026-08-12,7748.50. The run reduced valid observations to 121 embedded month-end closes."
+      },
+      {
+        "name": "in-app-browser-attempt",
+        "command": "Codex browser runtime setup, bootstrap troubleshooting, and agent.browsers.list()",
+        "exitCode": null,
+        "result": "The in-app browser request failed because the available browser list was empty. The limitation was disclosed in the final visible response."
+      },
+      {
+        "name": "benchmark-model-and-markup-tests",
+        "command": "node --check app.js && node tests/model.test.js && node -e '<required control and asset assertions>'",
+        "exitCode": 0,
+        "result": "JavaScript syntax passed; model.test.js reported all assertions passed; required controls and assets were present."
+      },
+      {
+        "name": "benchmark-http-smoke",
+        "command": "python3 -m http.server 8765 --bind 127.0.0.1; curl the HTML and app.js; inspect served assets",
+        "exitCode": 0,
+        "result": "HTTP/1.0 200 OK returned 12,536-byte HTML; app.js returned 23,074 bytes and contained the forecast engine and chart wiring."
+      },
+      {
+        "name": "benchmark-final-audit",
+        "command": "HTML ID uniqueness and scripted-control resolution audit; node tests/model.test.js; wc -l index.html styles.css app.js tests/model.test.js README.md",
+        "exitCode": 0,
+        "result": "The model reported 37 scripted HTML elements wired correctly; model assertions passed; the generated output totaled 975 lines across five files."
+      }
+    ],
+    "warnings": [
+      "The benchmark session could not perform visual browser validation because its Codex in-app browser list was empty; it disclosed this in the visible final response.",
+      "The generated dashboard depends on sibling CSS and JavaScript assets and therefore required collision-safe path repair for publication.",
+      "Harness stderr contains non-fatal plugin-manifest, keyring, telemetry, SQL, and file-watcher warnings."
+    ]
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "benchmark-model-test-rerun",
+        "command": "cd /tmp/benchmark-real-ai-gpt-5-6-sol-high-SCgkMT && node --check app.js && node tests/model.test.js",
+        "exitCode": 0,
+        "result": "app.js passed syntax checking and model.test.js reported all assertions passed."
+      },
+      {
+        "name": "independent-full-browser-validation",
+        "command": "Serve the untouched benchmark workspace on 127.0.0.1:8766; load it in the Codex in-app browser; click the unique Bull control; inspect the rendered state and browser logs; capture a full-page screenshot.",
+        "exitCode": 0,
+        "result": "Title `Northstar — S&P 500 Scenario Lab`; latest close 7,749; canvas 759x400; the Bull control changed the median end level from 8,647 to 9,369 and probability above today from 75% to 88%; viewport width 1,280 and document scroll width 1,265; no page-origin error logs."
+      },
+      {
+        "name": "rendering-repair-audit",
+        "command": "cmp original and displayed CSS/JavaScript; diff original and displayed HTML",
+        "exitCode": 0,
+        "result": "CSS and JavaScript are byte-identical. The displayed HTML differs only in the two documented support-asset paths."
+      },
+      {
+        "name": "repository-validation-and-tests",
+        "command": "npm install && npm run validate && npm test",
+        "exitCode": 0,
+        "result": "Before rebase, npm install found zero vulnerabilities; manifest validation passed for 20 runs; all 5 unit tests passed; the Playwright suite reported 5 passed and 1 intentional project skip. After rebasing over the concurrent gpt-5.6-sol low addition, the same validation and tests passed for 21 runs with 5 unit tests passed and 5 browser tests passed plus 1 intentional project skip."
+      },
+      {
+        "name": "new-table-row-open",
+        "command": "Serve the repository at http://127.0.0.1:4321/, locate the unique tr.run-row whose data-artifact targets this run, click the row, and inspect the opened page in the Codex in-app browser.",
+        "exitCode": 0,
+        "result": "Exactly one matching row opened http://127.0.0.1:4321/runs/rendered/openai-gpt-5-6-sol-high-codex-20260813.html; title `Northstar — S&P 500 Scenario Lab`; latest close 7,749; median end level 8,647; probability above today 75%; canvas and all forecast controls rendered."
+      }
+    ],
+    "result": "The untouched original passed executable and full-browser validation. The published copy retained byte-identical CSS and JavaScript and changed only two collision-safe support-asset paths. Repository validation and tests passed, and the new table row opened the standalone dashboard directly."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-6-sol-high-codex-20260813.html",
+    "originalStyles": "runs/original/openai-gpt-5-6-sol-high-codex-20260813.styles.css",
+    "originalScript": "runs/original/openai-gpt-5-6-sol-high-codex-20260813.app.js",
+    "displayHtml": "runs/rendered/openai-gpt-5-6-sol-high-codex-20260813.html",
+    "displayStyles": "runs/rendered/openai-gpt-5-6-sol-high-codex-20260813.styles.css",
+    "displayScript": "runs/rendered/openai-gpt-5-6-sol-high-codex-20260813.app.js",
+    "responseRecord": "responses/openai-gpt-5-6-sol-high-codex-20260813.md",
+    "repairLog": "repairs/openai-gpt-5-6-sol-high-codex-20260813.md",
+    "sessionLog": "validation/openai-gpt-5-6-sol-high-codex-20260813.session.jsonl",
+    "stderrLog": "validation/openai-gpt-5-6-sol-high-codex-20260813.stderr.log",
+    "finalResponse": "validation/openai-gpt-5-6-sol-high-codex-20260813.final-response.md",
+    "benchmarkTest": "validation/openai-gpt-5-6-sol-high-codex-20260813.benchmark.test.js",
+    "benchmarkReadme": "validation/openai-gpt-5-6-sol-high-codex-20260813.benchmark-readme.md",
+    "screenshot": "validation/openai-gpt-5-6-sol-high-codex-20260813-dashboard.png",
+    "sha256": {
+      "originalHtml": "9d73aa5fbcf4d3e3fc6312af8767eda7da22f7b602ef9ee336dcad068941d9be",
+      "originalStyles": "81e180a6427f430364a4d9250f701844519837cc9c040d0f33e9db6319a89c35",
+      "originalScript": "82a0c603066742f77c5a35bf0e57a13813a806572cfc89de0a6f3ff83fe927a1",
+      "displayHtml": "e55e0d9744ed355df88fe4f49354f7f2cf5e50ce8b43d25e818df796f2a0b989",
+      "displayStyles": "81e180a6427f430364a4d9250f701844519837cc9c040d0f33e9db6319a89c35",
+      "displayScript": "82a0c603066742f77c5a35bf0e57a13813a806572cfc89de0a6f3ff83fe927a1",
+      "responseRecord": "3b3b82ed441ab389d96f7af392bc7a02755447807f500404d5266f05ad3fb75a",
+      "repairLog": "db6104c78f37723fac56fa5e3a49082a9c4b489a1ca5a3d3f1db26e29a20a1ca",
+      "sessionLog": "97f199f7e4961569e5862b1b20c751b2044c4a14b6fde0d97fde3cdea2ba55e9",
+      "stderrLog": "2c11a46fd3c1b0c41dfa3514588b9746a7e6819fc516ddae609f82af6a887864",
+      "finalResponse": "8af4d3f6095bae043fc827bdd904fd7748b1329378b72ef90fd3001e17a08872",
+      "benchmarkTest": "94e97b20e67a038acb65e3b59b5791ebb0f60ce977f1750dae823396cc31ce35",
+      "benchmarkReadme": "6d474de2dd0ecd9dcbb2f22266fbdeea19fe42fd76e3c2ba80d8ec2cf8c0ddda",
+      "screenshot": "ad8b86503c53462dc181cc9c311998cf7c847ae7b8440536efe6fdcd171276f5"
+    }
+  },
+  "unresolvedFailures": []
+}

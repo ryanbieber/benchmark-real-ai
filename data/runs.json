@@ -11,7 +11,7 @@
       "xhigh",
       "max"
     ],
-    "updatedAt": "2026-08-13T03:20:44Z",
+    "updatedAt": "2026-08-13T11:47:34Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -2436,6 +2436,164 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-sol at low reasoning in an empty temporary workspace, produced a responsive standalone synthetic S&P 500 forecasting dashboard with scenario controls and CSV import, and required no rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-6-sol-high-codex-20260813",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-sol",
+        "name": "gpt-5.6-sol",
+        "version": "gpt-5.6-sol"
+      },
+      "reasoning": {
+        "native": "high",
+        "normalized": "high"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-6-sol-high-SCgkMT",
+          "ignoreUserConfig": false,
+          "ignoreRules": false,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-sol",
+          "reasoningLevel": "high",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "outputLastMessage": true,
+          "promptSource": "argv",
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "network-access",
+          "web-search",
+          "mcp-tools",
+          "local-http-server",
+          "in-app-browser-control (attempted; no target available)"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-13T11:32:24.086Z",
+        "finishedAt": "2026-08-13T11:41:24.419Z",
+        "durationSeconds": 540.333
+      },
+      "run": {
+        "threadId": "019ffae5-1879-7d11-a1a5-e60790d71555",
+        "completedAt": "2026-08-13T11:41:24.419Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 706111,
+        "cachedInputTokens": 637440,
+        "outputTokens": 25221,
+        "reasoningOutputTokens": 3726,
+        "totalTokens": 731332,
+        "source": "Final turn.completed usage event in validation/openai-gpt-5-6-sol-high-codex-20260813.session.jsonl; totalTokens is inputTokens plus outputTokens.",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "The benchmark run fetched the FRED SP500 daily CSV, selected the last valid observation of each month, and embedded 121 month-end closes from August 2016 through August 12, 2026. The published default view uses this fixed snapshot and does not fetch market data at runtime."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-sol-high-codex-20260813.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-sol-high-codex-20260813.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-sol-high-codex-20260813.html",
+        "validationEvidence": "validation/openai-gpt-5-6-sol-high-codex-20260813.json",
+        "repairLog": "repairs/openai-gpt-5-6-sol-high-codex-20260813.md",
+        "sessionLog": "validation/openai-gpt-5-6-sol-high-codex-20260813.session.jsonl",
+        "stderrLog": "validation/openai-gpt-5-6-sol-high-codex-20260813.stderr.log",
+        "finalResponse": "validation/openai-gpt-5-6-sol-high-codex-20260813.final-response.md",
+        "benchmarkTest": "validation/openai-gpt-5-6-sol-high-codex-20260813.benchmark.test.js",
+        "benchmarkReadme": "validation/openai-gpt-5-6-sol-high-codex-20260813.benchmark-readme.md",
+        "desktopScreenshot": "validation/openai-gpt-5-6-sol-high-codex-20260813-dashboard.png",
+        "supportFiles": [
+          "runs/original/openai-gpt-5-6-sol-high-codex-20260813.styles.css",
+          "runs/original/openai-gpt-5-6-sol-high-codex-20260813.app.js",
+          "runs/rendered/openai-gpt-5-6-sol-high-codex-20260813.styles.css",
+          "runs/rendered/openai-gpt-5-6-sol-high-codex-20260813.app.js"
+        ],
+        "sha256": {
+          "rawResponse": "3b3b82ed441ab389d96f7af392bc7a02755447807f500404d5266f05ad3fb75a",
+          "originalHtml": "9d73aa5fbcf4d3e3fc6312af8767eda7da22f7b602ef9ee336dcad068941d9be",
+          "displayHtml": "e55e0d9744ed355df88fe4f49354f7f2cf5e50ce8b43d25e818df796f2a0b989",
+          "validationEvidence": "749bf31005ed9eb29ebefac3ca659c733c506dc5e6a45476fbf0b4e1e13318fd",
+          "repairLog": "db6104c78f37723fac56fa5e3a49082a9c4b489a1ca5a3d3f1db26e29a20a1ca",
+          "sessionLog": "97f199f7e4961569e5862b1b20c751b2044c4a14b6fde0d97fde3cdea2ba55e9",
+          "stderrLog": "2c11a46fd3c1b0c41dfa3514588b9746a7e6819fc516ddae609f82af6a887864",
+          "finalResponse": "8af4d3f6095bae043fc827bdd904fd7748b1329378b72ef90fd3001e17a08872",
+          "benchmarkTest": "94e97b20e67a038acb65e3b59b5791ebb0f60ce977f1750dae823396cc31ce35",
+          "benchmarkReadme": "6d474de2dd0ecd9dcbb2f22266fbdeea19fe42fd76e3c2ba80d8ec2cf8c0ddda",
+          "desktopScreenshot": "ad8b86503c53462dc181cc9c311998cf7c847ae7b8440536efe6fdcd171276f5",
+          "originalStyles": "81e180a6427f430364a4d9250f701844519837cc9c040d0f33e9db6319a89c35",
+          "originalScript": "82a0c603066742f77c5a35bf0e57a13813a806572cfc89de0a6f3ff83fe927a1",
+          "displayStyles": "81e180a6427f430364a4d9250f701844519837cc9c040d0f33e9db6319a89c35",
+          "displayScript": "82a0c603066742f77c5a35bf0e57a13813a806572cfc89de0a6f3ff83fe927a1"
+        },
+        "repaired": true
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 4
+        },
+        "total": 23,
+        "reviewer": "Codex",
+        "notes": "The untouched output is a polished, responsive dashboard with historical FRED data, seeded Monte Carlo paths, configurable history, horizon, drift, confidence and simulation controls, bear/base/bull scenarios, CSV import, forecast export, chart hover, and rolling out-of-sample diagnostics. It communicates uncertainty and investment limitations exceptionally clearly. The historical-return resampling method is transparent and stronger than a simple trend extrapolation, though still a simplified price-only market model whose interval is not a guarantee. Technical robustness is strong, with executable tests and independent browser validation; the original multi-file output required only collision-safe asset-path repair for the shared publication directory."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-model-and-markup-tests",
+            "passed": true,
+            "details": "JavaScript syntax, deterministic simulations, ordered confidence bands, scenario consistency, CSV parsing, rolling backtests, required markup, and scripted-control wiring passed during the benchmark run."
+          },
+          {
+            "name": "benchmark-http-delivery",
+            "passed": true,
+            "details": "The benchmark's local server returned HTTP 200 for the HTML and served the JavaScript asset successfully."
+          },
+          {
+            "name": "benchmark-in-app-browser",
+            "passed": false,
+            "details": "No in-app browser target was available to the benchmark session; this limitation is disclosed in the final visible response and validation evidence."
+          },
+          {
+            "name": "independent-browser-validation",
+            "passed": true,
+            "details": "The untouched output rendered in the Codex in-app browser; its unique Bull control updated median and probability values, the canvas rendered, no horizontal overflow was present at the tested desktop width, and no page-origin error logs were recorded."
+          },
+          {
+            "name": "rendering-repair-audit",
+            "passed": true,
+            "details": "Original HTML is untouched; displayed CSS and JavaScript are byte-identical to their original support assets, and displayed HTML differs only by the two documented collision-safe asset paths."
+          },
+          {
+            "name": "repository-validation-and-tests",
+            "passed": true,
+            "details": "On the final rebased tree, manifest validation passed for 21 runs, all 5 unit tests passed, and the Playwright suite reported 5 passed with 1 intentional project skip."
+          },
+          {
+            "name": "table-row-open",
+            "passed": true,
+            "details": "The unique new run row opened the standalone rendered dashboard with the expected title, FRED snapshot disclosure, populated forecast metrics, canvas, and controls."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-sol at high reasoning in a fresh temporary workspace, fetched and embedded a FRED S&P 500 month-end snapshot, built an interactive Monte Carlo scenario dashboard with rolling backtests and CSV import/export, and required only a documented collision-safe support-asset path repair for publication."
     }
   ]
 }
