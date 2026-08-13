@@ -1,0 +1,502 @@
+{
+  "runId": "openai-gpt-5-5-xhigh-codex-20260813",
+  "workspace": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace",
+  "isolatedCodexHome": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/codex-home",
+  "timestamps": {
+    "startedAt": "2026-08-13T14:17:19.963Z",
+    "finishedAt": "2026-08-13T14:33:43.446Z",
+    "durationMs": 983483,
+    "timeToFirstTokenMs": null
+  },
+  "usage": {
+    "inputTokens": 1962736,
+    "cachedInputTokens": 1831552,
+    "outputTokens": 40889,
+    "reasoningOutputTokens": 10761,
+    "totalTokens": 2003625,
+    "source": "Final turn.completed usage event in validation/openai-gpt-5-5-xhigh-codex-20260813.session.jsonl; totalTokens is inputTokens + outputTokens, with cached input and reasoning output recorded as subsets.",
+    "cost": null
+  },
+  "harness": {
+    "command": "CODEX_HOME=\"/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/codex-home\" codex --search -a never exec --json --ignore-user-config --ignore-rules --skip-git-repo-check -C \"/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace\" -m \"gpt-5.5\" -c \"model_reasoning_effort=\\\"xhigh\\\"\" -s danger-full-access -o \"/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/record/final-response.md\" [exact benchmark prompt passed as argv]",
+    "version": "codex-cli 0.144.4",
+    "configuration": {
+      "cd": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace",
+      "isolatedCodexHome": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/codex-home",
+      "ignoreUserConfig": true,
+      "ignoreRules": true,
+      "skipGitRepoCheck": true,
+      "model": "gpt-5.5",
+      "reasoningLevel": "xhigh",
+      "reasoningLevelLabel": "extra high",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": "never",
+      "webSearch": true,
+      "jsonEvents": true,
+      "outputLastMessage": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/record/final-response.md",
+      "normalToolsEnabled": true
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "local-browser-validation"
+    ]
+  },
+  "dataSource": {
+    "type": "live",
+    "source": "https://fred.stlouisfed.org/series/SP500 and https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500",
+    "notes": "The final benchmark artifact uses server.mjs as a same-origin Node proxy for FRED SP500 CSV data at runtime. The benchmark validation confirmed live FRED data through 2026-08-12 with latest close 7748.50. The HTML also contains public-proxy and deterministic-sample fallback paths for blocked static contexts."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "item_1",
+        "command": "/bin/bash -lc \"pwd && rg --files -g '\"'!*node_modules*'\"' -g '\"'!*.png'\"' -g '\"'!*.jpg'\"' -g '\"'!*.jpeg'\"' -g '\"'!*.gif'\"' -g '\"'!*.webp'\"' -g '\"'!*.pdf'\"'\"",
+        "exitCode": 1,
+        "status": "failed",
+        "result": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace\n"
+      },
+      {
+        "name": "item_2",
+        "command": "/bin/bash -lc \"find . -maxdepth 3 -path './node_modules' -prune -o -path './.git' -prune -o -name hosting.json -o -name package.json -o -name index.html -print\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": ""
+      },
+      {
+        "name": "item_6",
+        "command": "/bin/bash -lc 'python3 --version'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "Python 3.11.5\n"
+      },
+      {
+        "name": "item_8",
+        "command": "/bin/bash -lc 'ls -la'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "total 8\ndrwxrwxr-x 2 carnufex carnufex 4096 Aug 13 14:17 .\ndrwx------ 5 carnufex carnufex 4096 Aug 13 14:17 ..\n"
+      },
+      {
+        "name": "item_9",
+        "command": "/bin/bash -lc 'node --version'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "v22.22.2\n"
+      },
+      {
+        "name": "item_7",
+        "command": "/bin/bash -lc 'npx playwright --version'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "npm warn exec The following package was not found and will be installed: playwright@1.62.1\nVersion 1.62.1\n"
+      },
+      {
+        "name": "item_15",
+        "command": "/bin/bash -lc \"python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/sp500-dashboard.log 2>&1 & printf '%s\n' \"'$!'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "733368\n"
+      },
+      {
+        "name": "item_17",
+        "command": "/bin/bash -lc 'curl -I http://127.0.0.1:4173/index.html'",
+        "exitCode": 7,
+        "status": "failed",
+        "result": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to 127.0.0.1 port 4173 after 0 ms: Connection refused\n"
+      },
+      {
+        "name": "item_18",
+        "command": "/bin/bash -lc \"curl -I 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500'\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0 48903    0     0    0     0      0      0 --:HTTP/2 200 \r\ncontent-type: application/csv\r\nserver: Apache\r\ncontent-disposition: attachment; filename=\"SP500.csv\"\r\nx-content-type-options: nosniff\r\nx-xss-protection: 1; mode=block\r\ncontent-length: 48903\r\ndate: Thu, 13 Aug 2026 14:23:00 GMT\r\nalt-svc: h3=\":443\"; ma=93600\r\nstrict-transport-security: max-age=86400\r\nx-location: cfs\r\nset-cookie: _abck=CE6359E5D77E924B82D8D2C52A9F3A0F~-1~YAAQqqA7F4/H9vWfAQAAC0OB+xCQsRqM+2dKOIPHXTSVHry1ZP51QDL4O8F2bDF6QurbYjMxyFCdz+CTDZdhz+aHuCkeZzJFCW5fte/0Q8kXDobn48kUuvZ9fmWIPFNRe6d178kIuGRPdAsyd+gHZDz9XJQZYMKVWwzv89FeADYoSQjdNgjF5FjToGeDjfcqcthD0PgoFzKTtY8OSZaNTJzqw1ft/RRuk4E/CxnDdi0kMGZ7yxcUl6G4QmyG4dN9V63AKmFG2V/P5IBJqhEIkSaHoeY6SIBsaROU8zgixvxrjbuvssZNK174hjgVC8Djk9x7XnUEZtw7emc89kJgMqhSivHrtVJbR8d4YA7HkoY/+cBJrmo03Sb0EVniC8DwDhF/HV4tIdQIjdGG1EbTx9kXeZitAuH62/K63ab5JKqlc71rmC77nVJ5renUK47YbHuVPSzv0I/O~-1~-1~-1~-1~-1; Domain=.stlouisfed.org; Path=/; Expires=Fri, 13 Aug 2027 14:23:00 GMT; Max-Age=31536000; Secure\r\nset-cookie: bm_sz=E76EAC905BA5095A9D4CBCB9E9FCC913~YAAQqqA7F5DH9vWfAQAAC0OB+wAiseGegAPJWSAG8QR941WP8vTOvRnNeKx7/RCHwVbQjED1AqMiyBfcAfofIkR2mYpPu4Qi1rx34krwdr3dA1CJHcYLXvyq9YUzb7khLnNs//WJVeE0LNht+iBJqrrXrY7gKXCoeRlWRs8vJiJQdrsNH03rbAd4rGjxeIHiqrMkXQylo+CDarJuCnrzb0tujBgoA54KmgnW+CG6mZjkdHVg2glRf2ubSyMJInBDbEvi/dKUOmG+DJJbFRY8jls8A6iljwLBbV1B4rkBHgsJrzJnfi+HicDxcq8KIWzmog9hrQEhLrNcghxjioq9oak5GvU7yLIe883/NdDJ4bcZzQYZuXBpsYhTtQ==~3552835~4601670; Domain=.stlouisfed.org; Path=/; Expires=Thu, 13 Aug 2026 18:23:00 GMT; Max-Age=14400\r\n\r\n--:-- --:--:-- --:--:--     0\n"
+      },
+      {
+        "name": "item_20",
+        "command": "/bin/bash -lc \"sed -n '1,120p' /tmp/sp500-dashboard.log\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": ""
+      },
+      {
+        "name": "item_21",
+        "command": "/bin/bash -lc \"ss -ltnp | rg ':4173|:8000|:8080'\"",
+        "exitCode": 1,
+        "status": "failed",
+        "result": ""
+      },
+      {
+        "name": "item_23",
+        "command": "/bin/bash -lc \"nohup python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/sp500-dashboard.log 2>&1 & printf '%s\n' \"'$!'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "733419\n"
+      },
+      {
+        "name": "item_24",
+        "command": "/bin/bash -lc 'curl -I http://127.0.0.1:4173/index.html'",
+        "exitCode": 7,
+        "status": "failed",
+        "result": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to 127.0.0.1 port 4173 after 0 ms: Connection refused\n"
+      },
+      {
+        "name": "item_26",
+        "command": "/bin/bash -lc \"sed -n '1,160p' /tmp/sp500-dashboard.log\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": ""
+      },
+      {
+        "name": "item_29",
+        "command": "/bin/bash -lc \"npx -y -p playwright node - <<'NODE'\nconst { chromium } = require('playwright');\n(async () => {\n  const browser = await chromium.launch({ headless: true });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const errors = [];\n  page.on('pageerror', err => errors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') errors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => {\n    const body = document.body.getBoundingClientRect();\n    const header = document.querySelector('header').getBoundingClientRect();\n    const chart = document.querySelector('#chart').getBoundingClientRect();\n    return {\n      bodyWidth: body.width,\n      headerWidth: header.width,\n      chartWidth: chart.width,\n      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n    };\n  });\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (errors.length) throw new Error('Browser errors: ' + errors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+        "exitCode": 1,
+        "status": "failed",
+        "result": "node:internal/modules/cjs/loader:1386\n  throw err;\n  ^\n\nError: Cannot find module 'playwright'\nRequire stack:\n- /tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace/[stdin]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)\n    at Function._load (node:internal/modules/cjs/loader:1192:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [stdin]:1:22\n    at runScriptInThisContext (node:internal/vm:209:10) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace/[stdin]' ]\n}\n\nNode.js v22.22.2\n"
+      },
+      {
+        "name": "item_31",
+        "command": "/bin/bash -lc \"npm exec --yes --package=playwright -- node - <<'NODE'\nconst { chromium } = require('playwright');\n(async () => {\n  const browser = await chromium.launch({ headless: true });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const errors = [];\n  page.on('pageerror', err => errors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') errors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => {\n    const body = document.body.getBoundingClientRect();\n    const header = document.querySelector('header').getBoundingClientRect();\n    const chart = document.querySelector('#chart').getBoundingClientRect();\n    return {\n      bodyWidth: body.width,\n      headerWidth: header.width,\n      chartWidth: chart.width,\n      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n    };\n  });\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (errors.length) throw new Error('Browser errors: ' + errors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+        "exitCode": 1,
+        "status": "failed",
+        "result": "node:internal/modules/cjs/loader:1386\n  throw err;\n  ^\n\nError: Cannot find module 'playwright'\nRequire stack:\n- /tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace/[stdin]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)\n    at Function._load (node:internal/modules/cjs/loader:1192:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [stdin]:1:22\n    at runScriptInThisContext (node:internal/vm:209:10) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace/[stdin]' ]\n}\n\nNode.js v22.22.2\n"
+      },
+      {
+        "name": "item_33",
+        "command": "/bin/bash -lc 'which chromium || which chromium-browser || which google-chrome || which google-chrome-stable'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "/usr/bin/google-chrome\n"
+      },
+      {
+        "name": "item_34",
+        "command": "/bin/bash -lc \"curl -s http://127.0.0.1:4173/index.html | sed -n '1,16p'\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>S&P 500 Forecast Dashboard</title>\n  <style>\n    :root {\n      color-scheme: light;\n      --bg: #f4f7fb;\n      --panel: #ffffff;\n      --ink: #172033;\n      --muted: #617084;\n      --line: #d9e0ea;\n      --blue: #1f6feb;\n      --teal: #087f8c;\n"
+      },
+      {
+        "name": "item_35",
+        "command": "/bin/bash -lc 'npm --version'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "10.9.7\n"
+      },
+      {
+        "name": "item_37",
+        "command": "/bin/bash -lc 'mkdir -p /tmp/sp500-dashboard-validation && npm install --prefix /tmp/sp500-dashboard-validation --no-save playwright-core@1.62.1'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "\nadded 1 package in 906ms\n"
+      },
+      {
+        "name": "item_39",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck, consoleErrors }, null, 2));\n})();\nNODE\"",
+        "exitCode": 1,
+        "status": "failed",
+        "result": "[stdin]:50\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n                                                   ^\n\nError: Mobile layout has horizontal overflow: {\"bodyWidth\":390,\"htmlClientWidth\":390,\"scrollWidth\":1092,\"chartWidth\":1080,\"horizontalOverflow\":true}\n    at [stdin]:50:52\n\nNode.js v22.22.2\n"
+      },
+      {
+        "name": "item_43",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck, consoleErrors }, null, 2));\n})();\nNODE\"",
+        "exitCode": 1,
+        "status": "failed",
+        "result": "[stdin]:50\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n                                                   ^\n\nError: Mobile layout has horizontal overflow: {\"bodyWidth\":390,\"htmlClientWidth\":390,\"scrollWidth\":514,\"chartWidth\":502.421875,\"horizontalOverflow\":true}\n    at [stdin]:50:52\n\nNode.js v22.22.2\n"
+      },
+      {
+        "name": "item_47",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    tablePanelWidth: document.querySelector('.table-wrap').getBoundingClientRect().width,\n    tableScrollWidth: document.querySelector('.table-wrap').scrollWidth,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck, consoleErrors }, null, 2));\n})();\nNODE\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "{\n  \"status\": \"Using deterministic sample data\",\n  \"latest\": \"2,399.33 (Dec 31, 2025)\",\n  \"forecastBefore\": \"2,455.38 (Mar 30, 2026)\",\n  \"model\": \"EWMA momentum\",\n  \"horizon\": \"126 trading days\",\n  \"confidence\": \"95%\",\n  \"forecastAfter\": \"1,719.61 (Jun 25, 2026)\",\n  \"rows\": 5,\n  \"canvasCheck\": {\n    \"width\": 1080,\n    \"height\": 540,\n    \"nonWhite\": 26739\n  },\n  \"mobileOverlapCheck\": {\n    \"bodyWidth\": 390,\n    \"htmlClientWidth\": 390,\n    \"scrollWidth\": 390,\n    \"chartWidth\": 368,\n    \"tablePanelWidth\": 370,\n    \"tableScrollWidth\": 552,\n    \"horizontalOverflow\": false\n  },\n  \"consoleErrors\": [\n    \"Access to fetch at 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500' from origin 'http://127.0.0.1:4173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.\",\n    \"Failed to load resource: net::ERR_FAILED\",\n    \"Failed to load resource: the server responded with a status of 404 (File not found)\"\n  ]\n}\n"
+      },
+      {
+        "name": "item_49",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\nconst urls = {\n  fredDirect: 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500',\n  fredAllOrigins: 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500'),\n  stooq: 'https://stooq.com/q/d/l/?s=%5Espx&i=d',\n  yahooChart: 'https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=10y&interval=1d'\n};\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage();\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  const results = {};\n  for (const [name, url] of Object.entries(urls)) {\n    results[name] = await page.evaluate(async (url) => {\n      try {\n        const response = await fetch(url, { cache: 'no-store' });\n        const text = await response.text();\n        return { ok: response.ok, status: response.status, type: response.headers.get('content-type'), sample: text.slice(0, 120) };\n      } catch (error) {\n        return { ok: false, error: error.message };\n      }\n    }, url);\n  }\n  console.log(JSON.stringify(results, null, 2));\n  await browser.close();\n})();\nNODE\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "{\n  \"fredDirect\": {\n    \"ok\": false,\n    \"error\": \"Failed to fetch\"\n  },\n  \"fredAllOrigins\": {\n    \"ok\": true,\n    \"status\": 200,\n    \"type\": \"application/csv\",\n    \"sample\": \"observation_date,SP500\\n2016-08-15,2190.15\\n2016-08-16,2178.15\\n2016-08-17,2182.22\\n2016-08-18,2187.02\\n2016-08-19,2183.87\\n20\"\n  },\n  \"stooq\": {\n    \"ok\": false,\n    \"error\": \"Failed to fetch\"\n  },\n  \"yahooChart\": {\n    \"ok\": false,\n    \"error\": \"Failed to fetch\"\n  }\n}\n"
+      },
+      {
+        "name": "item_53",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 25000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    tablePanelWidth: document.querySelector('.table-wrap').getBoundingClientRect().width,\n    tableScrollWidth: document.querySelector('.table-wrap').scrollWidth,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n  if (\"'!/''^Live FRED data/.test(status)) throw new Error('\"'Expected live FRED status, got: ' + status);\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+        "exitCode": 1,
+        "status": "failed",
+        "result": "[stdin]:50\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n                                  ^\n\nError: Console errors: Access to fetch at 'https://api.allorigins.win/raw?url=https%3A%2F%2Ffred.stlouisfed.org%2Fgraph%2Ffredgraph.csv%3Fid%3DSP500' from origin 'http://127.0.0.1:4173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. | Failed to load resource: net::ERR_FAILED\n    at [stdin]:50:35\n\nNode.js v22.22.2\n"
+      },
+      {
+        "name": "item_55",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\nconst target = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500';\nconst urls = {\n  allOriginsRaw: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(target),\n  allOriginsGet: 'https://api.allorigins.win/get?url=' + encodeURIComponent(target),\n  codetabs: 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(target),\n  corsproxyIo: 'https://corsproxy.io/?' + encodeURIComponent(target),\n  thingproxy: 'https://thingproxy.freeboard.io/fetch/' + target,\n  jinaHttps: 'https://r.jina.ai/http://r.jina.ai/http://https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500',\n  jinaDirect: 'https://r.jina.ai/http://r.jina.ai/http://http://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500'\n};\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage();\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  const results = {};\n  for (const [name, url] of Object.entries(urls)) {\n    results[name] = await page.evaluate(async (url) => {\n      try {\n        const response = await fetch(url, { cache: 'no-store' });\n        const text = await response.text();\n        return { ok: response.ok, status: response.status, type: response.headers.get('content-type'), sample: text.slice(0, 180) };\n      } catch (error) {\n        return { ok: false, error: error.message };\n      }\n    }, url);\n  }\n  console.log(JSON.stringify(results, null, 2));\n  await browser.close();\n})();\nNODE\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "{\n  \"allOriginsRaw\": {\n    \"ok\": false,\n    \"error\": \"Failed to fetch\"\n  },\n  \"allOriginsGet\": {\n    \"ok\": true,\n    \"status\": 200,\n    \"type\": \"application/json\",\n    \"sample\": \"{\\\"contents\\\":\\\"data:application/csv;base64,b2JzZXJ2YXRpb25fZGF0ZSxTUDUwMAoyMDE2LTA4LTE1LDIxOTAuMTUKMjAxNi0wOC0xNiwyMTc4LjE1CjIwMTYtMDgtMTcsMjE4Mi4yMgoyMDE2LTA4LTE4LDIxODcuMDIKMjAxNi0\"\n  },\n  \"codetabs\": {\n    \"ok\": false,\n    \"error\": \"Failed to fetch\"\n  },\n  \"corsproxyIo\": {\n    \"ok\": false,\n    \"status\": 403,\n    \"type\": \"application/json\",\n    \"sample\": \"{\\\"error\\\":\\\"This content type is not allowed on the free plan. Upgrade at https://corsproxy.io/pricing/\\\"}\"\n  },\n  \"thingproxy\": {\n    \"ok\": false,\n    \"error\": \"Failed to fetch\"\n  },\n  \"jinaHttps\": {\n    \"ok\": false,\n    \"status\": 422,\n    \"type\": \"application/json; charset=utf-8\",\n    \"sample\": \"{\\\"data\\\":null,\\\"code\\\":422,\\\"name\\\":\\\"AssertionFailureError\\\",\\\"status\\\":42206,\\\"message\\\":\\\"Failed to interpret https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500: unexpected content ty\"\n  },\n  \"jinaDirect\": {\n    \"ok\": false,\n    \"status\": 422,\n    \"type\": \"application/json; charset=utf-8\",\n    \"sample\": \"{\\\"data\\\":null,\\\"code\\\":422,\\\"name\\\":\\\"AssertionFailureError\\\",\\\"status\\\":42206,\\\"message\\\":\\\"Failed to interpret http://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500: unexpected content typ\"\n  }\n}\n"
+      },
+      {
+        "name": "item_60",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 25000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    tablePanelWidth: document.querySelector('.table-wrap').getBoundingClientRect().width,\n    tableScrollWidth: document.querySelector('.table-wrap').scrollWidth,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n  if (\"'!/''^Live FRED data/.test(status)) throw new Error('\"'Expected live FRED status, got: ' + status);\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "{\n  \"status\": \"Live FRED data through Aug 12, 2026\",\n  \"latest\": \"7,748.50 (Aug 12, 2026)\",\n  \"forecastBefore\": \"7,966.45 (Nov 9, 2026)\",\n  \"model\": \"EWMA momentum\",\n  \"horizon\": \"126 trading days\",\n  \"confidence\": \"95%\",\n  \"forecastAfter\": \"8,829.73 (Feb 4, 2027)\",\n  \"rows\": 5,\n  \"canvasCheck\": {\n    \"width\": 1080,\n    \"height\": 540,\n    \"nonWhite\": 34864\n  },\n  \"mobileOverlapCheck\": {\n    \"bodyWidth\": 390,\n    \"htmlClientWidth\": 390,\n    \"scrollWidth\": 390,\n    \"chartWidth\": 368,\n    \"tablePanelWidth\": 370,\n    \"tableScrollWidth\": 552,\n    \"horizontalOverflow\": false\n  }\n}\n"
+      },
+      {
+        "name": "item_65",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 25000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    tablePanelWidth: document.querySelector('.table-wrap').getBoundingClientRect().width,\n    tableScrollWidth: document.querySelector('.table-wrap').scrollWidth,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n  if (\"'!/''^Live FRED data/.test(status)) throw new Error('\"'Expected live FRED status, got: ' + status);\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+        "exitCode": 1,
+        "status": "failed",
+        "result": "[stdin]:50\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n                                  ^\n\nError: Console errors: Access to fetch at 'https://api.allorigins.win/get?url=https%3A%2F%2Ffred.stlouisfed.org%2Fgraph%2Ffredgraph.csv%3Fid%3DSP500' from origin 'http://127.0.0.1:4173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. | Failed to load resource: net::ERR_FAILED\n    at [stdin]:50:35\n\nNode.js v22.22.2\n"
+      },
+      {
+        "name": "item_27",
+        "command": "/bin/bash -lc 'python3 -m http.server 4173 --bind 127.0.0.1'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "127.0.0.1 - - [13/Aug/2026 14:24:26] \"GET /index.html HTTP/1.1\" 200 -\n127.0.0.1 - - [13/Aug/2026 14:24:57] \"GET /index.html HTTP/1.1\" 200 -\n127.0.0.1 - - [13/Aug/2026 14:24:58] code 404, message File not found\n127.0.0.1 - - [13/Aug/2026 14:24:58] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [13/Aug/2026 14:25:30] \"GET /index.html HTTP/1.1\" 200 -\n127.0.0.1 - - [13/Aug/2026 14:25:31] code 404, message File not found\n127.0.0.1 - - [13/Aug/2026 14:25:31] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [13/Aug/2026 14:26:06] \"GET /index.html HTTP/1.1\" 200 -\n127.0.0.1 - - [13/Aug/2026 14:26:08] code 404, message File not found\n127.0.0.1 - - [13/Aug/2026 14:26:08] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [13/Aug/2026 14:26:34] \"GET /index.html HTTP/1.1\" 200 -\n127.0.0.1 - - [13/Aug/2026 14:26:35] code 404, message File not found\n127.0.0.1 - - [13/Aug/2026 14:26:35] \"GET /favicon.ico HTTP/1.1\" 404 -\n127.0.0.1 - - [13/Aug/2026 14:27:31] \"GET /index.html HTTP/1.1\" 200 -\n127.0.0.1 - - [13/Aug/2026 14:28:10] \"GET /index.html HTTP/1.1\" 200 -\n127.0.0.1 - - [13/Aug/2026 14:29:38] \"GET /index.html HTTP/1.1\" 200 -\n127.0.0.1 - - [13/Aug/2026 14:30:37] \"GET /index.html HTTP/1.1\" 200 -\nServing HTTP on 127.0.0.1 port 4173 (http://127.0.0.1:4173/) ...\n\nKeyboard interrupt received, exiting.\n"
+      },
+      {
+        "name": "item_74",
+        "command": "/bin/bash -lc 'curl -I http://127.0.0.1:4173/'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\nHTTP/1.1 200 OK\r\ncache-control: no-store\r\ncontent-type: text/html; charset=utf-8\r\nDate: Thu, 13 Aug 2026 14:32:15 GMT\r\nConnection: keep-alive\r\nKeep-Alive: timeout=5\r\n\r\n"
+      },
+      {
+        "name": "item_75",
+        "command": "/bin/bash -lc \"curl -s http://127.0.0.1:4173/api/sp500 | sed -n '1,6p'\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "observation_date,SP500\n2016-08-15,2190.15\n2016-08-16,2178.15\n2016-08-17,2182.22\n2016-08-18,2187.02\n2016-08-19,2183.87\n"
+      },
+      {
+        "name": "item_77",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 25000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    tablePanelWidth: document.querySelector('.table-wrap').getBoundingClientRect().width,\n    tableScrollWidth: document.querySelector('.table-wrap').scrollWidth,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n  if (\"'!/''^Live FRED data/.test(status)) throw new Error('\"'Expected live FRED status, got: ' + status);\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "{\n  \"status\": \"Live FRED data through Aug 12, 2026\",\n  \"latest\": \"7,748.50 (Aug 12, 2026)\",\n  \"forecastBefore\": \"7,966.45 (Nov 9, 2026)\",\n  \"model\": \"EWMA momentum\",\n  \"horizon\": \"126 trading days\",\n  \"confidence\": \"95%\",\n  \"forecastAfter\": \"8,829.73 (Feb 4, 2027)\",\n  \"rows\": 5,\n  \"canvasCheck\": {\n    \"width\": 1080,\n    \"height\": 540,\n    \"nonWhite\": 34362\n  },\n  \"mobileOverlapCheck\": {\n    \"bodyWidth\": 390,\n    \"htmlClientWidth\": 390,\n    \"scrollWidth\": 390,\n    \"chartWidth\": 368,\n    \"tablePanelWidth\": 370,\n    \"tableScrollWidth\": 552,\n    \"horizontalOverflow\": false\n  }\n}\n"
+      },
+      {
+        "name": "item_72",
+        "command": "/bin/bash -lc 'node server.mjs'",
+        "exitCode": 130,
+        "status": "failed",
+        "result": ""
+      },
+      {
+        "name": "item_80",
+        "command": "/bin/bash -lc \"setsid node server.mjs >/tmp/sp500-dashboard-node.log 2>&1 < /dev/null & printf '%s\n' \"'$!'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "735261\n"
+      },
+      {
+        "name": "item_81",
+        "command": "/bin/bash -lc \"sed -n '1,80p' /tmp/sp500-dashboard-node.log\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "S&P 500 dashboard running at http://127.0.0.1:4173/\n"
+      },
+      {
+        "name": "item_82",
+        "command": "/bin/bash -lc \"curl -s -o /tmp/sp500-home.html -w '%{http_code}\\\\n' http://127.0.0.1:4173/\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "200\n"
+      },
+      {
+        "name": "item_83",
+        "command": "/bin/bash -lc 'curl -s http://127.0.0.1:4173/api/sp500 | tail -n 3'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "2026-08-10,7753.11\n2026-08-11,7728.20\n2026-08-12,7748.50\n"
+      },
+      {
+        "name": "item_85",
+        "command": "/bin/bash -lc 'ps -p 735261 -o pid,cmd'",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "    PID CMD\n 735261 node server.mjs\n"
+      },
+      {
+        "name": "item_86",
+        "command": "/bin/bash -lc 'git status --short'",
+        "exitCode": 128,
+        "status": "failed",
+        "result": "fatal: not a git repository (or any of the parent directories): .git\n"
+      },
+      {
+        "name": "item_87",
+        "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1280, height: 820 } });\n  await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#latestMetric').textContent.includes('Aug 12, 2026'), null, { timeout: 20000 });\n  const result = await page.evaluate(() => ({\n    status: document.querySelector('#statusText').textContent,\n    latest: document.querySelector('#latestMetric').textContent,\n    rows: document.querySelectorAll('#scenarioBody tr').length,\n    exportLabel: document.querySelector('#exportButton').textContent.trim()\n  }));\n  await browser.close();\n  console.log(JSON.stringify(result, null, 2));\n})();\nNODE\"",
+        "exitCode": 0,
+        "status": "completed",
+        "result": "{\n  \"status\": \"Live FRED data through Aug 12, 2026\",\n  \"latest\": \"7,748.50 (Aug 12, 2026)\",\n  \"rows\": 5,\n  \"exportLabel\": \"Export CSV\"\n}\n"
+      }
+    ],
+    "warnings": [
+      "The first wrapper script exited before Codex was invoked because shell pipefail caught a random-suffix generation SIGPIPE; no benchmark prompt was submitted in that failed wrapper.",
+      "Initial Python background server checks failed and were resolved inside the benchmark run by using a foreground server and later a Node same-origin proxy server.",
+      "The first Playwright validation attempts failed because npx/npm exec did not expose playwright to require(); the benchmark installed playwright-core in /tmp for validation.",
+      "Direct browser fetches to FRED, Stooq, Yahoo, and several public proxy variants were blocked or unreliable under the local origin; the final run added server.mjs to proxy FRED from the same origin.",
+      "The dashboard includes deterministic sample fallback data, but the final benchmark validation passed with live FRED data through 2026-08-12."
+    ],
+    "observedOutputs": {
+      "finalValidation": {
+        "status": "Live FRED data through Aug 12, 2026",
+        "latest": "7,748.50 (Aug 12, 2026)",
+        "forecastBefore": "7,966.45 (Nov 9, 2026)",
+        "model": "EWMA momentum",
+        "horizon": "126 trading days",
+        "confidence": "95%",
+        "forecastAfter": "8,829.73 (Feb 4, 2027)",
+        "rows": 5,
+        "canvasCheck": {
+          "width": 1080,
+          "height": 540,
+          "nonWhite": 34362
+        },
+        "mobileOverlapCheck": {
+          "bodyWidth": 390,
+          "htmlClientWidth": 390,
+          "scrollWidth": 390,
+          "chartWidth": 368,
+          "tablePanelWidth": 370,
+          "tableScrollWidth": 552,
+          "horizontalOverflow": false
+        }
+      },
+      "proxiedCsvHead": "observation_date,SP500\n2016-08-15,2190.15\n2016-08-16,2178.15\n2016-08-17,2182.22\n2016-08-18,2187.02\n2016-08-19,2183.87\n",
+      "proxiedCsvTail": "2026-08-10,7753.11\n2026-08-11,7728.20\n2026-08-12,7748.50\n",
+      "failedCommandCount": 12,
+      "failedCommands": [
+        {
+          "name": "item_1",
+          "exitCode": 1,
+          "command": "/bin/bash -lc \"pwd && rg --files -g '\"'!*node_modules*'\"' -g '\"'!*.png'\"' -g '\"'!*.jpg'\"' -g '\"'!*.jpeg'\"' -g '\"'!*.gif'\"' -g '\"'!*.webp'\"' -g '\"'!*.pdf'\"'\"",
+          "result": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace\n"
+        },
+        {
+          "name": "item_17",
+          "exitCode": 7,
+          "command": "/bin/bash -lc 'curl -I http://127.0.0.1:4173/index.html'",
+          "result": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to 127.0.0.1 port 4173 after 0 ms: Connection refused\n"
+        },
+        {
+          "name": "item_21",
+          "exitCode": 1,
+          "command": "/bin/bash -lc \"ss -ltnp | rg ':4173|:8000|:8080'\"",
+          "result": ""
+        },
+        {
+          "name": "item_24",
+          "exitCode": 7,
+          "command": "/bin/bash -lc 'curl -I http://127.0.0.1:4173/index.html'",
+          "result": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to 127.0.0.1 port 4173 after 0 ms: Connection refused\n"
+        },
+        {
+          "name": "item_29",
+          "exitCode": 1,
+          "command": "/bin/bash -lc \"npx -y -p playwright node - <<'NODE'\nconst { chromium } = require('playwright');\n(async () => {\n  const browser = await chromium.launch({ headless: true });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const errors = [];\n  page.on('pageerror', err => errors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') errors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => {\n    const body = document.body.getBoundingClientRect();\n    const header = document.querySelector('header').getBoundingClientRect();\n    const chart = document.querySelector('#chart').getBoundingClientRect();\n    return {\n      bodyWidth: body.width,\n      headerWidth: header.width,\n      chartWidth: chart.width,\n      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n    };\n  });\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (errors.length) throw new Error('Browser errors: ' + errors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+          "result": "node:internal/modules/cjs/loader:1386\n  throw err;\n  ^\n\nError: Cannot find module 'playwright'\nRequire stack:\n- /tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace/[stdin]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)\n    at Function._load (node:internal/modules/cjs/loader:1192:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [stdin]:1:22\n    at runScriptInThisContext (node:internal/vm:209:10) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace/[stdin]' ]\n}\n\nNode.js v22.22.2\n"
+        },
+        {
+          "name": "item_31",
+          "exitCode": 1,
+          "command": "/bin/bash -lc \"npm exec --yes --package=playwright -- node - <<'NODE'\nconst { chromium } = require('playwright');\n(async () => {\n  const browser = await chromium.launch({ headless: true });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const errors = [];\n  page.on('pageerror', err => errors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') errors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => {\n    const body = document.body.getBoundingClientRect();\n    const header = document.querySelector('header').getBoundingClientRect();\n    const chart = document.querySelector('#chart').getBoundingClientRect();\n    return {\n      bodyWidth: body.width,\n      headerWidth: header.width,\n      chartWidth: chart.width,\n      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n    };\n  });\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (errors.length) throw new Error('Browser errors: ' + errors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+          "result": "node:internal/modules/cjs/loader:1386\n  throw err;\n  ^\n\nError: Cannot find module 'playwright'\nRequire stack:\n- /tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace/[stdin]\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)\n    at Function._load (node:internal/modules/cjs/loader:1192:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at [stdin]:1:22\n    at runScriptInThisContext (node:internal/vm:209:10) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace/[stdin]' ]\n}\n\nNode.js v22.22.2\n"
+        },
+        {
+          "name": "item_39",
+          "exitCode": 1,
+          "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck, consoleErrors }, null, 2));\n})();\nNODE\"",
+          "result": "[stdin]:50\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n                                                   ^\n\nError: Mobile layout has horizontal overflow: {\"bodyWidth\":390,\"htmlClientWidth\":390,\"scrollWidth\":1092,\"chartWidth\":1080,\"horizontalOverflow\":true}\n    at [stdin]:50:52\n\nNode.js v22.22.2\n"
+        },
+        {
+          "name": "item_43",
+          "exitCode": 1,
+          "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 20000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck, consoleErrors }, null, 2));\n})();\nNODE\"",
+          "result": "[stdin]:50\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n                                                   ^\n\nError: Mobile layout has horizontal overflow: {\"bodyWidth\":390,\"htmlClientWidth\":390,\"scrollWidth\":514,\"chartWidth\":502.421875,\"horizontalOverflow\":true}\n    at [stdin]:50:52\n\nNode.js v22.22.2\n"
+        },
+        {
+          "name": "item_53",
+          "exitCode": 1,
+          "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 25000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    tablePanelWidth: document.querySelector('.table-wrap').getBoundingClientRect().width,\n    tableScrollWidth: document.querySelector('.table-wrap').scrollWidth,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n  if (\"'!/''^Live FRED data/.test(status)) throw new Error('\"'Expected live FRED status, got: ' + status);\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+          "result": "[stdin]:50\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n                                  ^\n\nError: Console errors: Access to fetch at 'https://api.allorigins.win/raw?url=https%3A%2F%2Ffred.stlouisfed.org%2Fgraph%2Ffredgraph.csv%3Fid%3DSP500' from origin 'http://127.0.0.1:4173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. | Failed to load resource: net::ERR_FAILED\n    at [stdin]:50:35\n\nNode.js v22.22.2\n"
+        },
+        {
+          "name": "item_65",
+          "exitCode": 1,
+          "command": "/bin/bash -lc \"node - <<'NODE'\nconst { chromium } = require('/tmp/sp500-dashboard-validation/node_modules/playwright-core');\n(async () => {\n  const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });\n  const page = await browser.newPage({ viewport: { width: 1440, height: 980 } });\n  const pageErrors = [];\n  const consoleErrors = [];\n  page.on('pageerror', err => pageErrors.push(err.message));\n  page.on('console', msg => {\n    if (msg.type() === 'error') consoleErrors.push(msg.text());\n  });\n  await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => document.querySelector('#scenarioBody tr') && document.querySelector('#latestMetric').textContent \"'!== '\"'--', null, { timeout: 25000 });\n  const status = await page.locator('#statusText').innerText();\n  const latest = await page.locator('#latestMetric').innerText();\n  const forecastBefore = await page.locator('#forecastMetric').innerText();\n  await page.locator('#modelSelect').selectOption('ewma');\n  await page.locator('#horizonRange').evaluate(el => { el.value = 126; el.dispatchEvent(new Event('input', { bubbles: true })); });\n  await page.locator('#confidenceSelect').selectOption('0.95');\n  await page.waitForTimeout(250);\n  const horizon = await page.locator('#horizonLabel').innerText();\n  const confidence = await page.locator('#confidenceLabel').innerText();\n  const model = await page.locator('#modelLabel').innerText();\n  const forecastAfter = await page.locator('#forecastMetric').innerText();\n  const rows = await page.locator('#scenarioBody tr').count();\n  const canvasCheck = await page.locator('#chart').evaluate(canvas => {\n    const ctx = canvas.getContext('2d');\n    const { width, height } = canvas;\n    const data = ctx.getImageData(0, 0, width, height).data;\n    let nonWhite = 0;\n    for (let i = 0; i < data.length; i += 4) {\n      if (\"'!(data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) && data[i + 3] > 0) nonWhite++;\n    }\n    return { width, height, nonWhite };\n  });\n  await page.screenshot({ path: '\"'dashboard-desktop.png', fullPage: true });\n  await page.setViewportSize({ width: 390, height: 900 });\n  await page.waitForTimeout(250);\n  const mobileOverlapCheck = await page.evaluate(() => ({\n    bodyWidth: document.body.getBoundingClientRect().width,\n    htmlClientWidth: document.documentElement.clientWidth,\n    scrollWidth: document.documentElement.scrollWidth,\n    chartWidth: document.querySelector('#chart').getBoundingClientRect().width,\n    tablePanelWidth: document.querySelector('.table-wrap').getBoundingClientRect().width,\n    tableScrollWidth: document.querySelector('.table-wrap').scrollWidth,\n    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1\n  }));\n  await page.screenshot({ path: 'dashboard-mobile.png', fullPage: true });\n  await browser.close();\n  if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n  if (\"'!/''^Live FRED data/.test(status)) throw new Error('\"'Expected live FRED status, got: ' + status);\n  if (rows < 5) throw new Error('Expected at least 5 scenario rows, found ' + rows);\n  if (canvasCheck.nonWhite < 1000) throw new Error('Canvas appears blank: ' + JSON.stringify(canvasCheck));\n  if (mobileOverlapCheck.horizontalOverflow) throw new Error('Mobile layout has horizontal overflow: ' + JSON.stringify(mobileOverlapCheck));\n  console.log(JSON.stringify({ status, latest, forecastBefore, model, horizon, confidence, forecastAfter, rows, canvasCheck, mobileOverlapCheck }, null, 2));\n})();\nNODE\"",
+          "result": "[stdin]:50\n  if (consoleErrors.length) throw new Error('Console errors: ' + consoleErrors.join(' | '));\n                                  ^\n\nError: Console errors: Access to fetch at 'https://api.allorigins.win/get?url=https%3A%2F%2Ffred.stlouisfed.org%2Fgraph%2Ffredgraph.csv%3Fid%3DSP500' from origin 'http://127.0.0.1:4173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. | Failed to load resource: net::ERR_FAILED\n    at [stdin]:50:35\n\nNode.js v22.22.2\n"
+        },
+        {
+          "name": "item_72",
+          "exitCode": 130,
+          "command": "/bin/bash -lc 'node server.mjs'",
+          "result": ""
+        },
+        {
+          "name": "item_86",
+          "exitCode": 128,
+          "command": "/bin/bash -lc 'git status --short'",
+          "result": "fatal: not a git repository (or any of the parent directories): .git\n"
+        }
+      ]
+    }
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "npm-install",
+        "command": "npm install",
+        "exitCode": 0,
+        "result": "Installed/audited dependencies successfully: added 3 packages, audited 4 packages, 0 vulnerabilities. No tracked package files changed."
+      },
+      {
+        "name": "manifest-validate",
+        "command": "npm run validate",
+        "exitCode": 0,
+        "result": "Manifest valid: 28 runs checked."
+      },
+      {
+        "name": "full-test-suite",
+        "command": "npm test",
+        "exitCode": 0,
+        "result": "Repository validation, unit tests, and Playwright browser tests passed: 5 passed, 1 skipped."
+      },
+      {
+        "name": "row-open-check",
+        "command": "Serve repository at http://127.0.0.1:4322/, filter for openai-gpt-5-5-xhigh-codex-20260813, click the matching table row link, and inspect the rendered standalone dashboard with Playwright.",
+        "exitCode": 0,
+        "result": "Opened http://127.0.0.1:4322/runs/rendered/openai-gpt-5-5-xhigh-codex-20260813/index.html; title S&P 500 Forecast Dashboard; status Live FRED data through Aug 12, 2026; latest 7,748.50; five scenario rows; canvas initialized at 1006x503; no horizontal overflow. The static server returned 404 for /api/sp500, after which the dashboard loaded live FRED data through its fallback public proxy."
+      },
+      {
+        "name": "state-disclosure-check",
+        "command": "Serve repository at http://127.0.0.1:4322/ and inspect visible table row metadata for data-source, repair, and validation state labels.",
+        "exitCode": 0,
+        "result": "Unfiltered table showed 28 rows: 11 synthetic rows visibly labeled synthetic, 3 repaired rows visibly labeled repaired, 28 rows visibly labeled validated, and 0 current failed rows to disclose. app.js renders failed for any run where validation.passed is false."
+      }
+    ],
+    "result": "Repository checks passed and the new table row opens the standalone rendered dashboard directly."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-5-xhigh-codex-20260813/index.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-5-xhigh-codex-20260813/index.html",
+    "originalSupportFiles": [
+      "runs/original/openai-gpt-5-5-xhigh-codex-20260813/server.mjs"
+    ],
+    "displayedSupportFiles": [
+      "runs/rendered/openai-gpt-5-5-xhigh-codex-20260813/server.mjs"
+    ],
+    "responseRecord": "responses/openai-gpt-5-5-xhigh-codex-20260813.md",
+    "validationEvidence": "validation/openai-gpt-5-5-xhigh-codex-20260813.json",
+    "sessionLog": "validation/openai-gpt-5-5-xhigh-codex-20260813.session.jsonl",
+    "finalResponse": "validation/openai-gpt-5-5-xhigh-codex-20260813.final-response.md",
+    "stderrLog": "validation/openai-gpt-5-5-xhigh-codex-20260813.stderr.log",
+    "screenshots": [
+      "validation/openai-gpt-5-5-xhigh-codex-20260813-dashboard-desktop.png",
+      "validation/openai-gpt-5-5-xhigh-codex-20260813-dashboard-mobile.png",
+      "validation/openai-gpt-5-5-xhigh-codex-20260813-row-open.png"
+    ]
+  },
+  "unresolvedFailures": []
+}

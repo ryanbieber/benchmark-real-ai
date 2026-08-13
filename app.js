@@ -94,7 +94,8 @@ function rowTemplate(run) {
   const artifact = escapeHtml(run.artifacts.displayHtml);
   const usage = run.usage || {};
   const cost = estimateCost(run);
-  const runMeta = `${run.provider} · ${run.dataSource.type} · ${run.validation.passed ? 'validated' : 'failed'} · ${formatDate(run.run.completedAt)}`;
+  const repairState = run.artifacts?.repaired ? ' · repaired' : '';
+  const runMeta = `${run.provider} · ${run.dataSource.type} · ${run.validation.passed ? 'validated' : 'failed'}${repairState} · ${formatDate(run.run.completedAt)}`;
   return `
     <tr class="run-row" data-artifact="${artifact}" data-cost="${cost?.total ?? ''}" tabindex="0" aria-label="Open ${escapeHtml(run.model.name)} dashboard">
       <td class="model-cell"><a href="${artifact}"><strong>${escapeHtml(run.model.name)}</strong><small>${escapeHtml(runMeta)}</small></a></td>

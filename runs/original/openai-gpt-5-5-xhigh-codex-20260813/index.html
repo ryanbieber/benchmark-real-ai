@@ -1,0 +1,1385 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>S&P 500 Forecast Dashboard</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #617084;
+      --line: #d9e0ea;
+      --blue: #1f6feb;
+      --teal: #087f8c;
+      --green: #1f8a4c;
+      --red: #cc4b37;
+      --amber: #b7791f;
+      --band: rgba(31, 111, 235, 0.16);
+      --shadow: 0 14px 38px rgba(23, 32, 51, 0.10);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.80), rgba(244, 247, 251, 0.96)),
+        repeating-linear-gradient(90deg, rgba(31, 111, 235, 0.06) 0 1px, transparent 1px 96px);
+      color: var(--ink);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+      min-height: 38px;
+      border-radius: var(--radius);
+      padding: 0 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      border-color: #9fb1c9;
+      box-shadow: 0 8px 22px rgba(31, 111, 235, 0.10);
+    }
+
+    button.primary {
+      background: var(--ink);
+      color: #ffffff;
+      border-color: var(--ink);
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(31, 111, 235, 0.25);
+      outline-offset: 2px;
+    }
+
+    .app {
+      width: min(1480px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 22px 0 36px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 760px;
+      line-height: 1.45;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .status-pill {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+      max-width: 100%;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--amber);
+      flex: 0 0 auto;
+    }
+
+    .dot.ok {
+      background: var(--green);
+    }
+
+    .dot.bad {
+      background: var(--red);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .layout > *,
+    .below > *,
+    .chart-panel,
+    .panel {
+      min-width: 0;
+    }
+
+    .panel,
+    .metric,
+    .table-wrap,
+    .note {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 16px;
+    }
+
+    .panel h2,
+    .table-wrap h2,
+    .note h2 {
+      margin: 0 0 12px;
+      font-size: 0.94rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .control {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 15px;
+    }
+
+    .control:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.25;
+    }
+
+    .value {
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    select,
+    input[type="number"] {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+      color: var(--ink);
+      padding: 0 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      padding: 14px;
+      min-height: 96px;
+      display: grid;
+      align-content: space-between;
+      gap: 8px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .metric strong {
+      font-size: clamp(1.02rem, 1.45vw, 1.38rem);
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .chart-panel {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chart-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px 0;
+    }
+
+    .chart-head h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swatch {
+      width: 24px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--blue);
+      display: inline-block;
+    }
+
+    .swatch.forecast {
+      background: var(--teal);
+      border-top: 2px dashed var(--teal);
+      height: 0;
+    }
+
+    .swatch.band {
+      height: 12px;
+      background: var(--band);
+      border: 1px solid rgba(31, 111, 235, 0.26);
+    }
+
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 8;
+      min-height: 420px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      top: 0;
+      left: 0;
+      min-width: 180px;
+      max-width: 260px;
+      transform: translate(-50%, calc(-100% - 14px));
+      background: rgba(23, 32, 51, 0.96);
+      color: #ffffff;
+      border-radius: var(--radius);
+      padding: 10px 11px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+      opacity: 0;
+      transition: opacity 120ms ease;
+      z-index: 5;
+      font-size: 0.82rem;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    .tooltip strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.92rem;
+    }
+
+    .below {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .table-wrap,
+    .note {
+      padding: 16px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      min-width: 520px;
+    }
+
+    th,
+    td {
+      text-align: right;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      font-variant-numeric: tabular-nums;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .note {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .note p {
+      margin: 0 0 12px;
+    }
+
+    .note p:last-child {
+      margin-bottom: 0;
+    }
+
+    .equation {
+      display: block;
+      color: var(--ink);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      margin: 12px 0;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1060px) {
+      .layout,
+      .below {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .panel {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .panel h2,
+      .button-row {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        width: min(100vw - 20px, 1480px);
+        padding-top: 14px;
+      }
+
+      header {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .metrics,
+      .panel {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .legend {
+        justify-content: flex-start;
+      }
+
+      .canvas-wrap {
+        aspect-ratio: 10 / 9;
+        min-height: 360px;
+      }
+
+      th,
+      td {
+        padding: 9px 5px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>S&P 500 Forecast Dashboard</h1>
+        <p class="lede">Live daily closes feed a transparent forecasting sandbox with point paths, confidence bands, return statistics, and exportable scenarios.</p>
+      </div>
+      <div class="header-actions">
+        <div class="status-pill" id="status">
+          <span class="dot" id="statusDot"></span>
+          <span id="statusText">Loading FRED data...</span>
+        </div>
+        <button id="reloadButton" type="button" title="Reload live FRED data">Reload</button>
+        <button id="exportButton" class="primary" type="button" title="Download forecast CSV">Export CSV</button>
+      </div>
+    </header>
+
+    <section class="layout" aria-label="Forecast workspace">
+      <aside class="panel">
+        <h2>Controls</h2>
+
+        <div class="control">
+          <label for="modelSelect">Model <span class="value" id="modelLabel">Drift + volatility</span></label>
+          <select id="modelSelect">
+            <option value="drift">Drift + volatility</option>
+            <option value="linear">Log-price trend</option>
+            <option value="ewma">EWMA momentum</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="horizonRange">Forecast horizon <span class="value" id="horizonLabel">63 trading days</span></label>
+          <input id="horizonRange" type="range" min="5" max="252" value="63" step="1">
+        </div>
+
+        <div class="control">
+          <label for="lookbackRange">Training window <span class="value" id="lookbackLabel">5.0 years</span></label>
+          <input id="lookbackRange" type="range" min="1" max="10" value="5" step="0.5">
+        </div>
+
+        <div class="control">
+          <label for="confidenceSelect">Interval <span class="value" id="confidenceLabel">80%</span></label>
+          <select id="confidenceSelect">
+            <option value="0.68">68%</option>
+            <option value="0.80" selected>80%</option>
+            <option value="0.90">90%</option>
+            <option value="0.95">95%</option>
+          </select>
+        </div>
+
+        <div class="control" id="halfLifeControl">
+          <label for="halfLifeRange">EWMA half-life <span class="value" id="halfLifeLabel">45 days</span></label>
+          <input id="halfLifeRange" type="range" min="10" max="126" value="45" step="1">
+        </div>
+
+        <div class="button-row">
+          <button id="importButton" type="button" title="Import a CSV with Date and Close columns">Import CSV</button>
+          <button id="sampleButton" type="button" title="Use built-in sample data">Sample</button>
+        </div>
+        <input id="fileInput" class="hidden" type="file" accept=".csv,text/csv">
+      </aside>
+
+      <section>
+        <div class="metrics" aria-label="Forecast summary">
+          <div class="metric">
+            <span>Latest close</span>
+            <strong id="latestMetric">--</strong>
+          </div>
+          <div class="metric">
+            <span>Point forecast</span>
+            <strong id="forecastMetric">--</strong>
+          </div>
+          <div class="metric">
+            <span>Forecast change</span>
+            <strong id="changeMetric">--</strong>
+          </div>
+          <div class="metric">
+            <span>Annual return</span>
+            <strong id="returnMetric">--</strong>
+          </div>
+          <div class="metric">
+            <span>Annual volatility</span>
+            <strong id="volMetric">--</strong>
+          </div>
+        </div>
+
+        <div class="chart-panel">
+          <div class="chart-head">
+            <h2 id="chartTitle">Historical Close and Forecast</h2>
+            <div class="legend" aria-label="Chart legend">
+              <span><i class="swatch"></i>History</span>
+              <span><i class="swatch forecast"></i>Forecast</span>
+              <span><i class="swatch band"></i>Interval</span>
+            </div>
+          </div>
+          <div class="canvas-wrap" id="canvasWrap">
+            <canvas id="chart" aria-label="S&P 500 historical and forecast chart"></canvas>
+            <div id="tooltip" class="tooltip"></div>
+          </div>
+        </div>
+
+        <div class="below">
+          <section class="table-wrap">
+            <h2>Scenario Table</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Horizon</th>
+                  <th>Date</th>
+                  <th>Low</th>
+                  <th>Median</th>
+                  <th>High</th>
+                </tr>
+              </thead>
+              <tbody id="scenarioBody"></tbody>
+            </table>
+          </section>
+
+          <section class="note">
+            <h2>Method</h2>
+            <p id="methodText">The model estimates daily log returns over the selected training window, projects the median path, and scales uncertainty by historical volatility.</p>
+            <code class="equation">price[h] = price[0] * exp(mu * h +/- z * sigma * sqrt(h))</code>
+            <p>For education only. This is not investment advice and does not account for valuation, earnings, interest rates, macro releases, dividends, fees, taxes, or liquidity.</p>
+            <p>Source: FRED series SP500 from S&P Dow Jones Indices LLC, daily close.</p>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500";
+    const FRED_PROXY_URL = "https://api.allorigins.win/get?url=" + encodeURIComponent(FRED_URL);
+    const DATA_FEEDS = [
+      { name: "Local FRED proxy", url: "/api/sp500", type: "csv" },
+      { name: "AllOrigins FRED proxy", url: FRED_PROXY_URL, type: "allorigins" }
+    ];
+    const TRADING_DAYS = 252;
+    const Z_BY_CONFIDENCE = {
+      "0.68": 0.994,
+      "0.80": 1.282,
+      "0.90": 1.645,
+      "0.95": 1.96
+    };
+
+    const state = {
+      allData: [],
+      activeData: [],
+      forecast: [],
+      modelStats: null,
+      source: "FRED",
+      error: null
+    };
+
+    const els = {
+      status: document.getElementById("status"),
+      statusDot: document.getElementById("statusDot"),
+      statusText: document.getElementById("statusText"),
+      reloadButton: document.getElementById("reloadButton"),
+      exportButton: document.getElementById("exportButton"),
+      importButton: document.getElementById("importButton"),
+      sampleButton: document.getElementById("sampleButton"),
+      fileInput: document.getElementById("fileInput"),
+      modelSelect: document.getElementById("modelSelect"),
+      modelLabel: document.getElementById("modelLabel"),
+      horizonRange: document.getElementById("horizonRange"),
+      horizonLabel: document.getElementById("horizonLabel"),
+      lookbackRange: document.getElementById("lookbackRange"),
+      lookbackLabel: document.getElementById("lookbackLabel"),
+      confidenceSelect: document.getElementById("confidenceSelect"),
+      confidenceLabel: document.getElementById("confidenceLabel"),
+      halfLifeControl: document.getElementById("halfLifeControl"),
+      halfLifeRange: document.getElementById("halfLifeRange"),
+      halfLifeLabel: document.getElementById("halfLifeLabel"),
+      latestMetric: document.getElementById("latestMetric"),
+      forecastMetric: document.getElementById("forecastMetric"),
+      changeMetric: document.getElementById("changeMetric"),
+      returnMetric: document.getElementById("returnMetric"),
+      volMetric: document.getElementById("volMetric"),
+      chartTitle: document.getElementById("chartTitle"),
+      chart: document.getElementById("chart"),
+      canvasWrap: document.getElementById("canvasWrap"),
+      tooltip: document.getElementById("tooltip"),
+      scenarioBody: document.getElementById("scenarioBody"),
+      methodText: document.getElementById("methodText")
+    };
+
+    const ctx = els.chart.getContext("2d");
+
+    function formatMoney(value) {
+      if (!Number.isFinite(value)) return "--";
+      return value.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatPct(value) {
+      if (!Number.isFinite(value)) return "--";
+      return (value * 100).toLocaleString("en-US", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }) + "%";
+    }
+
+    function formatAxis(value) {
+      if (!Number.isFinite(value)) return "--";
+      return value.toLocaleString("en-US", {
+        maximumFractionDigits: value >= 1000 ? 0 : 1
+      });
+    }
+
+    function formatDate(date) {
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC"
+      });
+    }
+
+    function asUtcDate(value) {
+      const [year, month, day] = value.split("-").map(Number);
+      return new Date(Date.UTC(year, month - 1, day));
+    }
+
+    function toIsoDate(date) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function parseCsvLine(line) {
+      const cells = [];
+      let value = "";
+      let quoted = false;
+      for (let i = 0; i < line.length; i += 1) {
+        const char = line[i];
+        const next = line[i + 1];
+        if (char === '"' && quoted && next === '"') {
+          value += '"';
+          i += 1;
+        } else if (char === '"') {
+          quoted = !quoted;
+        } else if (char === "," && !quoted) {
+          cells.push(value.trim());
+          value = "";
+        } else {
+          value += char;
+        }
+      }
+      cells.push(value.trim());
+      return cells;
+    }
+
+    function parseMarketCsv(text) {
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      if (lines.length < 3) {
+        throw new Error("CSV does not contain enough rows.");
+      }
+
+      const headers = parseCsvLine(lines[0]).map((header) => header.trim().toLowerCase());
+      const dateIndex = headers.findIndex((header) => ["date", "observation_date", "time"].includes(header));
+      const closeIndex = headers.findIndex((header) => ["close", "adj close", "adj_close", "sp500", "value", "price"].includes(header));
+
+      if (dateIndex === -1 || closeIndex === -1) {
+        throw new Error("CSV needs a Date/observation_date column and a Close/SP500 column.");
+      }
+
+      const rows = [];
+      for (let i = 1; i < lines.length; i += 1) {
+        const cells = parseCsvLine(lines[i]);
+        const rawDate = cells[dateIndex];
+        const rawClose = cells[closeIndex];
+        const close = Number(String(rawClose).replace(/[$,\s]/g, ""));
+        if (!rawDate || !Number.isFinite(close) || close <= 0) continue;
+
+        const date = /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+          ? asUtcDate(rawDate)
+          : new Date(rawDate);
+
+        if (Number.isNaN(date.getTime())) continue;
+        rows.push({ date, close });
+      }
+
+      rows.sort((a, b) => a.date - b.date);
+      const deduped = rows.filter((row, index) => index === 0 || toIsoDate(row.date) !== toIsoDate(rows[index - 1].date));
+      if (deduped.length < 80) {
+        throw new Error("Need at least 80 valid daily observations.");
+      }
+      return deduped;
+    }
+
+    async function loadFredData() {
+      setStatus("loading", "Loading FRED data...");
+      try {
+        const { text } = await fetchFredCsv();
+        const rows = parseMarketCsv(text);
+        state.allData = rows;
+        state.source = "FRED";
+        state.error = null;
+        updateDashboard();
+        const latest = rows[rows.length - 1];
+        setStatus("ok", "Live FRED data through " + formatDate(latest.date));
+      } catch (error) {
+        state.error = error;
+        setStatus("bad", "Live load failed. Import CSV or use Sample.");
+        useSampleData();
+      }
+    }
+
+    async function fetchFredCsv() {
+      const errors = [];
+      for (const feed of DATA_FEEDS) {
+        try {
+          const response = await fetch(feed.url, { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error(feed.name + " returned HTTP " + response.status);
+          }
+
+          if (feed.type === "allorigins") {
+            return { text: decodeAllOriginsPayload(await response.json()), feed };
+          }
+
+          return { text: await response.text(), feed };
+        } catch (error) {
+          errors.push(error.message);
+        }
+      }
+      throw new Error(errors.join(" | "));
+    }
+
+    function decodeAllOriginsPayload(payload) {
+      if (!payload || typeof payload.contents !== "string") {
+        throw new Error("Live data response did not contain CSV text.");
+      }
+
+      if (!payload.contents.startsWith("data:")) {
+        return payload.contents;
+      }
+
+      const commaIndex = payload.contents.indexOf(",");
+      if (commaIndex === -1) {
+        throw new Error("Live data response had an invalid data URL.");
+      }
+
+      const meta = payload.contents.slice(5, commaIndex);
+      const encoded = payload.contents.slice(commaIndex + 1);
+      if (meta.includes(";base64")) {
+        return atob(encoded);
+      }
+      return decodeURIComponent(encoded);
+    }
+
+    function useSampleData() {
+      const rows = [];
+      const start = new Date(Date.UTC(2016, 0, 4));
+      let price = 2012.66;
+      let tradingIndex = 0;
+
+      for (let i = 0; i < 3650; i += 1) {
+        const date = new Date(start);
+        date.setUTCDate(start.getUTCDate() + i);
+        const day = date.getUTCDay();
+        if (day === 0 || day === 6) continue;
+
+        const cycle = Math.sin(tradingIndex / 38) * 0.003 + Math.cos(tradingIndex / 113) * 0.002;
+        const shock =
+          (tradingIndex > 1040 && tradingIndex < 1090 ? -0.016 : 0) +
+          (tradingIndex > 1370 && tradingIndex < 1430 ? 0.010 : 0) +
+          (tradingIndex > 1760 && tradingIndex < 1810 ? -0.007 : 0);
+        const deterministicNoise = Math.sin(tradingIndex * 12.9898) * 0.004 + Math.cos(tradingIndex * 4.1414) * 0.003;
+        const dailyReturn = 0.00034 + cycle + shock + deterministicNoise;
+        price *= Math.exp(dailyReturn);
+        rows.push({ date, close: price });
+        tradingIndex += 1;
+      }
+
+      state.allData = rows;
+      state.source = "Sample";
+      state.error = null;
+      updateDashboard();
+      setStatus("ok", "Using deterministic sample data");
+    }
+
+    function setStatus(kind, message) {
+      els.statusDot.className = "dot" + (kind === "ok" ? " ok" : kind === "bad" ? " bad" : "");
+      els.statusText.textContent = message;
+    }
+
+    function getControls() {
+      return {
+        model: els.modelSelect.value,
+        horizon: Number(els.horizonRange.value),
+        lookbackYears: Number(els.lookbackRange.value),
+        confidence: els.confidenceSelect.value,
+        halfLife: Number(els.halfLifeRange.value)
+      };
+    }
+
+    function updateLabels() {
+      const controls = getControls();
+      const modelName = els.modelSelect.options[els.modelSelect.selectedIndex].text;
+      els.modelLabel.textContent = modelName;
+      els.horizonLabel.textContent = controls.horizon + " trading days";
+      els.lookbackLabel.textContent = controls.lookbackYears.toFixed(1) + " years";
+      els.confidenceLabel.textContent = Math.round(Number(controls.confidence) * 100) + "%";
+      els.halfLifeLabel.textContent = controls.halfLife + " days";
+      els.halfLifeControl.classList.toggle("hidden", controls.model !== "ewma");
+    }
+
+    function sliceLookback(data, lookbackYears) {
+      if (!data.length) return [];
+      const latest = data[data.length - 1].date;
+      const cutoff = new Date(latest);
+      cutoff.setUTCDate(cutoff.getUTCDate() - Math.round(lookbackYears * 365.25));
+      const sliced = data.filter((row) => row.date >= cutoff);
+      return sliced.length >= 80 ? sliced : data.slice(-Math.max(80, Math.round(lookbackYears * TRADING_DAYS)));
+    }
+
+    function mean(values) {
+      return values.reduce((total, value) => total + value, 0) / values.length;
+    }
+
+    function stdev(values, average = mean(values)) {
+      if (values.length < 2) return 0;
+      const variance = values.reduce((total, value) => total + (value - average) ** 2, 0) / (values.length - 1);
+      return Math.sqrt(Math.max(variance, 0));
+    }
+
+    function logReturns(data) {
+      const returns = [];
+      for (let i = 1; i < data.length; i += 1) {
+        returns.push(Math.log(data[i].close / data[i - 1].close));
+      }
+      return returns;
+    }
+
+    function linearRegression(values) {
+      const n = values.length;
+      const xMean = (n - 1) / 2;
+      const yMean = mean(values);
+      let numerator = 0;
+      let denominator = 0;
+      for (let i = 0; i < n; i += 1) {
+        numerator += (i - xMean) * (values[i] - yMean);
+        denominator += (i - xMean) ** 2;
+      }
+      const slope = denominator === 0 ? 0 : numerator / denominator;
+      const intercept = yMean - slope * xMean;
+      return { slope, intercept };
+    }
+
+    function ewmaStats(values, halfLife) {
+      const decay = Math.exp(Math.log(0.5) / halfLife);
+      let weightSum = 0;
+      let weightedMean = 0;
+
+      for (let i = values.length - 1, age = 0; i >= 0; i -= 1, age += 1) {
+        const weight = decay ** age;
+        weightSum += weight;
+        weightedMean += weight * values[i];
+      }
+      weightedMean /= weightSum;
+
+      let weightedVariance = 0;
+      for (let i = values.length - 1, age = 0; i >= 0; i -= 1, age += 1) {
+        const weight = decay ** age;
+        weightedVariance += weight * (values[i] - weightedMean) ** 2;
+      }
+
+      return {
+        mu: weightedMean,
+        sigma: Math.sqrt(Math.max(weightedVariance / weightSum, 0))
+      };
+    }
+
+    function nextTradingDate(date) {
+      const next = new Date(date);
+      do {
+        next.setUTCDate(next.getUTCDate() + 1);
+      } while (next.getUTCDay() === 0 || next.getUTCDay() === 6);
+      return next;
+    }
+
+    function buildForecast(data, controls) {
+      const returns = logReturns(data);
+      const latest = data[data.length - 1];
+      const z = Z_BY_CONFIDENCE[controls.confidence] || Z_BY_CONFIDENCE["0.80"];
+      let mu = mean(returns);
+      let sigma = stdev(returns, mu);
+      let method = "Daily log-return drift and volatility are estimated from the selected history.";
+
+      if (controls.model === "linear") {
+        const logPrices = data.map((row) => Math.log(row.close));
+        const regression = linearRegression(logPrices);
+        mu = regression.slope;
+        const residualReturns = returns.map((value) => value - mu);
+        sigma = stdev(residualReturns, mean(residualReturns));
+        method = "The median path follows the fitted log-price trend; the band uses residual return volatility.";
+      }
+
+      if (controls.model === "ewma") {
+        const stats = ewmaStats(returns, controls.halfLife);
+        mu = stats.mu;
+        sigma = stats.sigma;
+        method = "Recent daily log returns receive higher weight through the selected EWMA half-life.";
+      }
+
+      const forecast = [];
+      let date = latest.date;
+      for (let h = 1; h <= controls.horizon; h += 1) {
+        date = nextTradingDate(date);
+        const spread = z * sigma * Math.sqrt(h);
+        const median = latest.close * Math.exp(mu * h);
+        forecast.push({
+          h,
+          date,
+          low: latest.close * Math.exp(mu * h - spread),
+          median,
+          high: latest.close * Math.exp(mu * h + spread)
+        });
+      }
+
+      return {
+        forecast,
+        stats: {
+          mu,
+          sigma,
+          annualReturn: Math.exp(mu * TRADING_DAYS) - 1,
+          annualVol: sigma * Math.sqrt(TRADING_DAYS),
+          method
+        }
+      };
+    }
+
+    function maxDrawdown(data) {
+      let peak = data[0].close;
+      let drawdown = 0;
+      for (const row of data) {
+        peak = Math.max(peak, row.close);
+        drawdown = Math.min(drawdown, row.close / peak - 1);
+      }
+      return drawdown;
+    }
+
+    function updateDashboard() {
+      if (!state.allData.length) return;
+      updateLabels();
+      const controls = getControls();
+      const activeData = sliceLookback(state.allData, controls.lookbackYears);
+      const { forecast, stats } = buildForecast(activeData, controls);
+      state.activeData = activeData;
+      state.forecast = forecast;
+      state.modelStats = stats;
+
+      updateMetrics(activeData, forecast, stats);
+      updateScenarioTable(activeData, forecast);
+      drawChart();
+    }
+
+    function updateMetrics(activeData, forecast, stats) {
+      const latest = activeData[activeData.length - 1];
+      const final = forecast[forecast.length - 1];
+      const change = final.median / latest.close - 1;
+      const oneYearStart = activeData[Math.max(0, activeData.length - TRADING_DAYS - 1)];
+      const oneYearReturn = oneYearStart ? latest.close / oneYearStart.close - 1 : NaN;
+      const dd = maxDrawdown(activeData);
+
+      els.latestMetric.textContent = formatMoney(latest.close) + " (" + formatDate(latest.date) + ")";
+      els.forecastMetric.textContent = formatMoney(final.median) + " (" + formatDate(final.date) + ")";
+      els.changeMetric.textContent = formatPct(change);
+      els.changeMetric.style.color = change >= 0 ? "var(--green)" : "var(--red)";
+      els.returnMetric.textContent = formatPct(stats.annualReturn);
+      els.volMetric.textContent = formatPct(stats.annualVol);
+      els.chartTitle.textContent = "History, Forecast, and " + els.confidenceLabel.textContent + " Interval";
+      els.methodText.textContent = stats.method + " One-year trailing return is " + formatPct(oneYearReturn) + "; maximum drawdown inside the training window is " + formatPct(dd) + ".";
+    }
+
+    function findForecast(horizon) {
+      return state.forecast[Math.min(Math.max(horizon, 1), state.forecast.length) - 1];
+    }
+
+    function updateScenarioTable(activeData, forecast) {
+      const latest = activeData[activeData.length - 1];
+      const rows = [
+        { label: "1 week", h: Math.min(5, forecast.length) },
+        { label: "1 month", h: Math.min(21, forecast.length) },
+        { label: "3 months", h: Math.min(63, forecast.length) },
+        { label: "6 months", h: Math.min(126, forecast.length) },
+        { label: "Selected", h: forecast.length }
+      ];
+
+      els.scenarioBody.innerHTML = rows.map((row) => {
+        const point = findForecast(row.h);
+        const selected = row.h === forecast.length ? " data-selected=\"true\"" : "";
+        return [
+          "<tr" + selected + ">",
+          "<td>" + row.label + " (" + point.h + "d)</td>",
+          "<td>" + formatDate(point.date) + "</td>",
+          "<td>" + formatMoney(point.low) + "</td>",
+          "<td>" + formatMoney(point.median) + "</td>",
+          "<td>" + formatMoney(point.high) + "</td>",
+          "</tr>"
+        ].join("");
+      }).join("");
+
+      els.scenarioBody.dataset.latest = latest.close.toFixed(2);
+    }
+
+    function chartGeometry(width, height) {
+      const mobile = width < 620;
+      return {
+        left: mobile ? 54 : 70,
+        right: mobile ? 16 : 26,
+        top: 28,
+        bottom: mobile ? 42 : 48,
+        width,
+        height
+      };
+    }
+
+    function getChartSeries() {
+      const history = state.activeData.map((row, index) => ({
+        x: index,
+        date: row.date,
+        close: row.close,
+        kind: "history"
+      }));
+      const start = history.length - 1;
+      const forecast = state.forecast.map((row) => ({
+        x: start + row.h,
+        date: row.date,
+        low: row.low,
+        median: row.median,
+        high: row.high,
+        kind: "forecast"
+      }));
+      return { history, forecast };
+    }
+
+    function drawChart() {
+      const bounds = els.canvasWrap.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const cssWidth = Math.max(320, Math.floor(bounds.width));
+      const cssHeight = Math.max(320, Math.floor(bounds.height));
+      els.chart.width = Math.floor(cssWidth * dpr);
+      els.chart.height = Math.floor(cssHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+      const { history, forecast } = getChartSeries();
+      if (!history.length || !forecast.length) return;
+
+      const geometry = chartGeometry(cssWidth, cssHeight);
+      const values = [
+        ...history.map((point) => point.close),
+        ...forecast.flatMap((point) => [point.low, point.high])
+      ];
+      const minValue = Math.min(...values);
+      const maxValue = Math.max(...values);
+      const padValue = Math.max((maxValue - minValue) * 0.10, maxValue * 0.015);
+      const yMin = minValue - padValue;
+      const yMax = maxValue + padValue;
+      const xMin = 0;
+      const xMax = history.length - 1 + forecast.length;
+      const plotWidth = geometry.width - geometry.left - geometry.right;
+      const plotHeight = geometry.height - geometry.top - geometry.bottom;
+
+      const xScale = (x) => geometry.left + ((x - xMin) / (xMax - xMin)) * plotWidth;
+      const yScale = (y) => geometry.top + (1 - (y - yMin) / (yMax - yMin)) * plotHeight;
+
+      drawGrid(geometry, yMin, yMax, yScale, xScale, history, forecast);
+      drawInterval(forecast, xScale, yScale);
+      drawLine(history, (point) => point.close, xScale, yScale, "#1f6feb", 2.2, []);
+
+      const last = history[history.length - 1];
+      drawLine([last, ...forecast], (point) => point.close || point.median, xScale, yScale, "#087f8c", 2.4, [7, 6]);
+
+      ctx.save();
+      ctx.strokeStyle = "rgba(23, 32, 51, 0.32)";
+      ctx.setLineDash([4, 5]);
+      ctx.beginPath();
+      ctx.moveTo(xScale(last.x), geometry.top);
+      ctx.lineTo(xScale(last.x), geometry.height - geometry.bottom);
+      ctx.stroke();
+      ctx.restore();
+
+      els.chart._chartScales = { xScale, yScale, yMin, yMax, geometry, history, forecast, xMax };
+    }
+
+    function drawGrid(geometry, yMin, yMax, yScale, xScale, history, forecast) {
+      const plotRight = geometry.width - geometry.right;
+      const plotBottom = geometry.height - geometry.bottom;
+      const mobile = geometry.width < 620;
+      ctx.save();
+      ctx.strokeStyle = "#e6ebf2";
+      ctx.fillStyle = "#617084";
+      ctx.lineWidth = 1;
+      ctx.font = (mobile ? "11px" : "12px") + " Inter, system-ui, sans-serif";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "right";
+
+      for (let i = 0; i <= 4; i += 1) {
+        const yValue = yMin + ((yMax - yMin) * i) / 4;
+        const y = yScale(yValue);
+        ctx.beginPath();
+        ctx.moveTo(geometry.left, y);
+        ctx.lineTo(plotRight, y);
+        ctx.stroke();
+        ctx.fillText(formatAxis(yValue), geometry.left - 8, y);
+      }
+
+      ctx.textBaseline = "top";
+      ctx.textAlign = "center";
+      const tickCount = geometry.width < 620 ? 3 : 5;
+      const allPoints = [...history, ...forecast];
+      for (let i = 0; i < tickCount; i += 1) {
+        const index = Math.round(((allPoints.length - 1) * i) / (tickCount - 1));
+        const point = allPoints[index];
+        const x = xScale(point.x);
+        ctx.strokeStyle = i === tickCount - 1 ? "#ccd6e4" : "#edf1f6";
+        ctx.beginPath();
+        ctx.moveTo(x, geometry.top);
+        ctx.lineTo(x, plotBottom);
+        ctx.stroke();
+        ctx.fillStyle = "#617084";
+        ctx.textAlign = i === 0 ? "left" : i === tickCount - 1 ? "right" : "center";
+        ctx.fillText(formatDate(point.date).replace(", 20", ", "), x, plotBottom + 12);
+      }
+
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.beginPath();
+      ctx.moveTo(geometry.left, geometry.top);
+      ctx.lineTo(geometry.left, plotBottom);
+      ctx.lineTo(plotRight, plotBottom);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawInterval(forecast, xScale, yScale) {
+      if (!forecast.length) return;
+      ctx.save();
+      ctx.fillStyle = "rgba(31, 111, 235, 0.16)";
+      ctx.beginPath();
+      forecast.forEach((point, index) => {
+        const x = xScale(point.x);
+        const y = yScale(point.high);
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      for (let i = forecast.length - 1; i >= 0; i -= 1) {
+        const point = forecast[i];
+        ctx.lineTo(xScale(point.x), yScale(point.low));
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawLine(points, valueFn, xScale, yScale, color, width, dash) {
+      if (!points.length) return;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      points.forEach((point, index) => {
+        const x = xScale(point.x);
+        const y = yScale(valueFn(point));
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function handlePointerMove(event) {
+      const scales = els.chart._chartScales;
+      if (!scales) return;
+      const rect = els.chart.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const { geometry, history, forecast } = scales;
+      const plotRight = geometry.width - geometry.right;
+      const plotBottom = geometry.height - geometry.bottom;
+      if (x < geometry.left || x > plotRight || y < geometry.top || y > plotBottom) {
+        els.tooltip.classList.remove("visible");
+        return;
+      }
+
+      const allPoints = [...history, ...forecast];
+      const xRatio = (x - geometry.left) / (plotRight - geometry.left);
+      const nearestX = Math.round(xRatio * scales.xMax);
+      const point = allPoints.reduce((best, candidate) => {
+        return Math.abs(candidate.x - nearestX) < Math.abs(best.x - nearestX) ? candidate : best;
+      }, allPoints[0]);
+
+      let html = "<strong>" + formatDate(point.date) + "</strong>";
+      if (point.kind === "history") {
+        html += "Close: " + formatMoney(point.close);
+      } else {
+        html += "Median: " + formatMoney(point.median) +
+          "<br>Low: " + formatMoney(point.low) +
+          "<br>High: " + formatMoney(point.high);
+      }
+
+      els.tooltip.innerHTML = html;
+      const tooltipX = Math.max(110, Math.min(geometry.width - 110, x));
+      const tooltipY = Math.max(86, y);
+      els.tooltip.style.left = tooltipX + "px";
+      els.tooltip.style.top = tooltipY + "px";
+      els.tooltip.classList.add("visible");
+    }
+
+    function downloadForecastCsv() {
+      if (!state.forecast.length || !state.activeData.length) return;
+      const latest = state.activeData[state.activeData.length - 1];
+      const header = "as_of,source,model,horizon,date,low,median,high\n";
+      const rows = state.forecast.map((point) => [
+        toIsoDate(latest.date),
+        state.source,
+        els.modelSelect.value,
+        point.h,
+        toIsoDate(point.date),
+        point.low.toFixed(2),
+        point.median.toFixed(2),
+        point.high.toFixed(2)
+      ].join(","));
+      const blob = new Blob([header + rows.join("\n")], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "sp500-forecast.csv";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function importCsvFile(file) {
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const rows = parseMarketCsv(text);
+        state.allData = rows;
+        state.source = file.name;
+        state.error = null;
+        updateDashboard();
+        setStatus("ok", "Imported " + file.name + " through " + formatDate(rows[rows.length - 1].date));
+      } catch (error) {
+        setStatus("bad", error.message);
+      }
+    }
+
+    function wireEvents() {
+      [
+        els.modelSelect,
+        els.horizonRange,
+        els.lookbackRange,
+        els.confidenceSelect,
+        els.halfLifeRange
+      ].forEach((input) => {
+        input.addEventListener("input", updateDashboard);
+        input.addEventListener("change", updateDashboard);
+      });
+
+      els.reloadButton.addEventListener("click", loadFredData);
+      els.exportButton.addEventListener("click", downloadForecastCsv);
+      els.importButton.addEventListener("click", () => els.fileInput.click());
+      els.sampleButton.addEventListener("click", useSampleData);
+      els.fileInput.addEventListener("change", (event) => importCsvFile(event.target.files[0]));
+      els.chart.addEventListener("pointermove", handlePointerMove);
+      els.chart.addEventListener("pointerleave", () => els.tooltip.classList.remove("visible"));
+      window.addEventListener("resize", drawChart);
+    }
+
+    wireEvents();
+    loadFredData();
+  </script>
+</body>
+</html>

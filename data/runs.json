@@ -3455,6 +3455,149 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.5 at high reasoning in an empty temp workspace, fetched a Yahoo Finance ^GSPC historical snapshot, produced an interactive multi-file S&P 500 forecast dashboard, browser-validated chart rendering and controls, and imported byte-identical original and displayed artifacts without a rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-5-xhigh-codex-20260813",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.5",
+        "name": "gpt-5.5",
+        "version": "gpt-5.5"
+      },
+      "reasoning": {
+        "native": "xhigh",
+        "normalized": "xhigh"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/workspace",
+          "isolatedCodexHome": "/tmp/benchmark-real-ai-gpt-5-5-xhigh-c2hH3S/codex-home",
+          "ignoreUserConfig": true,
+          "ignoreRules": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.5",
+          "reasoningLevel": "xhigh",
+          "reasoningLevelLabel": "extra high",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "outputLastMessage": true,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-13T14:17:19.963Z",
+        "finishedAt": "2026-08-13T14:33:43.446Z",
+        "durationSeconds": 983.483
+      },
+      "run": {
+        "completedAt": "2026-08-13T14:33:43.446Z"
+      },
+      "usage": {
+        "inputTokens": 1962736,
+        "cachedInputTokens": 1831552,
+        "outputTokens": 40889,
+        "reasoningOutputTokens": 10761,
+        "totalTokens": 2003625,
+        "source": "Final turn.completed usage event in validation/openai-gpt-5-5-xhigh-codex-20260813.session.jsonl; totalTokens is inputTokens plus outputTokens.",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "live",
+        "notes": "Final benchmark artifact uses server.mjs as a same-origin Node proxy to fetch the live FRED SP500 CSV at runtime. Benchmark validation confirmed live FRED data through 2026-08-12 with latest close 7748.50. The HTML also contains public-proxy and deterministic-sample fallback paths for blocked static contexts."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-5-xhigh-codex-20260813.md",
+        "originalHtml": "runs/original/openai-gpt-5-5-xhigh-codex-20260813/index.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-5-xhigh-codex-20260813/index.html",
+        "validationEvidence": "validation/openai-gpt-5-5-xhigh-codex-20260813.json",
+        "eventStream": "validation/openai-gpt-5-5-xhigh-codex-20260813.session.jsonl",
+        "stderrLog": "validation/openai-gpt-5-5-xhigh-codex-20260813.stderr.log",
+        "finalResponse": "validation/openai-gpt-5-5-xhigh-codex-20260813.final-response.md",
+        "desktopScreenshot": "validation/openai-gpt-5-5-xhigh-codex-20260813-dashboard-desktop.png",
+        "mobileScreenshot": "validation/openai-gpt-5-5-xhigh-codex-20260813-dashboard-mobile.png",
+        "supportFiles": [
+          "runs/original/openai-gpt-5-5-xhigh-codex-20260813/server.mjs",
+          "runs/rendered/openai-gpt-5-5-xhigh-codex-20260813/server.mjs"
+        ],
+        "sha256": {
+          "rawResponse": "bf36d180f72e10e9b13b1e0b50cce28b718624faec1b38efd3e4ba234a58250d",
+          "originalHtml": "d063a5f23cc2a42e1c2afc5b11fa2eb6d03fe4251ae0f34596a63b548ebbef4a",
+          "displayHtml": "d063a5f23cc2a42e1c2afc5b11fa2eb6d03fe4251ae0f34596a63b548ebbef4a",
+          "validationEvidence": "7a01c2a5a2c197cd9217e4389ddf7f376ab8ab40d9060f1733e997fe8a6560ec",
+          "eventStream": "ddc3ba37c6b17fab755c1fd08f942da99578d107cdb9e35427ab5b62aed92548",
+          "stderrLog": "81b9e11b760dde3160b7f1731e533460274618bb5ef969326cd467451eba0ec9",
+          "finalResponse": "b731e9eb6a4d203b1d1d6fceeffae9cff86573665475dde59a9e21e1c7cfd30f",
+          "originalServer": "6b34edf66fcd4d0aab88c83e17089002140a95bc7423c4b497007e1ca72d06de",
+          "displayServer": "6b34edf66fcd4d0aab88c83e17089002140a95bc7423c4b497007e1ca72d06de",
+          "desktopScreenshot": "4dfa9bf250f43d0b9d28034eeef7d2902849a375ec704e0947f04627eb51f3b3",
+          "mobileScreenshot": "4aefef77edc7e0ef9f16e85cff539ba97cca45572c394b01f91ce8634e456419",
+          "rowOpenScreenshot": "1d7e050e59638d60c43b97ab05ff142ba7263b63e8e796b075eb0163fe62a1c9"
+        },
+        "repaired": false,
+        "repairLog": null,
+        "rowOpenScreenshot": "validation/openai-gpt-5-5-xhigh-codex-20260813-row-open.png"
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 4,
+          "technicalRobustness": 4
+        },
+        "total": 22,
+        "reviewer": "Codex",
+        "notes": "The original run produced a polished dashboard with live FRED data through a same-origin Node proxy, interactive model/horizon/lookback/confidence controls, CSV import/export, forecast bands, scenario rows, and desktop/mobile Playwright validation. The methodology is a transparent historical log-return baseline with drift, trend, and EWMA variants rather than a rigorous market model. It clearly discloses uncertainty and investment limitations. Technical robustness is good, but live data requires the generated server.mjs proxy; static serving may fall back to a public proxy or deterministic sample data."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and rendered artifact directories were copied byte-identically; no import repair was required."
+          },
+          {
+            "name": "benchmark-browser-validation",
+            "passed": true,
+            "details": "The benchmark run validated live FRED data through 2026-08-12, latest close 7,748.50, nonblank chart pixels, control updates, five scenario rows, and no mobile horizontal page overflow."
+          },
+          {
+            "name": "data-source",
+            "passed": true,
+            "details": "The final benchmark path fetches live FRED SP500 CSV through the generated same-origin Node server endpoint /api/sp500; FRED tail rows ended at 2026-08-12."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "npm install, npm run validate, and npm test passed after import; npm test reported 5 passed and 1 skipped."
+          },
+          {
+            "name": "row-open-check",
+            "passed": true,
+            "details": "The showcase table row was filtered and clicked in Playwright, opening the rendered standalone dashboard with live FRED status through 2026-08-12, populated metrics, five scenario rows, initialized canvas, and no horizontal overflow."
+          },
+          {
+            "name": "state-disclosure-check",
+            "passed": true,
+            "details": "Synthetic and repaired states are visible in row metadata, and validation state is visible as validated or failed; the current manifest has no failed rows."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.5 at native xhigh (extra high) reasoning in a fresh temporary workspace, built an interactive S&P 500 forecast dashboard backed by live FRED SP500 data through a generated same-origin Node proxy, browser-validated desktop and mobile behavior, and imported byte-identical original and displayed artifacts without an import repair."
     }
   ]
 }
