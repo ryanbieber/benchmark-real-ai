@@ -11,7 +11,7 @@
       "xhigh",
       "max"
     ],
-    "updatedAt": "2026-08-12T17:53:49Z",
+    "updatedAt": "2026-08-13T03:20:44Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -2153,6 +2153,155 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-terra at high reasoning in a fresh temporary workspace, built a self-contained interactive S&P 500 scenario dashboard from deterministic illustrative data, passed local HTTP and JavaScript syntax checks, and imported byte-identical original and displayed artifacts without a rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-6-terra-xhigh-codex-20260813",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-terra",
+        "name": "gpt-5.6-terra",
+        "version": "gpt-5.6-terra"
+      },
+      "reasoning": {
+        "native": "xhigh",
+        "normalized": "xhigh"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-6-terra-xhigh-ToRduc",
+          "ignoreUserConfig": true,
+          "ignoreRules": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-terra",
+          "reasoningLevel": "xhigh",
+          "reasoningLevelLabel": "extra high",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": null,
+          "webSearch": null,
+          "jsonEvents": true,
+          "outputLastMessage": true,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "network-access",
+          "local-http-server",
+          "headless-Chrome validation",
+          "screenshot capture"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-13T03:11:13.829Z",
+        "finishedAt": "2026-08-13T03:20:44.202Z",
+        "durationSeconds": 570.373
+      },
+      "run": {
+        "threadId": "019ff91a-4240-72c1-bde1-7cb453572254",
+        "completedAt": "2026-08-13T03:20:44.202Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 782967,
+        "cachedInputTokens": 728960,
+        "outputTokens": 25422,
+        "reasoningOutputTokens": 6482,
+        "totalTokens": 808389,
+        "source": "Final turn.completed usage event in validation/openai-gpt-5-6-terra-xhigh-codex-20260813.session.jsonl; totalTokens is inputTokens plus outputTokens.",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The shipped dashboard defaults to its seeded built-in illustrative series. It offers CSV import and an optional Yahoo Finance refresh path, but no external market dataset was embedded and browser validation recorded the live endpoint as unavailable."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-terra-xhigh-codex-20260813.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-terra-xhigh-codex-20260813/index.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-terra-xhigh-codex-20260813/index.html",
+        "validationEvidence": "validation/openai-gpt-5-6-terra-xhigh-codex-20260813.json",
+        "eventStream": "validation/openai-gpt-5-6-terra-xhigh-codex-20260813.session.jsonl",
+        "stderrLog": "validation/openai-gpt-5-6-terra-xhigh-codex-20260813.stderr.log",
+        "desktopScreenshot": "validation/openai-gpt-5-6-terra-xhigh-codex-20260813-dashboard.png",
+        "supportFiles": [
+          "runs/original/openai-gpt-5-6-terra-xhigh-codex-20260813/app.js",
+          "runs/original/openai-gpt-5-6-terra-xhigh-codex-20260813/forecast-core.mjs",
+          "runs/original/openai-gpt-5-6-terra-xhigh-codex-20260813/tests/forecast-core.test.mjs",
+          "runs/rendered/openai-gpt-5-6-terra-xhigh-codex-20260813/app.js",
+          "runs/rendered/openai-gpt-5-6-terra-xhigh-codex-20260813/forecast-core.mjs",
+          "runs/rendered/openai-gpt-5-6-terra-xhigh-codex-20260813/tests/forecast-core.test.mjs"
+        ],
+        "sha256": {
+          "rawResponse": "7c2da8f55227f582b36f856c481a6600a9e1f18161927dcfa337b0d2e0cde5fc",
+          "originalHtml": "693f996ba6cdd6b76ccb9316c645aa7f31b1e10ae3a70f982ff61e098ec7e1a3",
+          "displayHtml": "693f996ba6cdd6b76ccb9316c645aa7f31b1e10ae3a70f982ff61e098ec7e1a3",
+          "validationEvidence": "a63b9ce1af4232b47bf4d220d612637bdaf4191ad014f7c30ef046a988fcace6",
+          "eventStream": "d8980ee98df2828493df8f13ffd9f43a4beaa69d6267fb1efd1601bc0923f21c",
+          "stderrLog": "103649f18c2c99a7beaab86a87040549c35e0bcae716ed3450b441dcee37515e",
+          "desktopScreenshot": "af181266481cac1f77cbbcd165c274e54ec6e71ed55ebaf8e59c146a9d089735",
+          "originalAppJs": "994ff7293311c1b1ab7efec9564aaabcf93fc3420e089ad2abf96bc2f70239ad",
+          "displayAppJs": "994ff7293311c1b1ab7efec9564aaabcf93fc3420e089ad2abf96bc2f70239ad",
+          "originalForecastCore": "ecc5d5d82c4d1facbf48ebc2cfecd99bf09830d4d8eb03dc4b9fb11798180093",
+          "displayForecastCore": "ecc5d5d82c4d1facbf48ebc2cfecd99bf09830d4d8eb03dc4b9fb11798180093",
+          "originalTest": "ca6bd9be9cdc00e6cbd2396c62e2c5c35436c03f1b4c84617419680fbf90de42",
+          "displayTest": "ca6bd9be9cdc00e6cbd2396c62e2c5c35436c03f1b4c84617419680fbf90de42"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 4,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 4
+        },
+        "total": 22,
+        "reviewer": "Codex",
+        "notes": "The untouched artifact provides a complete and polished interactive dashboard with adjustable assumptions, fan bands, scenarios, CSV import, hover detail, and a visible rolling-coverage diagnostic. Its GBM model and uncertainty treatment are transparent and careful for an educational dashboard, but its built-in default history is synthetic and its model is a deliberately simplified market-process assumption rather than a dependable market forecast. The final modules, Chrome render, and control path passed; live refresh was unavailable in browser validation and the dashboard depends on its sibling modules being served together."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-set-bytes",
+            "passed": true,
+            "details": "Original and displayed index.html, app.js, forecast-core.mjs, and forecast-core.test.mjs SHA-256 hashes match exactly; no rendering repair was required."
+          },
+          {
+            "name": "benchmark-core-tests-and-syntax",
+            "passed": true,
+            "details": "The final benchmark command passed forecast-core tests and node --check for both modules."
+          },
+          {
+            "name": "benchmark-headless-chrome",
+            "passed": true,
+            "details": "Chrome rendered populated forecast metrics, wrote the final desktop screenshot, and reported no matched JavaScript errors."
+          },
+          {
+            "name": "benchmark-interactive-controls",
+            "passed": true,
+            "details": "Chrome DevTools Protocol changed horizon and simulation controls; labels, three scenario cards, and a nonzero chart width were asserted."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "npm run validate and npm test passed with 5 unit tests and 5 browser tests; one mobile-project browser test was intentionally skipped."
+          },
+          {
+            "name": "table-row-target",
+            "passed": true,
+            "details": "The in-app browser found exactly one new run row and one model link, then opened its rendered index.html with populated forecast cards, scenario cards, rolling coverage, and the synthetic-data disclosure."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-terra at native xhigh (extra high) reasoning in a fresh temporary workspace, built and browser-validated a multi-file interactive S&P 500 GBM dashboard with seeded illustrative default data, CSV import, and an optional live refresh path, then imported byte-identical original and display artifact sets without a repair."
     }
   ]
 }

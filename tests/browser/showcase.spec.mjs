@@ -3,6 +3,12 @@ import { test, expect } from '@playwright/test';
 
 const manifest = JSON.parse(readFileSync(new URL('../../data/runs.json', import.meta.url), 'utf8'));
 const publishedRuns = manifest.runs.filter((run) => run.status === 'benchmark');
+const xhighRuns = publishedRuns.filter((run) => run.reasoning.normalized === 'xhigh');
+const combinedEstimatedCost = publishedRuns.reduce((total, run) => {
+  const rates = manifest.benchmark.pricing.models[run.model.id];
+  const usage = run.usage;
+  return total + ((usage.inputTokens - usage.cachedInputTokens) * rates.inputUsd + usage.cachedInputTokens * rates.cachedInputUsd + usage.outputTokens * rates.outputUsd) / manifest.benchmark.pricing.unitTokens;
+}, 0);
 
 const testRun = {
   id: 'test-model-high-codex-20260811',
@@ -39,12 +45,13 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('#filter-reasoning option[value="xhigh"]')).toHaveText('Extra High (xhigh)');
   await expect(page.locator('#filter-reasoning option[value="max"]')).toHaveText('Max (max)');
   await page.locator('#filter-search').fill('xhigh');
-  await expect(page.locator('.run-row')).toHaveCount(2);
-  await expect(page.locator('.run-row')).toContainText(['Extra High', 'Extra High']);
-  await expect(page.locator('#facet-result-count')).toHaveText(`2 of ${publishedRuns.length} runs`);
+  await expect(page.locator('.run-row')).toHaveCount(xhighRuns.length);
+  await expect(page.locator('.run-row')).toContainText(Array(xhighRuns.length).fill('Extra High'));
+  await expect(page.locator('#facet-result-count')).toHaveText(`${xhighRuns.length} of ${publishedRuns.length} runs`);
   await page.locator('#clear-filters').click();
   await expect(page.locator('.run-row', { hasText: 'gpt-5.4-mini' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
   await expect(page.locator('.run-row', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
+  await expect(page.locator('.run-row', { hasText: 'gpt-5.6-terra' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
   await expect(page.locator('.run-row', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Max' })).toHaveCount(1);
   await expect(page.locator('.run-row').first()).toContainText('gpt-5.6-luna');
   await expect(page.locator('#run-table-body')).toContainText(publishedRuns.at(-1).model.name);
@@ -66,7 +73,7 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   expect(lunaReasoningOrder).toEqual(['low', 'medium', 'high', 'xhigh', 'max']);
   await expect(page.locator('#cost-chart')).toContainText('Total tokens');
   await expect(page.locator('#premise, #protocol')).toHaveCount(0);
-  await expect(page.locator('#combined-cost')).toHaveText('$7.71');
+  await expect(page.locator('#combined-cost')).toHaveText(`$${combinedEstimatedCost.toFixed(2)}`);
   await expect(page.locator('#pricing-note')).toContainText('not actual Codex subscription charges');
   await expect(page.getByRole('heading', { name: 'Cost versus token volume' })).toBeVisible();
   await expect(page.locator('.tradeoff-point')).toHaveCount(publishedRuns.length);
