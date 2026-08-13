@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="An educational, client-side S&P 500 forecasting dashboard with transparent assumptions and CSV import." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2351dec0'/%3E%3Cpath d='M5 17.5 10 12l3 3 6-7.5' fill='none' stroke='%23071b2c' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <title>S&amp;P 500 Forecast Lab</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #eff6fb;
+      --muted: #94a7b8;
+      --subtle: #6e8295;
+      --canvas: #07111d;
+      --canvas-deep: #050c15;
+      --panel: rgba(15, 30, 46, .88);
+      --panel-solid: #0e1e2f;
+      --panel-raised: #142a3e;
+      --line: rgba(173, 205, 226, .13);
+      --line-strong: rgba(173, 205, 226, .24);
+      --teal: #51dec0;
+      --teal-bright: #80f0d5;
+      --teal-dim: rgba(81, 222, 192, .14);
+      --sky: #70b8ff;
+      --yellow: #f7c760;
+      --coral: #fa907d;
+      --coral-dim: rgba(250, 144, 125, .16);
+      --violet: #b1a0ff;
+      --shadow: 0 20px 60px rgba(0, 0, 0, .25);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--canvas-deep); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        radial-gradient(1000px 540px at 3% -10%, rgba(39, 105, 136, .25), transparent 64%),
+        radial-gradient(780px 520px at 100% 0%, rgba(44, 78, 128, .20), transparent 67%),
+        var(--canvas);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    button, select, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(112, 184, 255, .72);
+      outline-offset: 3px;
+    }
+
+    .shell { width: min(1500px, calc(100% - 40px)); margin: 0 auto; padding: 26px 0 56px; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 26px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 37px; height: 37px; border-radius: 12px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      background: linear-gradient(145deg, #65e7ca, #309bba);
+      color: #062033;
+      box-shadow: 0 10px 28px rgba(62, 196, 181, .2);
+    }
+    .brand-mark svg { width: 23px; height: 23px; }
+    .brand-copy { display: grid; gap: 1px; }
+    .brand-title { font-weight: 750; letter-spacing: -.025em; font-size: 16px; }
+    .brand-subtitle { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .status-pill, .educational-pill {
+      display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+      min-height: 31px; padding: 0 10px; border-radius: 99px;
+      color: var(--muted); background: rgba(19, 42, 60, .65); border: 1px solid var(--line);
+      font-size: 12px; font-weight: 650;
+    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 4px rgba(81, 222, 192, .1); }
+    .educational-pill { color: #e2d6aa; border-color: rgba(247,199,96,.25); background: rgba(86, 67, 28, .22); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(400px, .95fr);
+      align-items: end;
+      gap: 28px;
+      padding: 43px 0 32px;
+    }
+    .eyebrow { color: var(--teal); text-transform: uppercase; letter-spacing: .13em; font-size: 11px; font-weight: 800; }
+    h1 { margin: 9px 0 10px; font-size: clamp(32px, 4.2vw, 57px); line-height: .98; letter-spacing: -.055em; max-width: 780px; }
+    .hero p { margin: 0; max-width: 700px; color: var(--muted); font-size: 16px; }
+    .hero p strong { color: #dfeef7; font-weight: 650; }
+    .hero-note { margin-top: 15px; display: inline-flex; gap: 8px; align-items: center; color: var(--subtle); font-size: 12px; }
+    .hero-note svg { width: 15px; height: 15px; color: var(--yellow); flex: 0 0 auto; }
+    .hero-summary {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+      background: linear-gradient(135deg, rgba(16,34,52,.94), rgba(11,25,39,.84));
+      box-shadow: var(--shadow);
+    }
+    .hero-stat { padding: 19px 17px; min-width: 0; }
+    .hero-stat + .hero-stat { border-left: 1px solid var(--line); }
+    .stat-label { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .075em; }
+    .stat-value { margin-top: 6px; font-size: clamp(18px, 1.8vw, 25px); font-weight: 760; letter-spacing: -.04em; white-space: nowrap; }
+    .stat-detail { margin-top: 4px; color: var(--subtle); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .positive { color: var(--teal-bright); }
+    .negative { color: var(--coral); }
+
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1fr) 335px; gap: 18px; align-items: start; }
+    .panel { background: linear-gradient(145deg, rgba(17, 35, 52, .91), rgba(11, 25, 39, .93)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .chart-panel { overflow: hidden; }
+    .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; padding: 22px 24px 10px; }
+    .panel-heading h2, .control-heading h2 { margin: 0; font-size: 16px; letter-spacing: -.02em; }
+    .panel-heading p, .control-heading p { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+    .chart-meta { display: flex; align-items: center; gap: 13px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .legend { display: inline-flex; align-items: center; gap: 5px; }
+    .legend i { display: block; width: 17px; height: 2px; border-radius: 5px; background: var(--sky); }
+    .legend i.forecast-line { background: var(--teal); }
+    .legend i.band { height: 9px; border-radius: 2px; background: rgba(81, 222, 192, .26); }
+    .chart-wrap { position: relative; min-height: 450px; padding: 3px 10px 5px; }
+    #forecast-chart { width: 100%; height: 430px; display: block; overflow: visible; touch-action: pan-y; }
+    .tooltip {
+      position: absolute; z-index: 5; pointer-events: none; display: none; min-width: 150px;
+      transform: translate(-50%, calc(-100% - 13px)); padding: 9px 10px; border-radius: 9px;
+      color: #d9ecf8; background: rgba(4, 12, 20, .94); border: 1px solid rgba(177, 213, 237, .22);
+      box-shadow: 0 10px 26px rgba(0,0,0,.32); font-size: 11px; line-height: 1.45;
+    }
+    .tooltip .tooltip-date { color: var(--muted); margin-bottom: 3px; }
+    .tooltip strong { font-size: 13px; }
+    .tooltip-range { color: #a8c5d8; margin-top: 3px; }
+    .chart-footer { display: flex; gap: 12px; padding: 2px 24px 18px; align-items: center; justify-content: space-between; color: var(--subtle); font-size: 11px; }
+    .chart-footer span { display: inline-flex; align-items: center; gap: 6px; }
+    .chart-footer svg { width: 14px; height: 14px; color: var(--yellow); }
+
+    .control-panel { padding: 22px; }
+    .control-heading { padding-bottom: 17px; border-bottom: 1px solid var(--line); }
+    .field { margin-top: 19px; }
+    .field-label { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 9px; color: #c4d5e1; font-size: 12px; font-weight: 700; }
+    .field-label small { color: var(--subtle); font-weight: 600; }
+    .segmented { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 4px; border-radius: 10px; background: rgba(3, 12, 20, .38); border: 1px solid var(--line); }
+    .segmented button { min-height: 34px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 750; }
+    .segmented button:hover { color: #dcebf5; background: rgba(116, 163, 194, .09); }
+    .segmented button.active { color: #06241f; background: var(--teal); box-shadow: 0 4px 12px rgba(39, 194, 164, .18); }
+    select, textarea, input[type="text"] {
+      width: 100%; border: 1px solid var(--line-strong); border-radius: 9px; color: #e7f2f8;
+      background: rgba(3, 13, 22, .43); outline: none;
+    }
+    select { min-height: 42px; padding: 0 34px 0 11px; }
+    select:hover, textarea:hover, input[type="text"]:hover { border-color: rgba(173,205,226,.38); }
+    .range-row { display: grid; grid-template-columns: 1fr 49px; align-items: center; gap: 10px; }
+    input[type="range"] { width: 100%; accent-color: var(--teal); }
+    .range-value { padding: 8px 4px; border: 1px solid var(--line); border-radius: 8px; color: var(--teal-bright); background: rgba(3,13,22,.3); text-align: center; font-size: 12px; font-weight: 750; }
+    .control-hint { margin: 8px 0 0; color: var(--subtle); font-size: 11px; line-height: 1.5; }
+    .scenario-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .scenario-tabs button { min-height: 39px; border: 1px solid var(--line); border-radius: 9px; color: var(--muted); background: rgba(6, 17, 28, .35); font-size: 11px; font-weight: 750; }
+    .scenario-tabs button:hover { border-color: var(--line-strong); color: #dcebf5; }
+    .scenario-tabs button.active { color: var(--teal-bright); border-color: rgba(81,222,192,.52); background: var(--teal-dim); }
+    .run-button { width: 100%; min-height: 46px; margin-top: 22px; border: 0; border-radius: 10px; color: #05211c; background: linear-gradient(100deg, var(--teal), #72d8e9); font-weight: 800; letter-spacing: -.01em; box-shadow: 0 11px 22px rgba(36, 191, 166, .17); transition: transform .18s ease, filter .18s ease; }
+    .run-button:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .run-button:active { transform: translateY(0); }
+    .secondary-action { width: 100%; min-height: 39px; margin-top: 9px; border: 1px solid var(--line-strong); border-radius: 9px; background: transparent; color: #c9dce8; font-size: 12px; font-weight: 700; }
+    .secondary-action:hover { background: rgba(112,184,255,.08); border-color: rgba(112,184,255,.43); }
+    .data-state { margin-top: 18px; padding: 11px; border-radius: 10px; border: 1px solid var(--line); background: rgba(7, 19, 30, .47); }
+    .data-state-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #d4e4ee; font-size: 11px; font-weight: 700; }
+    .data-state-top .source-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 6px; background: var(--yellow); }
+    .data-state p { margin: 5px 0 0; color: var(--subtle); font-size: 10.5px; line-height: 1.45; }
+
+    .metrics-grid { display: grid; grid-template-columns: 1.22fr .95fr 1.05fr; gap: 18px; margin-top: 18px; }
+    .metric-panel { min-height: 242px; padding: 21px 22px; }
+    .metric-panel h2 { margin: 0; font-size: 15px; letter-spacing: -.015em; }
+    .metric-panel > p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .scenario-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 18px; }
+    .scenario-card { min-width: 0; padding: 12px 10px; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: rgba(4, 14, 23, .3); transition: .16s ease; }
+    .scenario-card:hover { transform: translateY(-1px); border-color: var(--line-strong); }
+    .scenario-card.selected { border-color: rgba(81,222,192,.52); background: rgba(81,222,192,.09); }
+    .scenario-card .scenario-name { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .075em; }
+    .scenario-card .scenario-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sky); }
+    .scenario-card.bull .scenario-dot { background: var(--teal); }
+    .scenario-card.bear .scenario-dot { background: var(--coral); }
+    .scenario-card .scenario-end { margin-top: 8px; color: #e7f4fa; font-size: 16px; font-weight: 750; letter-spacing: -.035em; white-space: nowrap; }
+    .scenario-card .scenario-return { margin-top: 2px; font-size: 11px; font-weight: 750; }
+    .scenario-footnote { margin-top: 12px; color: var(--subtle); font-size: 10.5px; line-height: 1.5; }
+    .probability-body { display: grid; grid-template-columns: 108px 1fr; gap: 15px; align-items: center; margin-top: 16px; }
+    .probability-ring { --pct: 50; width: 108px; height: 108px; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--teal) calc(var(--pct) * 1%), rgba(129,165,188,.16) 0); position: relative; }
+    .probability-ring::before { content: ""; position: absolute; inset: 10px; border-radius: 50%; background: var(--panel-solid); }
+    .probability-ring > div { position: relative; display: grid; place-items: center; line-height: 1.05; }
+    .probability-ring strong { font-size: 23px; letter-spacing: -.04em; }
+    .probability-ring span { color: var(--muted); font-size: 9px; font-weight: 750; text-transform: uppercase; letter-spacing: .07em; }
+    .probability-copy { display: grid; gap: 8px; }
+    .probability-copy strong { font-size: 14px; letter-spacing: -.02em; }
+    .probability-copy p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .probability-scale { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 14px; color: var(--subtle); font-size: 10px; }
+    .probability-scale span:last-child { text-align: right; }
+    .diagnostics { display: grid; gap: 0; margin-top: 13px; }
+    .diagnostic { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .diagnostic:last-child { border-bottom: 0; }
+    .diagnostic-label { color: var(--muted); font-size: 11px; }
+    .diagnostic-value { color: #e6f3f9; text-align: right; font-size: 12px; font-weight: 750; }
+    .diagnostic-detail { grid-column: 1 / -1; margin-top: -7px; color: var(--subtle); font-size: 10px; }
+
+    .method-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; margin-top: 18px; }
+    .method-panel, .disclaimer { padding: 23px 24px; }
+    .method-panel h2, .disclaimer h2 { margin: 0; font-size: 15px; letter-spacing: -.015em; }
+    .method-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; margin-top: 17px; }
+    .method-step { position: relative; padding-left: 31px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .method-step b { display: block; margin-bottom: 3px; color: #d8e8f2; font-size: 12px; }
+    .step-number { position: absolute; left: 0; top: 0; width: 21px; height: 21px; display: grid; place-items: center; border-radius: 7px; color: var(--teal-bright); background: var(--teal-dim); font-size: 10px; font-weight: 800; }
+    .formula { display: inline-block; margin-top: 16px; padding: 7px 9px; color: #abc6d9; background: rgba(4, 14, 23, .48); border-radius: 7px; font: 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .disclaimer { border-color: rgba(247,199,96,.22); background: linear-gradient(145deg, rgba(52, 45, 24, .42), rgba(18, 31, 42, .86)); }
+    .disclaimer-heading { display: flex; align-items: center; gap: 9px; }
+    .disclaimer-heading svg { width: 19px; height: 19px; color: var(--yellow); }
+    .disclaimer p { margin: 14px 0 0; color: #b9c5c8; font-size: 12px; line-height: 1.6; }
+    .disclaimer a { color: #d7bc72; }
+    .data-guide { margin-top: 14px; padding-top: 13px; border-top: 1px solid rgba(247,199,96,.16); color: var(--subtle); font-size: 11px; }
+
+    .modal-backdrop { position: fixed; z-index: 20; inset: 0; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0, 7, 13, .72); backdrop-filter: blur(5px); }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(620px, 100%); max-height: min(740px, calc(100vh - 40px)); overflow: auto; padding: 25px; border: 1px solid var(--line-strong); border-radius: 17px; background: #0d1d2c; box-shadow: 0 28px 90px rgba(0,0,0,.55); }
+    .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .modal h2 { margin: 0; font-size: 18px; letter-spacing: -.025em; }
+    .modal p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .icon-button { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); background: transparent; }
+    .icon-button:hover { color: #fff; border-color: var(--line-strong); }
+    .icon-button svg { width: 16px; height: 16px; }
+    .upload-zone { margin-top: 20px; padding: 18px; border: 1px dashed rgba(112,184,255,.43); border-radius: 11px; background: rgba(112,184,255,.055); }
+    .upload-zone label { display: inline-flex; align-items: center; min-height: 35px; padding: 0 11px; border-radius: 8px; color: #bdddff; background: rgba(112,184,255,.13); font-size: 12px; font-weight: 750; cursor: pointer; }
+    .upload-zone input { display: none; }
+    .upload-state { margin-left: 8px; color: var(--subtle); font-size: 11px; }
+    .modal label.block-label { display: block; margin: 18px 0 8px; color: #c4d5e1; font-size: 12px; font-weight: 750; }
+    textarea { min-height: 157px; padding: 11px; resize: vertical; font: 11px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .csv-example { display: block; margin-top: 8px; color: var(--subtle); font: 10px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; }
+    .modal-error { min-height: 18px; margin-top: 10px; color: var(--coral); font-size: 11px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 12px; }
+    .modal-actions button { min-height: 38px; padding: 0 13px; border-radius: 8px; font-size: 12px; font-weight: 750; }
+    .cancel-button { color: #d0e1eb; border: 1px solid var(--line-strong); background: transparent; }
+    .import-button { color: #06241f; border: 0; background: var(--teal); }
+
+    .toast { position: fixed; z-index: 40; right: 20px; bottom: 20px; display: none; max-width: min(380px, calc(100vw - 40px)); padding: 11px 13px; border: 1px solid rgba(81,222,192,.36); border-radius: 10px; color: #d7fbf1; background: rgba(9, 38, 37, .96); box-shadow: 0 14px 38px rgba(0,0,0,.3); font-size: 12px; }
+    .toast.show { display: block; animation: toast-in .22s ease both; }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    @media (max-width: 1100px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-summary { width: min(680px, 100%); }
+      .dashboard-grid { grid-template-columns: 1fr 315px; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .metrics-grid .metric-panel:last-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 820px) {
+      .shell { width: min(100% - 24px, 650px); padding-top: 16px; }
+      .topbar { align-items: flex-start; padding-bottom: 20px; }
+      .top-actions { gap: 6px; }
+      .educational-pill { display: none; }
+      .hero { padding: 31px 0 23px; gap: 20px; }
+      .hero-summary { grid-template-columns: repeat(3, 1fr); }
+      .dashboard-grid, .metrics-grid, .method-grid { grid-template-columns: 1fr; }
+      .metrics-grid .metric-panel:last-child { grid-column: auto; }
+      .control-panel { order: -1; }
+      .chart-wrap { min-height: 360px; }
+      #forecast-chart { height: 345px; }
+      .method-steps { grid-template-columns: 1fr; gap: 12px; }
+      .chart-meta .legend:nth-child(2) { display: none; }
+    }
+    @media (max-width: 520px) {
+      .brand-subtitle { display: none; }
+      .status-pill { padding: 0 8px; }
+      .status-pill .status-text { display: none; }
+      h1 { font-size: 35px; }
+      .hero p { font-size: 14px; }
+      .hero-summary { margin: 0 -1px; }
+      .hero-stat { padding: 15px 10px; }
+      .stat-value { font-size: 17px; }
+      .stat-detail { font-size: 9px; }
+      .panel-heading { padding: 17px 16px 6px; }
+      .chart-meta { gap: 9px; }
+      .chart-meta .legend:nth-child(3) { display: none; }
+      .chart-footer { padding: 3px 16px 14px; }
+      .chart-footer span:last-child { display: none; }
+      .control-panel, .metric-panel, .method-panel, .disclaimer { padding: 18px 16px; }
+      .scenario-cards { gap: 5px; }
+      .scenario-card { padding: 10px 7px; }
+      .scenario-card .scenario-end { font-size: 14px; }
+      .probability-body { grid-template-columns: 92px 1fr; gap: 13px; }
+      .probability-ring { width: 92px; height: 92px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand" aria-label="S&P 500 Forecast Lab">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17.5 9.2 12l3.3 3.1L20 7.5"/><path d="M15 7.5h5v5"/></svg>
+        </span>
+        <span class="brand-copy"><span class="brand-title">S&amp;P 500 Forecast Lab</span><span class="brand-subtitle">Transparent, client-side scenario modeling</span></span>
+      </div>
+      <div class="top-actions">
+        <span class="educational-pill">Educational model · not advice</span>
+        <span class="status-pill" id="source-status"><span class="status-dot"></span><span class="status-text">Synthetic demo data</span></span>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <div class="eyebrow">Forecast workspace</div>
+        <h1 id="page-title">Make the uncertainty visible.</h1>
+        <p>Explore a <strong>transparent, probabilistic S&amp;P 500 forecast</strong> from daily closing prices. Change the horizon, assumptions, and scenario—then import your own CSV when you are ready to work with real data.</p>
+        <div class="hero-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 1.5"/></svg>
+          <span id="as-of-note">Forecast refreshed from 504 illustrative trading sessions.</span>
+        </div>
+      </div>
+      <div class="hero-summary" aria-label="Forecast summary">
+        <div class="hero-stat"><div class="stat-label">Last close</div><div class="stat-value" id="last-close">—</div><div class="stat-detail" id="last-close-date">—</div></div>
+        <div class="hero-stat"><div class="stat-label" id="forecast-label">60 session forecast</div><div class="stat-value" id="forecast-end">—</div><div class="stat-detail" id="forecast-return">—</div></div>
+        <div class="hero-stat"><div class="stat-label" id="interval-label">90% interval</div><div class="stat-value" id="forecast-range">—</div><div class="stat-detail" id="interval-detail">At forecast horizon</div></div>
+      </div>
+    </section>
+
+    <section class="dashboard-grid" aria-label="Forecast dashboard">
+      <article class="panel chart-panel">
+        <div class="panel-heading">
+          <div><h2>Price path &amp; forecast fan</h2><p id="chart-subtitle">Recent closing prices and modeled range</p></div>
+          <div class="chart-meta" aria-label="Chart legend">
+            <span class="legend"><i></i>Close</span>
+            <span class="legend"><i class="forecast-line"></i>Median</span>
+            <span class="legend"><i class="band"></i><span id="legend-band">90% band</span></span>
+          </div>
+        </div>
+        <div class="chart-wrap" id="chart-wrap">
+          <svg id="forecast-chart" viewBox="0 0 1040 440" role="img" aria-labelledby="chart-title chart-description">
+            <title id="chart-title">S&amp;P 500 closing prices and forecast</title>
+            <desc id="chart-description">A line chart with historical closing prices, a forecast median line, and a confidence interval.</desc>
+          </svg>
+          <div class="tooltip" id="chart-tooltip" role="status" aria-live="polite"></div>
+        </div>
+        <div class="chart-footer"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01"/><path d="M10.3 3.7 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0Z"/></svg>Forecasts are model outputs, not price targets.</span><span>Hover or tap the chart for values</span></div>
+      </article>
+
+      <aside class="panel control-panel" aria-labelledby="control-title">
+        <div class="control-heading"><h2 id="control-title">Forecast controls</h2><p>Every input updates the calculation on your device.</p></div>
+        <div class="field">
+          <div class="field-label"><label for="model-select">Model</label><small>daily log returns</small></div>
+          <select id="model-select" aria-label="Forecast model">
+            <option value="trend">Trend + volatility</option>
+            <option value="naive">Flat / naïve baseline</option>
+            <option value="drift">Historical drift</option>
+            <option value="reversion">Mean reversion</option>
+          </select>
+          <p class="control-hint" id="model-hint">Blends trailing drift with recent momentum, capped to limit extrapolation.</p>
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Forecast horizon</span><small id="horizon-detail">60 sessions</small></div>
+          <div class="segmented" id="horizon-control" role="group" aria-label="Forecast horizon">
+            <button type="button" data-horizon="5">5D</button><button type="button" data-horizon="20">1M</button><button type="button" class="active" data-horizon="60">3M</button><button type="button" data-horizon="126">6M</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label"><label for="lookback-range">Estimation lookback</label><small>sessions</small></div>
+          <div class="range-row"><input id="lookback-range" type="range" min="60" max="252" step="1" value="126" aria-describedby="lookback-hint" /><output class="range-value" id="lookback-value" for="lookback-range">126</output></div>
+          <p class="control-hint" id="lookback-hint">Uses the most recent 126 daily returns to estimate drift and volatility.</p>
+        </div>
+        <div class="field">
+          <div class="field-label"><label for="confidence-select">Interval confidence</label><small>normal approximation</small></div>
+          <select id="confidence-select" aria-label="Confidence interval">
+            <option value="80">80%</option><option value="90" selected>90%</option><option value="95">95%</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Scenario tilt</span><small>same volatility estimate</small></div>
+          <div class="scenario-tabs" id="scenario-tabs" role="group" aria-label="Forecast scenario">
+            <button type="button" data-scenario="bear">Bear</button><button type="button" class="active" data-scenario="base">Base</button><button type="button" data-scenario="bull">Bull</button>
+          </div>
+          <p class="control-hint" id="scenario-hint">Base uses the selected model without an added scenario adjustment.</p>
+        </div>
+        <button class="run-button" id="run-button" type="button">Run forecast</button>
+        <button class="secondary-action" id="import-button" type="button">Import closing-price CSV</button>
+        <button class="secondary-action" id="export-button" type="button">Export forecast CSV</button>
+        <div class="data-state">
+          <div class="data-state-top"><span><i class="source-dot"></i><span id="data-state-title">Illustrative demo series</span></span><span id="row-count">504 rows</span></div>
+          <p id="data-state-copy">Deterministic, S&amp;P-style sample data. Import daily dates and closes to forecast a real series.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="metrics-grid" aria-label="Forecast details">
+      <article class="panel metric-panel">
+        <h2>Scenario comparison</h2><p>End-of-horizon median paths under the same estimated volatility.</p>
+        <div class="scenario-cards" id="scenario-cards">
+          <button type="button" class="scenario-card bear" data-scenario="bear"><span class="scenario-name"><i class="scenario-dot"></i>Bear</span><span class="scenario-end" id="bear-end">—</span><span class="scenario-return negative" id="bear-return">—</span></button>
+          <button type="button" class="scenario-card base selected" data-scenario="base"><span class="scenario-name"><i class="scenario-dot"></i>Base</span><span class="scenario-end" id="base-end">—</span><span class="scenario-return" id="base-return">—</span></button>
+          <button type="button" class="scenario-card bull" data-scenario="bull"><span class="scenario-name"><i class="scenario-dot"></i>Bull</span><span class="scenario-end" id="bull-end">—</span><span class="scenario-return positive" id="bull-return">—</span></button>
+        </div>
+        <div class="scenario-footnote">Bear and bull apply a bounded ±0.55σ endpoint tilt. They are sensitivity views, not assigned probabilities.</div>
+      </article>
+      <article class="panel metric-panel">
+        <h2>Probability of a gain</h2><p>Model-implied chance the median distribution ends above today.</p>
+        <div class="probability-body">
+          <div class="probability-ring" id="probability-ring"><div><strong id="gain-probability">—</strong><span>chance up</span></div></div>
+          <div class="probability-copy"><strong id="probability-title">—</strong><p id="probability-copy">—</p></div>
+        </div>
+        <div class="probability-scale"><span>0% chance of gain</span><span>100%</span></div>
+      </article>
+      <article class="panel metric-panel">
+        <h2>Model diagnostics</h2><p>In-sample estimates and a small walk-forward check.</p>
+        <div class="diagnostics">
+          <div class="diagnostic"><span class="diagnostic-label">Estimated annual drift</span><span class="diagnostic-value" id="annual-drift">—</span><span class="diagnostic-detail" id="annual-drift-detail">—</span></div>
+          <div class="diagnostic"><span class="diagnostic-label">Annualized volatility</span><span class="diagnostic-value" id="annual-volatility">—</span><span class="diagnostic-detail" id="annual-volatility-detail">—</span></div>
+          <div class="diagnostic"><span class="diagnostic-label">One-day walk-forward</span><span class="diagnostic-value" id="backtest-hit-rate">—</span><span class="diagnostic-detail" id="backtest-detail">—</span></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="method-grid">
+      <article class="panel method-panel">
+        <h2>How this dashboard makes a forecast</h2>
+        <div class="method-steps">
+          <div class="method-step"><span class="step-number">1</span><b>Estimate returns</b>It converts daily closes to log returns and measures trailing drift and standard deviation over your chosen lookback.</div>
+          <div class="method-step"><span class="step-number">2</span><b>Choose a central path</b>The model projects a capped daily drift. Trend and mean-reversion modes modify the central path—not the observed history.</div>
+          <div class="method-step"><span class="step-number">3</span><b>Show a range</b>Volatility expands the interval with the square root of time. The shaded region is a distributional assumption, not certainty.</div>
+        </div>
+        <span class="formula">P(t) = P₀ · exp(μt ± zσ√t)</span>
+      </article>
+      <article class="panel disclaimer">
+        <div class="disclaimer-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01"/><path d="M10.3 3.7 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0Z"/></svg><h2>Use it as an analysis aid</h2></div>
+        <p>This is an educational forecasting tool, not investment advice or a recommendation to buy or sell. It cannot account for news, valuations, rates, dividends, regime changes, or tail events. Historical patterns and backtests do not predict future results.</p>
+        <div class="data-guide">For a real analysis, import adjusted daily closing prices from a source you trust, inspect the series for gaps or splits, and compare several models. The <a href="https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-47" target="_blank" rel="noopener noreferrer">SEC’s investor guidance on performance claims</a> explains why projections should be interpreted cautiously.</div>
+      </article>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="import-modal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="import-title">
+      <div class="modal-header"><div><h2 id="import-title">Import daily closing prices</h2><p>Paste CSV data or choose a local CSV. Date and Close headers are preferred; rows will be sorted and duplicate dates removed.</p></div><button class="icon-button" type="button" id="close-modal" aria-label="Close import dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+      <div class="upload-zone"><label for="csv-file">Choose a CSV file<input id="csv-file" type="file" accept=".csv,text/csv" /></label><span class="upload-state" id="upload-state">No file selected</span></div>
+      <label class="block-label" for="csv-text">Or paste CSV</label>
+      <textarea id="csv-text" spellcheck="false" placeholder="Date,Close&#10;2025-01-02,5900.12&#10;2025-01-03,5942.47"></textarea>
+      <span class="csv-example">Accepted header names: date / observation_date / timestamp · close / adj close / price / SP500. At least 65 valid rows are needed.</span>
+      <div class="modal-error" id="modal-error" role="alert"></div>
+      <div class="modal-actions"><button type="button" class="cancel-button" id="cancel-import">Cancel</button><button type="button" class="import-button" id="confirm-import">Use this series</button></div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const DAY = 24 * 60 * 60 * 1000;
+      const Z_SCORES = { 80: 1.2815515655, 90: 1.644853627, 95: 1.9599639845 };
+      const MODEL_HINTS = {
+        naive: 'Keeps the central path flat at the latest close. A useful benchmark for judging more elaborate assumptions.',
+        trend: 'Blends trailing drift with recent momentum, capped to limit extrapolation.',
+        drift: 'Uses the average daily log return over the selected lookback, capped to limit extrapolation.',
+        reversion: 'Pulls the central path modestly toward the 40-session moving average, then caps the daily drift.'
+      };
+      const SCENARIO_HINTS = {
+        bear: 'Bear applies a bounded −0.55σ endpoint tilt; the uncertainty band still uses observed volatility.',
+        base: 'Base uses the selected model without an added scenario adjustment.',
+        bull: 'Bull applies a bounded +0.55σ endpoint tilt; the uncertainty band still uses observed volatility.'
+      };
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+      const state = {
+        data: [],
+        source: 'demo',
+        sourceName: 'Illustrative demo series',
+        horizon: 60,
+        lookback: 126,
+        confidence: 90,
+        model: 'trend',
+        scenario: 'base',
+        result: null,
+        chartPoints: [],
+        lastFocused: null
+      };
+
+      const formatNumber = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+      const formatNumberOne = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+      const formatDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+      const formatDateShort = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+
+      function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+      function mean(values) { return values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1); }
+      function stdDev(values, average = mean(values)) {
+        if (values.length < 2) return 0;
+        return Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / (values.length - 1));
+      }
+      function normalCdf(value) {
+        const sign = value < 0 ? -1 : 1;
+        const x = Math.abs(value) / Math.sqrt(2);
+        const t = 1 / (1 + 0.3275911 * x);
+        const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
+        const erf = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+        return .5 * (1 + sign * erf);
+      }
+      function toDateKey(date) { return date.toISOString().slice(0, 10); }
+      function isFiniteNumber(value) { return Number.isFinite(value) && value > 0; }
+      function formatIndex(value) { return formatNumber.format(value); }
+      function formatPct(value, digits = 1) { const sign = value > 0 ? '+' : ''; return `${sign}${(value * 100).toFixed(digits)}%`; }
+      function formatSignedNumber(value) { return `${value > 0 ? '+' : ''}${formatNumber.format(value)}`; }
+      function formatInterval(low, high) { return `${formatNumber.format(low)}–${formatNumber.format(high)}`; }
+      function businessDaysAfter(date, count) {
+        const result = [];
+        const cursor = new Date(`${date}T12:00:00Z`);
+        while (result.length < count) {
+          cursor.setUTCDate(cursor.getUTCDate() + 1);
+          const weekday = cursor.getUTCDay();
+          if (weekday !== 0 && weekday !== 6) result.push(toDateKey(cursor));
+        }
+        return result;
+      }
+      function nthPreviousBusinessDate(from, sessions) {
+        const cursor = new Date(`${from}T12:00:00Z`);
+        let count = 0;
+        while (count < sessions) {
+          cursor.setUTCDate(cursor.getUTCDate() - 1);
+          const weekday = cursor.getUTCDay();
+          if (weekday !== 0 && weekday !== 6) count += 1;
+        }
+        return toDateKey(cursor);
+      }
+
+      // Deterministic pseudo-random values make the offline example repeatable.
+      function mulberry32(seed) {
+        return function() {
+          let t = seed += 0x6D2B79F5;
+          t = Math.imul(t ^ t >>> 15, t | 1);
+          t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      function gaussian(random) {
+        const u = Math.max(random(), 1e-12);
+        const v = Math.max(random(), 1e-12);
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+      }
+      function makeDemoSeries() {
+        const random = mulberry32(9072025);
+        const output = [];
+        let price = 4775;
+        let date = new Date('2024-08-12T12:00:00Z');
+        let session = 0;
+        while (output.length < 504) {
+          const weekday = date.getUTCDay();
+          if (weekday !== 0 && weekday !== 6) {
+            const macroCycle = .00010 * Math.sin(session / 37) + .000055 * Math.cos(session / 11);
+            const shock = gaussian(random) * (.0072 + .0024 * (1 + Math.sin(session / 23)) / 2);
+            const drawdown = session > 196 && session < 227 ? -.00135 : 0;
+            const recovery = session > 227 && session < 302 ? .00027 : 0;
+            const returnLog = .00031 + macroCycle + drawdown + recovery + shock;
+            price *= Math.exp(returnLog);
+            output.push({ date: toDateKey(date), close: Number(price.toFixed(2)) });
+            session += 1;
+          }
+          date.setUTCDate(date.getUTCDate() + 1);
+        }
+        return output;
+      }
+
+      function returnsFor(data) {
+        const returns = [];
+        for (let index = 1; index < data.length; index += 1) returns.push(Math.log(data[index].close / data[index - 1].close));
+        return returns;
+      }
+      function estimateAt(data, endpointIndex, lookback, model, scenario, horizon) {
+        const availableReturns = endpointIndex;
+        const usedLookback = Math.max(20, Math.min(lookback, availableReturns));
+        const startReturn = Math.max(0, endpointIndex - usedLookback);
+        const logReturns = [];
+        for (let index = startReturn + 1; index <= endpointIndex; index += 1) logReturns.push(Math.log(data[index].close / data[index - 1].close));
+        const rawMean = mean(logReturns);
+        const sigma = Math.max(stdDev(logReturns, rawMean), .0001);
+        const shortCount = Math.max(10, Math.min(20, logReturns.length));
+        const shortMean = mean(logReturns.slice(-shortCount));
+        const momentum = shortMean - rawMean;
+        const smaCount = Math.max(10, Math.min(40, endpointIndex + 1));
+        const sma = mean(data.slice(endpointIndex + 1 - smaCount, endpointIndex + 1).map(item => item.close));
+        const current = data[endpointIndex].close;
+        let centralDrift;
+        if (model === 'naive') centralDrift = 0;
+        else if (model === 'drift') centralDrift = rawMean;
+        else if (model === 'reversion') centralDrift = rawMean + clamp(Math.log(sma / current) * .040, -.00085, .00085);
+        else centralDrift = rawMean + clamp(momentum * .35, -.00075, .00075);
+        // Prevent a noisy short sample from becoming an implausibly large compound forecast.
+        centralDrift = clamp(centralDrift, -.0012, .0012);
+        const scenarioScale = horizon > 0 ? .55 * sigma / Math.sqrt(horizon) : 0;
+        const scenarioAdjust = scenario === 'bull' ? scenarioScale : scenario === 'bear' ? -scenarioScale : 0;
+        return { rawMean, sigma, shortMean, sma, centralDrift: centralDrift + scenarioAdjust, baseDrift: centralDrift, usedLookback };
+      }
+      function buildForecast(data, options) {
+        const lastIndex = data.length - 1;
+        const last = data[lastIndex];
+        const estimate = estimateAt(data, lastIndex, options.lookback, options.model, options.scenario, options.horizon);
+        const dates = businessDaysAfter(last.date, options.horizon);
+        const z = Z_SCORES[options.confidence] || Z_SCORES[90];
+        const points = [{ date: last.date, median: last.close, low: last.close, high: last.close, step: 0 }];
+        for (let step = 1; step <= options.horizon; step += 1) {
+          const median = last.close * Math.exp(estimate.centralDrift * step);
+          const spread = z * estimate.sigma * Math.sqrt(step);
+          points.push({ date: dates[step - 1], median, low: median * Math.exp(-spread), high: median * Math.exp(spread), step });
+        }
+        const end = points[points.length - 1];
+        const cumulativeReturn = end.median / last.close - 1;
+        const gainProbability = estimate.sigma > 0 ? normalCdf((estimate.centralDrift * options.horizon) / (estimate.sigma * Math.sqrt(options.horizon))) : (cumulativeReturn > 0 ? 1 : 0);
+        return { ...estimate, last, points, end, cumulativeReturn, gainProbability, options };
+      }
+      function runBacktest(data, options) {
+        const minStart = Math.max(options.lookback + 1, 65);
+        const endExclusive = data.length - 1;
+        const count = Math.min(30, Math.max(0, endExclusive - minStart));
+        if (count < 5) return null;
+        const start = endExclusive - count;
+        let directionCorrect = 0;
+        let absoluteError = 0;
+        for (let index = start; index < endExclusive; index += 1) {
+          const estimate = estimateAt(data, index, options.lookback, options.model, 'base', 1);
+          const predicted = data[index].close * Math.exp(estimate.centralDrift);
+          const actual = data[index + 1].close;
+          const predictedDirection = predicted >= data[index].close;
+          const actualDirection = actual >= data[index].close;
+          if (predictedDirection === actualDirection) directionCorrect += 1;
+          absoluteError += Math.abs(predicted / actual - 1);
+        }
+        return { count, hitRate: directionCorrect / count, mae: absoluteError / count };
+      }
+      function scenarioForecasts() {
+        return ['bear', 'base', 'bull'].reduce((result, scenario) => {
+          result[scenario] = buildForecast(state.data, { ...state, scenario });
+          return result;
+        }, {});
+      }
+
+      function refreshForecast({ announce = false } = {}) {
+        state.result = buildForecast(state.data, state);
+        state.scenarios = scenarioForecasts();
+        state.backtest = runBacktest(state.data, state);
+        updateDashboard();
+        if (announce) showToast(`Forecast updated: ${state.horizon} sessions, ${state.model === 'trend' ? 'trend + volatility' : state.model} model, ${state.confidence}% interval.`);
+      }
+      function updateDashboard() {
+        const result = state.result;
+        const { last, end, cumulativeReturn, gainProbability, sigma, centralDrift, usedLookback } = result;
+        const isPositive = cumulativeReturn >= 0;
+        $('#last-close').textContent = formatIndex(last.close);
+        $('#last-close-date').textContent = `Close · ${formatDate.format(new Date(`${last.date}T12:00:00Z`))}`;
+        $('#forecast-label').textContent = `${state.horizon} session forecast`;
+        $('#forecast-end').textContent = formatIndex(end.median);
+        $('#forecast-return').textContent = `${formatPct(cumulativeReturn)} vs. last close`;
+        $('#forecast-return').className = `stat-detail ${isPositive ? 'positive' : 'negative'}`;
+        $('#interval-label').textContent = `${state.confidence}% interval`;
+        $('#forecast-range').textContent = formatInterval(end.low, end.high);
+        $('#interval-detail').textContent = `At ${state.horizon} sessions`;
+        $('#legend-band').textContent = `${state.confidence}% band`;
+        $('#chart-subtitle').textContent = `${state.source === 'demo' ? 'Illustrative' : 'Imported'} daily closes · ${usedLookback}-session lookback · ${state.horizon}-session forecast`;
+        $('#horizon-detail').textContent = `${state.horizon} sessions`;
+        $('#lookback-value').textContent = state.lookback;
+        $('#model-hint').textContent = MODEL_HINTS[state.model];
+        $('#scenario-hint').textContent = SCENARIO_HINTS[state.scenario];
+        $('#as-of-note').textContent = `Forecast refreshed from ${state.data.length} ${state.source === 'demo' ? 'illustrative' : 'imported'} trading sessions.`;
+        $('#row-count').textContent = `${state.data.length} rows`;
+        $('#data-state-title').textContent = state.sourceName;
+        $('#data-state-copy').textContent = state.source === 'demo'
+          ? 'Deterministic, S&P-style sample data. Import daily dates and closes to forecast a real series.'
+          : `Imported series ending ${formatDate.format(new Date(`${last.date}T12:00:00Z`))}. Values remain local to this browser tab.`;
+        $('#source-status').innerHTML = `<span class="status-dot"></span><span class="status-text">${state.source === 'demo' ? 'Synthetic demo data' : 'Imported CSV data'}</span>`;
+        $('#source-status').querySelector('.status-dot').style.background = state.source === 'demo' ? 'var(--yellow)' : 'var(--teal)';
+
+        ['bear', 'base', 'bull'].forEach(scenario => {
+          const scenarioResult = state.scenarios[scenario];
+          const returnValue = scenarioResult.cumulativeReturn;
+          $(`#${scenario}-end`).textContent = formatIndex(scenarioResult.end.median);
+          const returnElement = $(`#${scenario}-return`);
+          returnElement.textContent = formatPct(returnValue);
+          returnElement.className = `scenario-return ${returnValue >= 0 ? 'positive' : 'negative'}`;
+        });
+        $$('.scenario-card').forEach(button => button.classList.toggle('selected', button.dataset.scenario === state.scenario));
+        $$('#scenario-tabs button').forEach(button => button.classList.toggle('active', button.dataset.scenario === state.scenario));
+        $$('#horizon-control button').forEach(button => button.classList.toggle('active', Number(button.dataset.horizon) === state.horizon));
+
+        const probabilityPct = clamp(gainProbability * 100, 0, 100);
+        $('#gain-probability').textContent = `${Math.round(probabilityPct)}%`;
+        $('#probability-ring').style.setProperty('--pct', probabilityPct.toFixed(1));
+        $('#probability-title').textContent = probabilityPct >= 55 ? 'Above-even chance of a gain' : probabilityPct <= 45 ? 'Below-even chance of a gain' : 'Near an even split';
+        $('#probability-copy').textContent = `Under the selected log-normal model, the terminal distribution has a ${Math.round(probabilityPct)}% chance of closing above ${formatIndex(last.close)}.`;
+        const annualDrift = Math.exp(centralDrift * 252) - 1;
+        const annualVol = sigma * Math.sqrt(252);
+        $('#annual-drift').textContent = formatPct(annualDrift);
+        $('#annual-drift').className = `diagnostic-value ${annualDrift >= 0 ? 'positive' : 'negative'}`;
+        $('#annual-drift-detail').textContent = `Capped daily central drift: ${(centralDrift * 100).toFixed(3)}%`;
+        $('#annual-volatility').textContent = `${(annualVol * 100).toFixed(1)}%`;
+        $('#annual-volatility-detail').textContent = `Daily σ: ${(sigma * 100).toFixed(2)}% from ${usedLookback} returns`;
+        if (state.backtest) {
+          $('#backtest-hit-rate').textContent = `${Math.round(state.backtest.hitRate * 100)}% hit rate`;
+          $('#backtest-detail').textContent = `Last ${state.backtest.count} one-day forecasts · mean absolute error ${(state.backtest.mae * 100).toFixed(2)}%`;
+        } else {
+          $('#backtest-hit-rate').textContent = 'Not enough data';
+          $('#backtest-detail').textContent = 'Import more than 65 valid rows to run a walk-forward check.';
+        }
+        renderChart();
+      }
+
+      function svgEl(name, attrs = {}, text = '') {
+        const node = document.createElementNS('http://www.w3.org/2000/svg', name);
+        Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+        if (text) node.textContent = text;
+        return node;
+      }
+      function linePath(points, x, y, valueKey) {
+        return points.map((point, index) => `${index ? 'L' : 'M'}${x(point, index).toFixed(2)},${y(point[valueKey]).toFixed(2)}`).join(' ');
+      }
+      function areaPath(points, x, y, upperKey, lowerKey) {
+        const top = points.map((point, index) => `${index ? 'L' : 'M'}${x(point).toFixed(2)},${y(point[upperKey]).toFixed(2)}`).join(' ');
+        const bottom = points.slice().reverse().map(point => `L${x(point).toFixed(2)},${y(point[lowerKey]).toFixed(2)}`).join(' ');
+        return `${top}${bottom}Z`;
+      }
+      function niceTicks(minValue, maxValue, count = 5) {
+        const span = Math.max(maxValue - minValue, 1);
+        const rough = span / Math.max(count - 1, 1);
+        const power = 10 ** Math.floor(Math.log10(rough));
+        const normalized = rough / power;
+        const nice = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+        const step = nice * power;
+        const first = Math.floor(minValue / step) * step;
+        const last = Math.ceil(maxValue / step) * step;
+        const ticks = [];
+        for (let value = first; value <= last + step * .01; value += step) ticks.push(value);
+        return ticks;
+      }
+      function renderChart() {
+        const svg = $('#forecast-chart');
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        const width = 1040, height = 440, left = 68, right = 28, top = 20, bottom = 50;
+        const plotWidth = width - left - right, plotHeight = height - top - bottom;
+        const historyCount = Math.min(145, state.data.length);
+        const historical = state.data.slice(-historyCount).map(item => ({ ...item, type: 'actual' }));
+        const forecast = state.result.points.map((item, index) => ({ ...item, type: index === 0 ? 'anchor' : 'forecast' }));
+        const points = [...historical, ...forecast.slice(1)];
+        const valueCandidates = [
+          ...historical.map(item => item.close),
+          ...forecast.map(item => item.low),
+          ...forecast.map(item => item.high)
+        ];
+        const rawMin = Math.min(...valueCandidates), rawMax = Math.max(...valueCandidates);
+        const padding = Math.max((rawMax - rawMin) * .075, rawMax * .008);
+        const min = rawMin - padding, max = rawMax + padding;
+        const y = (value) => top + ((max - value) / (max - min)) * plotHeight;
+        const x = (index) => left + (index / Math.max(points.length - 1, 1)) * plotWidth;
+        const forecastAnchorIndex = historical.length - 1;
+        const group = svgEl('g');
+        svg.appendChild(group);
+        const forecastRegion = svgEl('rect', { x: x(forecastAnchorIndex), y: top, width: width - right - x(forecastAnchorIndex), height: plotHeight, fill: 'rgba(81,222,192,.045)' });
+        group.appendChild(forecastRegion);
+        const ticks = niceTicks(min, max, 5);
+        ticks.forEach(tick => {
+          const tickY = y(tick);
+          group.appendChild(svgEl('line', { x1: left, x2: width - right, y1: tickY, y2: tickY, stroke: 'rgba(173,205,226,.12)', 'stroke-width': 1 }));
+          group.appendChild(svgEl('text', { x: left - 10, y: tickY + 4, fill: 'rgba(177,201,216,.72)', 'font-size': 10, 'text-anchor': 'end', 'font-family': 'Inter, system-ui, sans-serif' }, formatIndex(tick)));
+        });
+        const xPositions = [0, Math.floor((historical.length - 1) / 2), forecastAnchorIndex, points.length - 1];
+        xPositions.forEach((position, index) => {
+          const label = position === forecastAnchorIndex ? 'Today' : formatDateShort.format(new Date(`${points[position].date}T12:00:00Z`));
+          const anchor = position === 0 ? 'start' : position === points.length - 1 ? 'end' : 'middle';
+          group.appendChild(svgEl('text', { x: x(position), y: height - 19, fill: position === forecastAnchorIndex ? '#f7c760' : 'rgba(177,201,216,.72)', 'font-size': 10, 'text-anchor': anchor, 'font-family': 'Inter, system-ui, sans-serif', 'font-weight': position === forecastAnchorIndex ? 700 : 500 }, label));
+          if (index !== 0 && position !== points.length - 1) group.appendChild(svgEl('line', { x1: x(position), x2: x(position), y1: top, y2: top + plotHeight, stroke: position === forecastAnchorIndex ? 'rgba(247,199,96,.52)' : 'rgba(173,205,226,.08)', 'stroke-width': position === forecastAnchorIndex ? 1.3 : 1, 'stroke-dasharray': position === forecastAnchorIndex ? '4 4' : '2 5' }));
+        });
+        const forecastDrawPoints = forecast.map((point, index) => ({ ...point, chartIndex: forecastAnchorIndex + index }));
+        group.appendChild(svgEl('path', { d: areaPath(forecastDrawPoints, point => x(point.chartIndex), y, 'high', 'low'), fill: 'rgba(81,222,192,.19)', stroke: 'none' }));
+        group.appendChild(svgEl('path', { d: linePath(historical, (_, index) => x(index), y, 'close'), fill: 'none', stroke: '#70b8ff', 'stroke-width': 2.25, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+        group.appendChild(svgEl('path', { d: linePath(forecastDrawPoints, point => x(point.chartIndex), y, 'median'), fill: 'none', stroke: '#51dec0', 'stroke-width': 2.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+        group.appendChild(svgEl('circle', { cx: x(forecastAnchorIndex), cy: y(state.result.last.close), r: 4.1, fill: '#f7c760', stroke: '#07111d', 'stroke-width': 2 }));
+        const endPoint = forecastDrawPoints[forecastDrawPoints.length - 1];
+        group.appendChild(svgEl('circle', { cx: x(endPoint.chartIndex), cy: y(endPoint.median), r: 3.8, fill: '#51dec0', stroke: '#07111d', 'stroke-width': 2 }));
+        const hoverLine = svgEl('line', { id: 'hover-line', x1: 0, x2: 0, y1: top, y2: top + plotHeight, stroke: 'rgba(223,242,251,.52)', 'stroke-width': 1, 'stroke-dasharray': '3 4', visibility: 'hidden' });
+        const hoverDot = svgEl('circle', { id: 'hover-dot', cx: 0, cy: 0, r: 4.1, fill: '#eff6fb', stroke: '#0a1826', 'stroke-width': 2, visibility: 'hidden' });
+        group.appendChild(hoverLine); group.appendChild(hoverDot);
+        state.chartPoints = points.map((point, index) => ({ ...point, chartIndex: index, x: x(index), y: y(point.type === 'actual' ? point.close : point.median) }));
+        state.chartDimensions = { width, height, left, right, top, bottom, plotWidth, plotHeight };
+      }
+
+      function showChartTooltip(event) {
+        if (!state.chartPoints.length) return;
+        const svg = $('#forecast-chart');
+        const bounds = svg.getBoundingClientRect();
+        const pointerX = (event.clientX - bounds.left) / bounds.width * state.chartDimensions.width;
+        const ratio = clamp((pointerX - state.chartDimensions.left) / state.chartDimensions.plotWidth, 0, 1);
+        const index = Math.round(ratio * (state.chartPoints.length - 1));
+        const point = state.chartPoints[index];
+        const tooltip = $('#chart-tooltip');
+        const hoverLine = $('#hover-line');
+        const hoverDot = $('#hover-dot');
+        hoverLine.setAttribute('x1', point.x); hoverLine.setAttribute('x2', point.x); hoverLine.setAttribute('visibility', 'visible');
+        hoverDot.setAttribute('cx', point.x); hoverDot.setAttribute('cy', point.y); hoverDot.setAttribute('visibility', 'visible');
+        const forecastPoint = point.type !== 'actual';
+        const value = forecastPoint ? point.median : point.close;
+        tooltip.innerHTML = `<div class="tooltip-date">${formatDate.format(new Date(`${point.date}T12:00:00Z`))} · ${forecastPoint ? 'Forecast' : 'Close'}</div><strong>${formatIndex(value)}</strong>${forecastPoint ? `<div class="tooltip-range">${state.confidence}% range: ${formatInterval(point.low, point.high)}</div>` : ''}`;
+        const chartWrap = $('#chart-wrap').getBoundingClientRect();
+        const localX = event.clientX - chartWrap.left;
+        const localY = Math.max(42, point.y / state.chartDimensions.height * bounds.height + (bounds.top - chartWrap.top));
+        tooltip.style.left = `${clamp(localX, 90, chartWrap.width - 90)}px`;
+        tooltip.style.top = `${localY}px`;
+        tooltip.style.display = 'block';
+      }
+      function hideChartTooltip() {
+        $('#chart-tooltip').style.display = 'none';
+        const line = $('#hover-line'), dot = $('#hover-dot');
+        if (line) line.setAttribute('visibility', 'hidden');
+        if (dot) dot.setAttribute('visibility', 'hidden');
+      }
+
+      function parseCsv(text) {
+        const rows = text.trim().split(/\r?\n/).map(row => row.trim()).filter(Boolean);
+        if (rows.length < 2) throw new Error('Add a header and at least 65 daily rows.');
+        const delimiter = rows[0].includes('\t') ? '\t' : ',';
+        const splitRow = (row) => {
+          // Supports normal CSV fields, including quoted date or close values.
+          const fields = [];
+          let field = '', quoted = false;
+          for (let i = 0; i < row.length; i += 1) {
+            const char = row[i];
+            if (char === '"') {
+              if (quoted && row[i + 1] === '"') { field += '"'; i += 1; } else quoted = !quoted;
+            } else if (char === delimiter && !quoted) { fields.push(field.trim()); field = ''; }
+            else field += char;
+          }
+          fields.push(field.trim());
+          return fields;
+        };
+        const headers = splitRow(rows[0]).map(value => value.toLowerCase().replace(/[^a-z0-9]/g, ''));
+        const dateIndex = headers.findIndex(value => ['date', 'observationdate', 'timestamp', 'time', 'datetime'].includes(value));
+        const closeIndex = headers.findIndex(value => ['close', 'adjclose', 'adjustedclose', 'price', 'last', 'sp500', 'spx'].includes(value));
+        if (dateIndex === -1 || closeIndex === -1) throw new Error('Could not find Date and Close columns. Use headers such as Date,Close or Date,Adj Close.');
+        const deduped = new Map();
+        for (const row of rows.slice(1)) {
+          const fields = splitRow(row);
+          const rawDate = fields[dateIndex];
+          const rawClose = fields[closeIndex];
+          if (!rawDate || !rawClose) continue;
+          const parsed = new Date(rawDate.includes('T') ? rawDate : `${rawDate}T12:00:00Z`);
+          const close = Number(String(rawClose).replace(/[$,\s]/g, ''));
+          if (!Number.isNaN(parsed.getTime()) && isFiniteNumber(close)) deduped.set(toDateKey(parsed), { date: toDateKey(parsed), close });
+        }
+        const output = Array.from(deduped.values()).sort((a, b) => a.date.localeCompare(b.date));
+        if (output.length < 65) throw new Error(`Found ${output.length} valid rows; at least 65 are required for a useful forecast.`);
+        return output;
+      }
+      function openImportModal() {
+        state.lastFocused = document.activeElement;
+        $('#import-modal').classList.add('open');
+        $('#import-modal').setAttribute('aria-hidden', 'false');
+        $('#modal-error').textContent = '';
+        setTimeout(() => $('#csv-text').focus(), 0);
+      }
+      function closeImportModal() {
+        $('#import-modal').classList.remove('open');
+        $('#import-modal').setAttribute('aria-hidden', 'true');
+        if (state.lastFocused && typeof state.lastFocused.focus === 'function') state.lastFocused.focus();
+      }
+      let toastTimer;
+      function showToast(message) {
+        const toast = $('#toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3700);
+      }
+      function downloadForecast() {
+        const header = ['Date', 'Median', `Lower ${state.confidence}%`, `Upper ${state.confidence}%`, 'Scenario', 'Model'];
+        const rows = state.result.points.map(point => [point.date, point.median.toFixed(2), point.low.toFixed(2), point.high.toFixed(2), state.scenario, state.model]);
+        const csv = [header, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url; anchor.download = `sp500-forecast-${state.result.last.date}.csv`; document.body.appendChild(anchor); anchor.click(); anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('Forecast CSV prepared with median and interval bounds.');
+      }
+      function setScenario(scenario, announce = true) { state.scenario = scenario; refreshForecast({ announce }); }
+      function bindEvents() {
+        $('#horizon-control').addEventListener('click', event => {
+          const button = event.target.closest('button[data-horizon]');
+          if (!button) return;
+          state.horizon = Number(button.dataset.horizon);
+          refreshForecast({ announce: true });
+        });
+        $('#scenario-tabs').addEventListener('click', event => {
+          const button = event.target.closest('button[data-scenario]');
+          if (button) setScenario(button.dataset.scenario);
+        });
+        $('#scenario-cards').addEventListener('click', event => {
+          const button = event.target.closest('button[data-scenario]');
+          if (button) setScenario(button.dataset.scenario);
+        });
+        $('#model-select').addEventListener('change', event => { state.model = event.target.value; refreshForecast({ announce: true }); });
+        $('#confidence-select').addEventListener('change', event => { state.confidence = Number(event.target.value); refreshForecast({ announce: true }); });
+        $('#lookback-range').addEventListener('input', event => { state.lookback = Number(event.target.value); $('#lookback-value').textContent = state.lookback; });
+        $('#lookback-range').addEventListener('change', () => refreshForecast({ announce: true }));
+        $('#run-button').addEventListener('click', () => refreshForecast({ announce: true }));
+        $('#import-button').addEventListener('click', openImportModal);
+        $('#export-button').addEventListener('click', downloadForecast);
+        $('#close-modal').addEventListener('click', closeImportModal);
+        $('#cancel-import').addEventListener('click', closeImportModal);
+        $('#import-modal').addEventListener('click', event => { if (event.target === $('#import-modal')) closeImportModal(); });
+        $('#csv-file').addEventListener('change', event => {
+          const file = event.target.files && event.target.files[0];
+          if (!file) return;
+          $('#upload-state').textContent = file.name;
+          const reader = new FileReader();
+          reader.onload = () => { $('#csv-text').value = String(reader.result || ''); $('#modal-error').textContent = ''; };
+          reader.onerror = () => { $('#modal-error').textContent = 'The selected file could not be read.'; };
+          reader.readAsText(file);
+        });
+        $('#confirm-import').addEventListener('click', () => {
+          try {
+            const imported = parseCsv($('#csv-text').value);
+            state.data = imported;
+            state.source = 'import';
+            state.sourceName = 'Imported CSV series';
+            state.lookback = Math.min(state.lookback, imported.length - 2);
+            $('#lookback-range').value = state.lookback;
+            refreshForecast();
+            closeImportModal();
+            showToast(`Imported ${imported.length} daily closes. Your new forecast is ready.`);
+          } catch (error) { $('#modal-error').textContent = error.message || 'This CSV could not be imported.'; }
+        });
+        document.addEventListener('keydown', event => {
+          if (event.key === 'Escape' && $('#import-modal').classList.contains('open')) closeImportModal();
+        });
+        const chart = $('#forecast-chart');
+        chart.addEventListener('mousemove', showChartTooltip);
+        chart.addEventListener('touchstart', event => { if (event.touches[0]) showChartTooltip(event.touches[0]); }, { passive: true });
+        chart.addEventListener('touchmove', event => { if (event.touches[0]) showChartTooltip(event.touches[0]); }, { passive: true });
+        chart.addEventListener('mouseleave', hideChartTooltip);
+        window.addEventListener('resize', () => { hideChartTooltip(); });
+      }
+      function initialize() {
+        state.data = makeDemoSeries();
+        bindEvents();
+        refreshForecast();
+      }
+      initialize();
+    })();
+  </script>
+</body>
+</html>

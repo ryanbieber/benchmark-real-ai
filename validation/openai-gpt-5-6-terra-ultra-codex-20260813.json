@@ -1,0 +1,179 @@
+{
+  "runId": "openai-gpt-5-6-terra-ultra-codex-20260813",
+  "workspace": "/tmp/benchmark-real-ai-gpt-5-6-terra-ultra-BzdnpU",
+  "prompt": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+  "timestamps": {
+    "outerCommandStartedAt": "2026-08-13T11:33:18.793Z",
+    "startedAt": "2026-08-13T11:33:19.948Z",
+    "finishedAt": "2026-08-13T11:47:00.974Z",
+    "durationMs": 821026,
+    "durationSeconds": 821.026,
+    "timeToFirstTokenMs": 7643,
+    "source": "The safe metadata fields of the Codex session's task_started and task_complete events record the task times, duration, and timeToFirstTokenMs. The outer recorder printed outerCommandStartedAt immediately before starting Codex. The private session transcript itself is not published because it contains non-visible model content."
+  },
+  "run": {
+    "threadId": "019ffae5-eb92-72e3-b73c-e5ae378640b4",
+    "turnId": "019ffae5-ebcb-7630-b1dc-f992513a28ab",
+    "completedAt": "2026-08-13T11:47:00.974Z",
+    "timeToFirstTokenMs": 7643,
+    "latencyMs": null
+  },
+  "usage": {
+    "inputTokens": 1423718,
+    "cachedInputTokens": 1337088,
+    "outputTokens": 36097,
+    "reasoningOutputTokens": 6627,
+    "totalTokens": 1459815,
+    "actualCostUsd": null,
+    "source": "Final turn.completed usage event in validation/openai-gpt-5-6-terra-ultra-codex-20260813.session.jsonl. The final private-session token_count event agreed; only its safe aggregate metadata was consulted. totalTokens is inputTokens + outputTokens; cached input and reasoning output are subsets."
+  },
+  "model": {
+    "provider": "openai",
+    "id": "gpt-5.6-terra",
+    "nativeReasoningLevel": "ultra",
+    "normalizedReasoningLevel": "ultra",
+    "reasoningNormalization": "Ultra is a distinct gpt-5.6-terra setting and is recorded as ultra rather than collapsed into max."
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "command": "codex exec --json --ignore-user-config --ignore-rules --skip-git-repo-check -C /tmp/benchmark-real-ai-gpt-5-6-terra-ultra-BzdnpU --sandbox danger-full-access --model gpt-5.6-terra -c model_reasoning_effort=\"ultra\" --output-last-message /tmp/benchmark-real-ai-record-gpt-5-6-terra-ultra-8PERXz/final-response.md [exact benchmark prompt passed as argv]",
+    "configuration": {
+      "cd": "/tmp/benchmark-real-ai-gpt-5-6-terra-ultra-BzdnpU",
+      "ignoreUserConfig": true,
+      "ignoreRules": true,
+      "skipGitRepoCheck": true,
+      "model": "gpt-5.6-terra",
+      "reasoningLevel": "ultra",
+      "reasoningLevelLabel": "ultra",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": null,
+      "webSearch": null,
+      "jsonEvents": true,
+      "outputLastMessage": "/tmp/benchmark-real-ai-record-gpt-5-6-terra-ultra-8PERXz/final-response.md",
+      "normalToolsEnabled": true
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "network-access",
+      "local-http-server",
+      "headless-Chrome validation",
+      "screenshot capture",
+      "automatic task delegation"
+    ]
+  },
+  "pricingEvidence": {
+    "source": "https://developers.openai.com/api/docs/pricing/",
+    "retrievedAt": "2026-08-13",
+    "serviceTier": "standard",
+    "contextBand": "short",
+    "currency": "USD",
+    "unitTokens": 1000000,
+    "rates": {
+      "inputUsd": 2,
+      "cachedInputUsd": 0.2,
+      "outputUsd": 12
+    },
+    "notes": "These are API-equivalent estimate inputs only. Codex did not report an actual billed cost, so actualCostUsd is null and reasoning output is not charged separately."
+  },
+  "dataSource": {
+    "type": "synthetic",
+    "notes": "The final self-contained artifact ships a deterministic S&P-style illustrative series and labels it Synthetic demo data. The run's Stooq probe returned an anti-bot page and its Yahoo Finance probe returned HTTP 429; neither result was embedded. Users can import trusted daily closing-price CSV data, including observation_date,SP500-style headers."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "fresh-workspace",
+        "command": "Create a new mktemp directory, then run pwd and rg --files before implementation.",
+        "exitCode": 0,
+        "result": "The model reported /tmp/benchmark-real-ai-gpt-5-6-terra-ultra-BzdnpU and no project files. Its first git-status probe correctly reported that the deliberately fresh workspace was not a Git repository."
+      },
+      {
+        "name": "market-data-probes",
+        "command": "curl -I -L --max-time 12 Stooq and Yahoo Finance S&P 500 endpoints; then fetch Stooq with a browser user agent.",
+        "exitCode": 0,
+        "result": "Stooq served an anti-bot verification page and Yahoo Finance returned HTTP 429. The final default dashboard consequently uses explicitly synthetic data and a local CSV-import path."
+      },
+      {
+        "name": "local-http-delivery",
+        "command": "python3 -m http.server 4173 --bind 127.0.0.1; curl -sS -I http://127.0.0.1:4173/; inspect index.html byte and script counts.",
+        "exitCode": 0,
+        "result": "The local server returned HTTP 200. The final artifact is one HTML file with one inline script and no external script dependency."
+      },
+      {
+        "name": "interactive-headless-Chrome",
+        "command": "Use Playwright with local Chrome to open the local server, change horizon/model/confidence/scenario/lookback controls, hover the SVG chart, export CSV, import a 100-row CSV, and assert desktop/mobile widths.",
+        "exitCode": 0,
+        "result": "Passed with errors: []. Initial values were last 5,964, forecast 5,824, and 90% range 5,254–6,457. The test changed to a 20-session forecast, reversion model, 95% interval, Bull scenario, and 80-session lookback; it observed a visible tooltip, a .csv download, 100 imported rows, and no horizontal overflow at 1440px or 390px."
+      },
+      {
+        "name": "naive-and-FRED-style-import",
+        "command": "Use Playwright with local Chrome to select the naive model, open and close the import dialog with Escape, import 72 rows with observation_date,SP500 headers, and assert chart semantics.",
+        "exitCode": 0,
+        "result": "Passed with errors: []. The naive central forecast equaled the last close, the dialog opened and closed, the FRED-style import reported 72 rows and Imported CSV data, and the chart carried role=img."
+      },
+      {
+        "name": "standalone-local-file",
+        "command": "Use Playwright with local Chrome to load file:///tmp/benchmark-real-ai-gpt-5-6-terra-ultra-BzdnpU/index.html and inspect populated controls and SVG paths.",
+        "exitCode": 0,
+        "result": "Passed with errors: []. The local file showed last close 5,964, three SVG paths, an enabled Run forecast button, and the Synthetic demo data source label."
+      }
+    ],
+    "warnings": [
+      "An early render reported an SVG NaN path; the model corrected its own artifact and the final interactive and local-file passes were clean.",
+      "An early render requested /favicon.ico and received a local 404; the model embedded a data-URL favicon before final validation.",
+      "An initial npx Playwright module-resolution attempt failed; the model used an already-installed Playwright package for the successful final validations.",
+      "An early follow-up test queried an absent #modal-error element and failed in the test harness. The null-safe rerun passed and confirmed the artifact's FRED-style CSV import behavior."
+    ],
+    "unresolvedFailures": []
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "npm-install",
+        "command": "npm install",
+        "exitCode": 0,
+        "result": "Added 3 packages, audited 4 packages, and reported 0 vulnerabilities."
+      },
+      {
+        "name": "manifest-validate",
+        "command": "npm run validate",
+        "exitCode": 0,
+        "result": "Manifest valid: 20 runs checked."
+      },
+      {
+        "name": "full-test-suite",
+        "command": "npm test",
+        "exitCode": 0,
+        "result": "The validator passed, all 5 unit tests passed, and all 5 browser tests passed. One browser project duplicate was intentionally skipped. The browser suite includes the Ultra facet, the Terra Ultra row, the Terra reasoning-order, and the plot-label assertions."
+      },
+      {
+        "name": "new-row-opens-standalone-dashboard",
+        "command": "Serve the repository at http://127.0.0.1:4321/, locate the unique tr.run-row whose data-artifact is runs/rendered/openai-gpt-5-6-terra-ultra-codex-20260813.html, then click its unique model link in the in-app browser.",
+        "exitCode": 0,
+        "result": "The target row and model link each had count 1. Clicking opened http://127.0.0.1:4321/runs/rendered/openai-gpt-5-6-terra-ultra-codex-20260813.html with title S&P 500 Forecast Lab, populated forecast summary/controls/diagnostics, Synthetic demo data disclosure, and no browser errors."
+      }
+    ],
+    "result": "Repository validation and the complete test suite pass, and the new table row opens the standalone dashboard directly from the showcase."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-6-terra-ultra-codex-20260813.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-6-terra-ultra-codex-20260813.html",
+    "responseRecord": "responses/openai-gpt-5-6-terra-ultra-codex-20260813.md",
+    "sessionLog": "validation/openai-gpt-5-6-terra-ultra-codex-20260813.session.jsonl",
+    "stderrLog": "validation/openai-gpt-5-6-terra-ultra-codex-20260813.stderr.log",
+    "sha256": {
+      "originalHtml": "47991e55d907bc254e9f396d9828ec8d6579ee0c1f0174bb2f3be99ca8f26a93",
+      "displayHtml": "47991e55d907bc254e9f396d9828ec8d6579ee0c1f0174bb2f3be99ca8f26a93",
+      "responseRecord": "f887013fc441325e1d61a71c0af3ddb30fe092bf47ae6061991d2a031b37bf41",
+      "sessionLog": "ad7ea52d5ded26ff11431d9bc44dfe6fcdf74fcfa79747ec246d0f5e17006f51",
+      "stderrLog": "6aba72c3a0f028fdabaedb63627112eb79efc44fee8f5fa8face4520dc11f405"
+    },
+    "repaired": false,
+    "repairLog": null
+  }
+}

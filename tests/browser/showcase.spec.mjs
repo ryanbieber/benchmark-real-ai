@@ -4,6 +4,7 @@ import { test, expect } from '@playwright/test';
 const manifest = JSON.parse(readFileSync(new URL('../../data/runs.json', import.meta.url), 'utf8'));
 const publishedRuns = manifest.runs.filter((run) => run.status === 'benchmark');
 const xhighRuns = publishedRuns.filter((run) => run.reasoning.normalized === 'xhigh');
+const ultraRuns = publishedRuns.filter((run) => run.reasoning.normalized === 'ultra');
 const combinedEstimatedCost = publishedRuns.reduce((total, run) => {
   const rates = manifest.benchmark.pricing.models[run.model.id];
   const usage = run.usage;
@@ -44,14 +45,21 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('#facet-panel')).toHaveAttribute('open', '');
   await expect(page.locator('#filter-reasoning option[value="xhigh"]')).toHaveText('Extra High (xhigh)');
   await expect(page.locator('#filter-reasoning option[value="max"]')).toHaveText('Max (max)');
+  await expect(page.locator('#filter-reasoning option[value="ultra"]')).toHaveText('Ultra (ultra)');
   await page.locator('#filter-search').fill('xhigh');
   await expect(page.locator('.run-row')).toHaveCount(xhighRuns.length);
   await expect(page.locator('.run-row')).toContainText(Array(xhighRuns.length).fill('Extra High'));
   await expect(page.locator('#facet-result-count')).toHaveText(`${xhighRuns.length} of ${publishedRuns.length} runs`);
+  await page.locator('#filter-search').fill('');
+  await page.locator('#filter-reasoning').selectOption('ultra');
+  await expect(page.locator('.run-row')).toHaveCount(ultraRuns.length);
+  await expect(page.locator('.run-row')).toContainText(Array(ultraRuns.length).fill('Ultra'));
+  await expect(page.locator('#facet-result-count')).toHaveText(`${ultraRuns.length} of ${publishedRuns.length} runs`);
   await page.locator('#clear-filters').click();
   await expect(page.locator('.run-row', { hasText: 'gpt-5.4-mini' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
   await expect(page.locator('.run-row', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
   await expect(page.locator('.run-row', { hasText: 'gpt-5.6-terra' }).filter({ hasText: 'Extra High' })).toHaveCount(1);
+  await expect(page.locator('.run-row', { hasText: 'gpt-5.6-terra' }).filter({ hasText: 'Ultra' })).toHaveCount(1);
   await expect(page.locator('.run-row', { hasText: 'gpt-5.6-luna' }).filter({ hasText: 'Max' })).toHaveCount(1);
   await expect(page.locator('.run-row').first()).toContainText('gpt-5.6-luna');
   await expect(page.locator('#run-table-body')).toContainText(publishedRuns.at(-1).model.name);
@@ -71,6 +79,8 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   await expect(page.locator('#token-legend')).toContainText('Reasoning output is included within output');
   const lunaReasoningOrder = await page.locator('#cost-chart .token-bar[data-model="gpt-5.6-luna"]').evaluateAll((bars) => bars.map((bar) => bar.dataset.reasoning));
   expect(lunaReasoningOrder).toEqual(['low', 'medium', 'high', 'xhigh', 'max']);
+  const terraReasoningOrder = await page.locator('#cost-chart .token-bar[data-model="gpt-5.6-terra"]').evaluateAll((bars) => bars.map((bar) => bar.dataset.reasoning));
+  expect(terraReasoningOrder).toEqual(['low', 'medium', 'high', 'xhigh', 'max', 'ultra']);
   await expect(page.locator('#cost-chart')).toContainText('Total tokens');
   await expect(page.locator('#premise, #protocol')).toHaveCount(0);
   await expect(page.locator('#combined-cost')).toHaveText(`$${combinedEstimatedCost.toFixed(2)}`);
@@ -84,6 +94,7 @@ test('landing page sorts runs by estimated cost and renders the behavior map', a
   expect(plotLabels.some((label) => label.includes('gpt-5.4-mini'))).toBe(true);
   expect(plotLabels.some((label) => label.includes('gpt-5.6-luna · xhigh'))).toBe(true);
   expect(plotLabels.some((label) => label.includes('gpt-5.6-luna · max'))).toBe(true);
+  expect(plotLabels.some((label) => label.includes('gpt-5.6-terra · ultra'))).toBe(true);
   await expect(page.locator('#tradeoff-svg-desc')).toContainText('Labels show the model and native reasoning setting');
   const pointFills = await page.locator('.tradeoff-point circle').evaluateAll((points) => [...new Set(points.map((point) => getComputedStyle(point).fill))]);
   expect(pointFills).toHaveLength(1);

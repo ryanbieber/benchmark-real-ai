@@ -1,0 +1,30 @@
+2026-08-13T11:33:37.835689Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:33:41.130055Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:33:45.280765Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:33:45.738577Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:33:47.935309Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:33:48.904529Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:33:50.609737Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:33:53.215050Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:34:03.628982Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:34:07.025227Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:34:20.570298Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:34:24.358869Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:34:35.870251Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:34:53.688762Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:34:54.566675Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:34:57.165136Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:35:01.313699Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:35:06.177742Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:35:20.369713Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:35:25.371372Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:35:30.910685Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:35:37.594143Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:35:47.556003Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:36:06.595376Z ERROR codex_core::tools::router: error=timeout_ms must be at least 10000
+2026-08-13T11:36:25.154837Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.6-terra personality=pragmatic
+2026-08-13T11:45:08.029022Z ERROR codex_core::tools::router: error=apply_patch verification failed: Failed to find expected lines in /tmp/benchmark-real-ai-gpt-5-6-terra-ultra-BzdnpU/index.html:
+          <select id="model-select" aria-label="Forecast model">
+            <option value="trend">Trend + volatility</option>
+            <option value="drift">Historical drift</option>
+2026-08-13T11:47:00.998898Z  WARN codex_file_watcher: failed to unwatch /home/carnufex/.codex/skills/.system: No watch was found. about ["/home/carnufex/.codex/skills/.system"]

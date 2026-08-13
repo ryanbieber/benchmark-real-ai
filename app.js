@@ -8,7 +8,7 @@ const $ = (selector) => document.querySelector(selector);
 const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 const titleCase = (value) => String(value).replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 const reasoningLabel = (value) => value === 'xhigh' ? 'Extra High' : titleCase(value);
-const reasoningFacetLabel = (value) => ['xhigh', 'max'].includes(value) ? `${reasoningLabel(value)} (${value})` : reasoningLabel(value);
+const reasoningFacetLabel = (value) => ['xhigh', 'max', 'ultra'].includes(value) ? `${reasoningLabel(value)} (${value})` : reasoningLabel(value);
 const reasoningDescription = (run) => `${reasoningLabel(run.reasoning.normalized)} (${run.reasoning.native})`;
 
 function unique(field) {
@@ -117,7 +117,7 @@ function formatTokenAxis(value) {
 }
 
 function renderTokenChart() {
-  const reasoningOrder = { default: 0, low: 1, medium: 2, high: 3, xhigh: 4, max: 5 };
+  const reasoningOrder = { default: 0, low: 1, medium: 2, high: 3, xhigh: 4, max: 5, ultra: 6 };
   const runs = [...state.runs].sort((a, b) => a.model.name.localeCompare(b.model.name) || (reasoningOrder[a.reasoning.native] ?? 99) - (reasoningOrder[b.reasoning.native] ?? 99) || a.id.localeCompare(b.id));
   const groups = [...new Map(runs.map((run) => [run.model.name, runs.filter((candidate) => candidate.model.name === run.model.name)])).entries()];
   const combined = runs.reduce((sum, run) => sum + (estimateCost(run)?.total || 0), 0);
