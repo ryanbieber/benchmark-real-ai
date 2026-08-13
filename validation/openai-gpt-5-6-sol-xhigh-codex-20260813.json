@@ -1,0 +1,223 @@
+{
+  "runId": "openai-gpt-5-6-sol-xhigh-codex-20260813",
+  "workspace": "/tmp/benchmark-real-ai-gpt-5-6-sol-xhigh-YloUI3/workspace",
+  "captureDirectory": "/tmp/benchmark-real-ai-record-gpt-5-6-sol-xhigh-cKfoow",
+  "prompt": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+  "timestamps": {
+    "startedAt": "2026-08-13T11:36:08.408Z",
+    "finishedAt": "2026-08-13T11:51:50.424Z",
+    "durationMs": 942016,
+    "durationSeconds": 942.016,
+    "timeToFirstTokenMs": null,
+    "latencyMs": null,
+    "source": "The outer benchmark recorder wrote startedAt immediately before launching Codex and finishedAt immediately after Codex exited following turn.completed. The harness emitted no time-to-first-token or model-latency fields."
+  },
+  "usage": {
+    "inputTokens": 1253486,
+    "cachedInputTokens": 1154816,
+    "outputTokens": 27177,
+    "reasoningOutputTokens": 5992,
+    "totalTokens": 1280663,
+    "actualCostUsd": null,
+    "source": "Final turn.completed usage event in validation/openai-gpt-5-6-sol-xhigh-codex-20260813.session.jsonl. totalTokens is inputTokens plus outputTokens; cached input and reasoning output are subsets."
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "command": "codex exec --json --ignore-user-config --ignore-rules --skip-git-repo-check -C /tmp/benchmark-real-ai-gpt-5-6-sol-xhigh-YloUI3/workspace --sandbox danger-full-access --model gpt-5.6-sol -c model_reasoning_effort=xhigh --output-last-message /tmp/benchmark-real-ai-record-gpt-5-6-sol-xhigh-cKfoow/final-response.md [exact benchmark prompt passed as argv]",
+    "configuration": {
+      "cd": "/tmp/benchmark-real-ai-gpt-5-6-sol-xhigh-YloUI3/workspace",
+      "ignoreUserConfig": true,
+      "ignoreRules": true,
+      "skipGitRepoCheck": true,
+      "model": "gpt-5.6-sol",
+      "reasoningLevel": "xhigh",
+      "reasoningLevelLabel": "extra high",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": null,
+      "webSearchMode": null,
+      "jsonEvents": true,
+      "outputLastMessage": "/tmp/benchmark-real-ai-record-gpt-5-6-sol-xhigh-cKfoow/final-response.md",
+      "normalToolsEnabled": true
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "network-access",
+      "headless-Chrome validation",
+      "screenshot capture"
+    ]
+  },
+  "dataSource": {
+    "type": "historical-snapshot",
+    "source": "FRED series SP500, https://fred.stlouisfed.org/series/SP500",
+    "retrievedAt": "2026-08-13",
+    "snapshotThrough": "2026-08-12",
+    "notes": "The final self-contained HTML embeds the retrieved FRED daily closing-price CSV. It contains 2,608 dated rows including blank non-trading-day observations and loads 2,512 valid numeric observations after filtering blanks. The dashboard and README disclose that SP500 is a price index excluding dividends. No runtime data fetch is required."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "fresh-workspace",
+        "command": "pwd and rg --files in the configured benchmark workspace",
+        "exitCode": 0,
+        "result": "Reported /tmp/benchmark-real-ai-gpt-5-6-sol-xhigh-YloUI3/workspace with no files."
+      },
+      {
+        "name": "official-source-research",
+        "command": "Codex web search for the official FRED SP500 series, FRED API documentation, and official S&P 500 overview",
+        "exitCode": null,
+        "result": "Selected FRED SP500 as the daily closing-price source and S&P Dow Jones Indices as the index-methodology source."
+      },
+      {
+        "name": "fred-snapshot-retrieval",
+        "command": "curl -L --fail --silent --show-error https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500",
+        "exitCode": 0,
+        "result": "Retrieved the FRED CSV from 2016-08-15 through 2026-08-12 and embedded it in the standalone HTML."
+      },
+      {
+        "name": "initial-browser-render",
+        "command": "Google Chrome headless DOM dump of file:///tmp/benchmark-real-ai-gpt-5-6-sol-xhigh-YloUI3/workspace/index.html",
+        "exitCode": 0,
+        "result": "The first render marked the dashboard ready but exposed NaN forecast and validation values because blank holiday rows were parsed as zero. The model diagnosed and repaired this before completion."
+      },
+      {
+        "name": "corrected-browser-render",
+        "command": "Google Chrome headless DOM dump with dashboard-ready and forecast/validation output assertions",
+        "exitCode": 0,
+        "result": "Dashboard ready; current level 7,749; median endpoint 8,484; median endpoint error 5.6%; direction rate 89%; interval coverage 100%; 18 historical starts."
+      },
+      {
+        "name": "automated-self-test",
+        "command": "Google Chrome headless DOM dump of index.html?selftest=1",
+        "exitCode": 0,
+        "result": "data-dashboard-ready=true and data-selftest=passed. The alternate state showed a 252-session horizon, 95% confidence, finite 9,247 median endpoint, and finite model specifications."
+      },
+      {
+        "name": "desktop-screenshot",
+        "command": "Google Chrome headless screenshot at 1440x1400",
+        "exitCode": 0,
+        "result": "Created a 1440x1400 RGB PNG with 187,187 bytes."
+      },
+      {
+        "name": "desktop-interaction-validation",
+        "command": "Chrome DevTools Protocol control, interval, validation, reset, and canvas assertions",
+        "exitCode": 0,
+        "result": "Passed. Default state loaded 2,512 observations with 8,484.2588 median, 7,123.0186 lower bound, 10,105.6380 upper bound, 18 validation starts, 5.5695% median error, 88.8889% direction rate, 100% coverage, and a 595x386 canvas. Changing to 252 sessions, 95% confidence, and trend drift produced a 9,246.7657 median; reset restored 126 sessions, 90%, and historical drift."
+      },
+      {
+        "name": "mobile-render-and-layout",
+        "command": "Google Chrome 390x1000 screenshot plus Chrome DevTools Protocol mobile layout assertions",
+        "exitCode": 0,
+        "result": "Created a 390x1000 RGB screenshot. At a 390px emulated viewport, document and body widths were both 390px, the forecast card was 362px, the canvas was 340px, and the dashboard-ready flag was true."
+      },
+      {
+        "name": "final-wording-self-test",
+        "command": "Google Chrome headless self-test after validation-overlap disclosure cleanup",
+        "exitCode": 0,
+        "result": "data-dashboard-ready=true and data-selftest=passed; the validation note states that historical starts are spaced, no future data is used in estimation, and some test windows overlap."
+      }
+    ],
+    "warnings": [
+      "The first attempt to inject the retrieved CSV with apply_patch failed hunk verification; the model recovered and embedded the complete data before validation.",
+      "The first browser render exposed NaN values from blank FRED holiday rows; the model corrected the parser and all final browser checks passed.",
+      "Codex reported one transient response-stream disconnect and automatically retried sampling once before successful completion.",
+      "Codex reported a non-fatal file-watcher warning while exiting."
+    ],
+    "observedOutputs": {
+      "defaultDashboard": {
+        "latestDate": "2026-08-12",
+        "currentLevel": 7748.5,
+        "medianForecast": 8484.258837460467,
+        "lowerBound": 7123.018622911022,
+        "upperBound": 10105.638049224743,
+        "probabilityUp": 0.8032285224599496,
+        "validObservations": 2512,
+        "validationStarts": 18,
+        "medianEndpointError": 0.055694804490102334,
+        "directionHitRate": 0.8888888888888888,
+        "intervalCoverage": 1
+      },
+      "interactiveUpdate": {
+        "horizon": "252 sessions",
+        "confidence": "95%",
+        "model": "trend",
+        "medianForecast": 9246.765735716397,
+        "validationStarts": 9,
+        "medianEndpointError": 0.10630425113783537
+      }
+    }
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "artifact-bytes",
+        "command": "cmp original and displayed index.html and README.md; compare imported original against the temporary workspace output",
+        "exitCode": 0,
+        "result": "The imported original matches the benchmark output exactly, and original/displayed HTML and README pairs are byte-identical. No rendering repair was required."
+      },
+      {
+        "name": "syntax-self-test-and-dependency-check",
+        "command": "Parse the inline script with node --check; run Google Chrome against rendered index.html?selftest=1; confirm no script src, fetch, XMLHttpRequest, or dynamic import dependency",
+        "exitCode": 0,
+        "result": "Inline JavaScript parsed; data-dashboard-ready=true; data-selftest=passed; rendered values were finite; no runtime script or data dependency was found."
+      },
+      {
+        "name": "independent-interaction-validation",
+        "command": "Chrome DevTools Protocol assertions against runs/rendered/openai-gpt-5-6-sol-xhigh-codex-20260813/index.html",
+        "exitCode": 0,
+        "result": "Independently reproduced the 2,512-observation default, ordered finite forecast bounds, 18-start walk-forward metrics, 595x386 canvas, changed 252-session trend forecast, and reset to the 126-session historical defaults."
+      },
+      {
+        "name": "npm-install",
+        "command": "npm install",
+        "exitCode": 0,
+        "result": "Added 3 packages, audited 4 packages, and reported 0 vulnerabilities."
+      },
+      {
+        "name": "manifest-validation",
+        "command": "npm run validate",
+        "exitCode": 0,
+        "result": "Manifest valid: 23 runs checked on the final rebased branch."
+      },
+      {
+        "name": "full-repository-suite",
+        "command": "npm test",
+        "exitCode": 0,
+        "result": "On the final rebased branch, manifest validation passed for 23 runs, all 5 unit tests passed, and the Playwright suite reported 5 passed with 1 intentional project skip."
+      },
+      {
+        "name": "new-table-row-open",
+        "command": "Serve the repository at http://127.0.0.1:4321/, locate the unique gpt-5.6-sol historical-snapshot xhigh model link inside the run table with the Codex in-app browser, click it, and inspect the standalone page.",
+        "exitCode": 0,
+        "result": "The run table and matching model link each had count 1. Clicking navigated to /runs/rendered/openai-gpt-5-6-sol-xhigh-codex-20260813/index.html with title Northstar — S&P 500 Scenario Lab. The page reported dashboard-ready, current level 7,749, median endpoint 8,484, median error 5.6%, direction rate 89%, interval coverage 100%, a 575x552 canvas, equal 1265px client/scroll widths, and no console errors."
+      }
+    ],
+    "result": "Artifact identity, JavaScript syntax, built-in self-test, standalone dependency behavior, independent browser interactions, repository validation, the complete test suite, and in-app-browser table-row navigation all passed."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-6-sol-xhigh-codex-20260813/index.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-6-sol-xhigh-codex-20260813/index.html",
+    "originalReadme": "runs/original/openai-gpt-5-6-sol-xhigh-codex-20260813/README.md",
+    "displayReadme": "runs/rendered/openai-gpt-5-6-sol-xhigh-codex-20260813/README.md",
+    "responseRecord": "responses/openai-gpt-5-6-sol-xhigh-codex-20260813.md",
+    "sessionLog": "validation/openai-gpt-5-6-sol-xhigh-codex-20260813.session.jsonl",
+    "stderrLog": "validation/openai-gpt-5-6-sol-xhigh-codex-20260813.stderr.log",
+    "desktopScreenshot": "validation/openai-gpt-5-6-sol-xhigh-codex-20260813-dashboard.png",
+    "mobileScreenshot": "validation/openai-gpt-5-6-sol-xhigh-codex-20260813-dashboard-mobile.png",
+    "sha256": {
+      "originalHtml": "09116fe0ccb9c3f8a9f9d7e85fc3120ad6918c200f73902ba0f679139d2a8123",
+      "displayHtml": "09116fe0ccb9c3f8a9f9d7e85fc3120ad6918c200f73902ba0f679139d2a8123",
+      "originalReadme": "c0d430efb592140d67cd207df876682c0e5bbcf12627228bf8dcfd6a251df982",
+      "displayReadme": "c0d430efb592140d67cd207df876682c0e5bbcf12627228bf8dcfd6a251df982",
+      "sessionLog": "7186fb6bd504da8e49f800c9e0f4f4da277c20448f5f20a0293bc0e6d611f0ef",
+      "stderrLog": "e92e715cc2c9baf8e7e37eb10623dc01ecad305a761fc2f4463568610e79c310",
+      "desktopScreenshot": "b8e49144e89c47174d05777d3ae2bcb6b21098fa8dea87f4384d3065f7caa2c5",
+      "mobileScreenshot": "076d08219f7c4064728cb643da91d13bd969102c163a83072048a458b8be2035"
+    }
+  },
+  "unresolvedFailures": []
+}
