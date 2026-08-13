@@ -9,15 +9,16 @@
       "medium",
       "high",
       "xhigh",
-      "max"
+      "max",
+      "ultra"
     ],
-    "updatedAt": "2026-08-13T11:57:07Z",
+    "updatedAt": "2026-08-13T12:20:54Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
       "serviceTier": "standard",
       "contextBand": "short",
-      "retrievedAt": "2026-08-12",
+      "retrievedAt": "2026-08-13",
       "source": "https://developers.openai.com/api/docs/pricing/",
       "notes": "API-equivalent estimates use standard short-context rates. Cached input is a subset of input. Reasoning output is a subset of output and is not charged twice.",
       "models": {
@@ -3037,7 +3038,7 @@
       },
       "reasoning": {
         "native": "ultra",
-        "normalized": "max"
+        "normalized": "ultra"
       },
       "harness": {
         "name": "Codex CLI",
@@ -3120,10 +3121,10 @@
           "runs/rendered/openai-gpt-5-6-sol-ultra-codex-20260813/styles.css"
         ],
         "sha256": {
-          "rawResponse": "28f21995039e834df1810e02db8e23143d9b74d0dac4bd2b7eb33160906cbb75",
+          "rawResponse": "6b2907be2abe2d4936c91f0886d41cec16f8eb3f4ffbf3b479c67ec054998345",
           "originalHtml": "1d744c232efd6dbde4941286513860ae44f969ab5d90618282672caa0c048615",
           "displayHtml": "1d744c232efd6dbde4941286513860ae44f969ab5d90618282672caa0c048615",
-          "validationEvidence": "3a437e30ac63f52ea8f44edaefe222dba035a919744d7d89c05c1e23ca14ec2b",
+          "validationEvidence": "d36ec71b47b010d6b088dbc7090e526d7d20a9e34203d31550aab502eebe83d0",
           "eventStream": "220a044377f6feffa1405fca072f060a0dbe1790429f8a9dd43b8fce3f5264a5",
           "stderrLog": "1654403e9bad82470968c40b633e8e9dd77df8714e528413130b9fffffc0c355",
           "visibleResponse": "2428f675ee3d794c2db1dfe2e3d08000cfe947a9124bdd89dae3f912d17ac5a1",
@@ -3201,6 +3202,136 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-sol at native ultra reasoning in a fresh temporary workspace, fetched and bundled a 2,164-observation FRED S&P 500 snapshot, built a polished multi-file interactive forecast lab with three models and walk-forward diagnostics, passed model-authored numerical/DOM/HTML/HTTP checks and independent desktop/mobile browser validation, and required no rendering repair."
+    },
+    {
+      "id": "openai-gpt-5-6-terra-ultra-codex-20260813",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-terra",
+        "name": "gpt-5.6-terra",
+        "version": "gpt-5.6-terra"
+      },
+      "reasoning": {
+        "native": "ultra",
+        "normalized": "ultra"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-6-terra-ultra-BzdnpU",
+          "ignoreUserConfig": true,
+          "ignoreRules": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-terra",
+          "reasoningLevel": "ultra",
+          "reasoningLevelLabel": "ultra",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": null,
+          "webSearch": null,
+          "jsonEvents": true,
+          "outputLastMessage": true,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "network-access",
+          "local-http-server",
+          "headless-Chrome validation",
+          "screenshot capture",
+          "automatic task delegation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-13T11:33:19.948Z",
+        "finishedAt": "2026-08-13T11:47:00.974Z",
+        "durationSeconds": 821.026
+      },
+      "run": {
+        "threadId": "019ffae5-eb92-72e3-b73c-e5ae378640b4",
+        "completedAt": "2026-08-13T11:47:00.974Z",
+        "timeToFirstTokenMs": 7643,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 1423718,
+        "cachedInputTokens": 1337088,
+        "outputTokens": 36097,
+        "reasoningOutputTokens": 6627,
+        "totalTokens": 1459815,
+        "source": "Final turn.completed usage event in validation/openai-gpt-5-6-terra-ultra-codex-20260813.session.jsonl; totalTokens is inputTokens plus outputTokens.",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "synthetic",
+        "notes": "The shipped standalone dashboard defaults to its deterministic S&P-style illustrative series and visibly labels it Synthetic demo data. It supports CSV import, including FRED-style observation_date,SP500 headers, but no external market dataset was embedded."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-terra-ultra-codex-20260813.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-terra-ultra-codex-20260813.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-terra-ultra-codex-20260813.html",
+        "validationEvidence": "validation/openai-gpt-5-6-terra-ultra-codex-20260813.json",
+        "eventStream": "validation/openai-gpt-5-6-terra-ultra-codex-20260813.session.jsonl",
+        "stderrLog": "validation/openai-gpt-5-6-terra-ultra-codex-20260813.stderr.log",
+        "sha256": {
+          "rawResponse": "f887013fc441325e1d61a71c0af3ddb30fe092bf47ae6061991d2a031b37bf41",
+          "originalHtml": "47991e55d907bc254e9f396d9828ec8d6579ee0c1f0174bb2f3be99ca8f26a93",
+          "displayHtml": "47991e55d907bc254e9f396d9828ec8d6579ee0c1f0174bb2f3be99ca8f26a93",
+          "validationEvidence": "d8e58cbf2a1bf1d2470b4548588dcd33953a0915f096daf88a4cdea0a6b6ea79",
+          "eventStream": "ad7ea52d5ded26ff11431d9bc44dfe6fcdf74fcfa79747ec246d0f5e17006f51",
+          "stderrLog": "6aba72c3a0f028fdabaedb63627112eb79efc44fee8f5fa8face4520dc11f405"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 5
+        },
+        "total": 24,
+        "reviewer": "Codex",
+        "notes": "The untouched single-file artifact is a complete, polished dashboard with directly exercised forecast controls, fan intervals, scenarios, chart detail, CSV import/export, and a compact walk-forward diagnostic. It clearly explains its log-return, drift, volatility, and mean-reversion assumptions and is unusually candid about synthetic data and forecast limitations. The method remains a deliberately simplified educational model rather than a reliable market-prediction system, which is why forecasting methodology is 4 rather than 5. The final self-contained HTML passed comprehensive browser and direct file:// validation without errors."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed HTML SHA-256 hashes match exactly; no rendering repair was required."
+          },
+          {
+            "name": "benchmark-interactive-headless-Chrome",
+            "passed": true,
+            "details": "The final Chrome pass exercised controls, tooltip, CSV export/import, FRED-style import, and desktop/mobile layout with no page or console errors."
+          },
+          {
+            "name": "benchmark-standalone-local-file",
+            "passed": true,
+            "details": "The final single-file dashboard loaded directly over file:// with populated metrics, three SVG paths, an enabled Run forecast control, and no errors."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "After rebasing onto current main, npm run validate checked 26 runs and npm test passed all 5 unit tests and 5 browser tests, with one intentionally skipped browser-project duplicate, on the committed default local-server configuration."
+          },
+          {
+            "name": "table-row-target",
+            "passed": true,
+            "details": "After the rebase, the in-app browser found exactly one matching row and model link among 26 rows, opened the rendered HTML with title S&P 500 Forecast Lab, heading Make the uncertainty visible., six SVG elements, the synthetic disclosure, and no browser errors."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-terra at native Ultra reasoning in a fresh temporary workspace, built and comprehensively browser-validated a self-contained interactive S&P 500 forecasting dashboard from synthetic illustrative data with CSV import/export, then imported byte-identical original and displayed HTML without a rendering repair."
     }
   ]
 }

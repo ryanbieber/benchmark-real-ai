@@ -12,14 +12,14 @@
   },
   "reasoning": {
     "native": "ultra",
-    "normalized": "max",
+    "normalized": "ultra",
     "nativeSupportEvidence": {
       "source": "/home/carnufex/.codex/models_cache.json",
       "modelCacheFetchedAt": "2026-08-13T11:37:12.642679945Z",
       "model": "gpt-5.6-sol",
       "description": "Maximum reasoning with automatic task delegation"
     },
-    "normalizationNotes": "The model natively supports ultra. The repository's fixed normalized bands end at max, so ultra is mapped to max while native ultra remains visible and distinct from native max."
+    "normalizationNotes": "The model natively supports ultra. Ultra is a distinct normalized band and remains separate from Max."
   },
   "timestamps": {
     "startedAt": "2026-08-13T11:39:21.413Z",
@@ -232,7 +232,7 @@
         "name": "new-table-row-opens-standalone-dashboard",
         "command": "Serve the repository, locate .run-row[data-artifact=\"runs/rendered/openai-gpt-5-6-sol-ultra-codex-20260813/index.html\"], click its unique model link, and inspect the resulting page in the in-app browser",
         "exitCode": 0,
-        "result": "Exactly one row and one scoped model link were found. The row showed gpt-5.6-sol, historical-snapshot, Max, Native: ultra, 1,755,649 total tokens, 15m 18s, and $2.59 API estimate. Clicking opened the exact standalone displayed index.html with title Northstar — S&P 500 Forecast Lab, last close 7,749, target 8,069, FRED source, 4 chart paths, and no page errors."
+        "result": "Exactly one row and one scoped model link were found. The row showed gpt-5.6-sol, historical-snapshot, Ultra, Native: ultra, 1,755,649 total tokens, 15m 18s, and $2.59 API estimate. Clicking opened the exact standalone displayed index.html with title Northstar — S&P 500 Forecast Lab, last close 7,749, target 8,069, FRED source, 4 chart paths, and no page errors."
       }
     ],
     "repositoryChecks": {

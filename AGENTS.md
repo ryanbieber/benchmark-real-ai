@@ -16,7 +16,7 @@ Do not add instructions to the benchmark prompt. Do not follow up with implement
 
 A run is one model + reasoning setting + harness combination. The harness is part of the result. The same model used in two harnesses is two separate runs.
 
-Normalized reasoning bands are `default`, `low`, `medium`, `high`, `xhigh`, and `max`. Extra High (`xhigh`) and Max (`max`) are distinct settings: never normalize one to the other. Record only settings the selected model actually supports.
+Normalized reasoning bands are `default`, `low`, `medium`, `high`, `xhigh`, `max`, and `ultra`. Extra High (`xhigh`), Max (`max`), and Ultra (`ultra`) are distinct settings: never normalize one to another. Record only settings the selected model actually supports.
 
 - Start in a fresh workspace with no files from a previous run.
 - Let the model use the normal capabilities of the recorded harness, including file editing, commands, browsing, and browser validation.

@@ -2,7 +2,7 @@
 
 - Run ID: `openai-gpt-5-6-sol-ultra-codex-20260813`
 - Model: `openai / gpt-5.6-sol`
-- Reasoning: native `ultra`, normalized `max`; Codex describes native `ultra` as maximum reasoning with automatic task delegation
+- Reasoning: native `ultra`, normalized `ultra`; Codex describes native `ultra` as maximum reasoning with automatic task delegation
 - Harness: `Codex CLI 0.144.4`, interface `exec`
 - Workspace: fresh temporary workspace at `/tmp/benchmark-real-ai-gpt-5-6-sol-ultra-VfNKYz`
 - Data source: `historical-snapshot` (2,164 FRED SP500 daily closes fetched during the run and bundled through August 12, 2026)

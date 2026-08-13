@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const exactGoal = 'I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.';
 const scoreKeys = ['taskFulfillment', 'interactivityUsability', 'forecastingMethodology', 'uncertaintyHonesty', 'technicalRobustness'];
-const normalizedReasoningBands = ['default', 'low', 'medium', 'high', 'xhigh', 'max'];
+const normalizedReasoningBands = ['default', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'];
 const reasoningBands = new Set(normalizedReasoningBands);
 const dataTypes = new Set(['live', 'historical-snapshot', 'synthetic', 'undocumented']);
 const usageKeys = ['inputTokens', 'cachedInputTokens', 'outputTokens', 'reasoningOutputTokens', 'totalTokens'];
@@ -50,6 +50,7 @@ export function validateManifest(manifest) {
     if (!run.reasoning?.native || !reasoningBands.has(run.reasoning?.normalized)) errors.push(`${label}: native and valid normalized reasoning values are required`);
     if (run.reasoning?.native === 'xhigh' && run.reasoning?.normalized !== 'xhigh') errors.push(`${label}: native xhigh reasoning must remain normalized as xhigh`);
     if (run.reasoning?.native === 'max' && run.reasoning?.normalized !== 'max') errors.push(`${label}: native max reasoning must remain normalized as max`);
+    if (run.reasoning?.native === 'ultra' && run.reasoning?.normalized !== 'ultra') errors.push(`${label}: native ultra reasoning must remain normalized as ultra`);
     if (!dataTypes.has(run.dataSource?.type)) errors.push(`${label}: invalid data-source classification`);
     if (!run.summary) errors.push(`${label}: summary is required`);
 

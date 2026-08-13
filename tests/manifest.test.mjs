@@ -19,12 +19,13 @@ test('every run records the complete non-duplicative token breakdown', () => {
   }
 });
 
-test('Extra High and Max remain distinct reasoning bands', () => {
+test('Extra High, Max, and Ultra remain distinct reasoning bands', () => {
   const manifest = readManifest();
-  assert.deepEqual(manifest.benchmark.normalizedReasoningBands, ['default', 'low', 'medium', 'high', 'xhigh', 'max']);
+  assert.deepEqual(manifest.benchmark.normalizedReasoningBands, ['default', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra']);
   for (const run of manifest.runs) {
     if (run.reasoning.native === 'xhigh') assert.equal(run.reasoning.normalized, 'xhigh', run.id);
     if (run.reasoning.native === 'max') assert.equal(run.reasoning.normalized, 'max', run.id);
+    if (run.reasoning.native === 'ultra') assert.equal(run.reasoning.normalized, 'ultra', run.id);
   }
 });
 
