@@ -12,7 +12,7 @@
       "max",
       "ultra"
     ],
-    "updatedAt": "2026-08-13T12:08:28Z",
+    "updatedAt": "2026-08-13T12:14:44Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -3282,7 +3282,7 @@
           "rawResponse": "f887013fc441325e1d61a71c0af3ddb30fe092bf47ae6061991d2a031b37bf41",
           "originalHtml": "47991e55d907bc254e9f396d9828ec8d6579ee0c1f0174bb2f3be99ca8f26a93",
           "displayHtml": "47991e55d907bc254e9f396d9828ec8d6579ee0c1f0174bb2f3be99ca8f26a93",
-          "validationEvidence": "f1721b62cfb5783d647fa64ebd53342cdc2f6513610bf74d570cf93a46f5cb1f",
+          "validationEvidence": "a4a91dc3ac5a6cc7ace2ee78db312a8f9b2b096e9c992fcc8c545790c999f372",
           "eventStream": "ad7ea52d5ded26ff11431d9bc44dfe6fcdf74fcfa79747ec246d0f5e17006f51",
           "stderrLog": "6aba72c3a0f028fdabaedb63627112eb79efc44fee8f5fa8face4520dc11f405"
         },
@@ -3322,12 +3322,12 @@
           {
             "name": "repository-checks",
             "passed": true,
-            "details": "After rebasing onto current main, npm run validate checked 23 runs and npm test passed all 5 unit tests and 5 browser tests, with one intentionally skipped browser-project duplicate. The test used a temporary isolated local port because independent workspaces occupied the default ports; committed configuration was restored."
+            "details": "After rebasing onto current main, npm run validate checked 24 runs and npm test passed all 5 unit tests and 5 browser tests, with one intentionally skipped browser-project duplicate, on the committed default local-server configuration."
           },
           {
             "name": "table-row-target",
             "passed": true,
-            "details": "After the rebase, the in-app browser found exactly one matching row and model link among 23 rows, opened the rendered HTML, showed last close 5,964, forecast 5,824, three chart paths, the synthetic disclosure, and no browser errors."
+            "details": "After the rebase, the in-app browser found exactly one matching row and model link among 24 rows, opened the rendered HTML with title S&P 500 Forecast Lab, heading Make the uncertainty visible., six SVG elements, the synthetic disclosure, and no browser errors."
           }
         ]
       },
