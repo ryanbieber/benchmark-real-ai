@@ -2882,6 +2882,149 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-sol at native xhigh (extra high) reasoning in a fresh temporary workspace, built and browser-validated a self-contained interactive S&P 500 scenario dashboard from an embedded FRED historical snapshot, and imported byte-identical original and display artifacts without a repair."
+    },
+    {
+      "id": "openai-gpt-5-6-sol-max-codex-20260813",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-sol",
+        "name": "gpt-5.6-sol",
+        "version": "gpt-5.6-sol"
+      },
+      "reasoning": {
+        "native": "max",
+        "normalized": "max"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-6-sol-max-yfcwRBas/workspace",
+          "freshWorkspace": true,
+          "ignoreUserConfig": true,
+          "ignoreRules": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-sol",
+          "reasoningLevel": "max",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": true,
+          "jsonEvents": true,
+          "promptSource": "argument",
+          "outputLastMessage": false,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "network-access",
+          "local-http-server",
+          "headless-Chrome validation",
+          "screenshot capture"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-13T11:37:35.349Z",
+        "finishedAt": "2026-08-13T11:52:59.180Z",
+        "durationSeconds": 923.831
+      },
+      "run": {
+        "threadId": "019ffae9-d752-7ce0-9aa1-306dfc5c95b2",
+        "completedAt": "2026-08-13T11:52:59.180Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 1746464,
+        "cachedInputTokens": 1657472,
+        "outputTokens": 43567,
+        "reasoningOutputTokens": 8954,
+        "totalTokens": 1790031,
+        "source": "Final Codex CLI turn.completed usage event in validation/openai-gpt-5-6-sol-max-codex-20260813.session.jsonl; totalTokens is inputTokens plus outputTokens.",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "The run fetched FRED's SP500 CSV live, omitted missing values, and embedded 2,512 daily closes through 2026-08-12 in the standalone HTML. The published default view uses that fixed snapshot and makes no runtime market-data request."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-sol-max-codex-20260813.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-sol-max-codex-20260813.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-sol-max-codex-20260813.html",
+        "validationEvidence": "validation/openai-gpt-5-6-sol-max-codex-20260813.json",
+        "sessionLog": "validation/openai-gpt-5-6-sol-max-codex-20260813.session.jsonl",
+        "stderrLog": "validation/openai-gpt-5-6-sol-max-codex-20260813.stderr.txt",
+        "benchmarkReadme": "validation/openai-gpt-5-6-sol-max-codex-20260813.benchmark-readme.md",
+        "screenshots": [
+          "validation/openai-gpt-5-6-sol-max-codex-20260813-desktop.png",
+          "validation/openai-gpt-5-6-sol-max-codex-20260813-mobile.png"
+        ],
+        "sha256": {
+          "rawResponse": "fe542866c0314e392f4b278313511f6345f8dfaa33b6fa6ecc495a7ed4bfa6c5",
+          "originalHtml": "04af24a3378956e78dfdbc2e689eb565c274c8ce70b73ce2f59634910ada8b84",
+          "displayHtml": "04af24a3378956e78dfdbc2e689eb565c274c8ce70b73ce2f59634910ada8b84",
+          "validationEvidence": "60c69282c3ea9f5f199a7b24e8cf65981c6e23e17f1838b1e7e3bbd48bc7c3b9",
+          "sessionLog": "ce90cf02520a41aac361465ee4b1fc29fb5feb1493df1ca23c9e480899159600",
+          "stderrLog": "d03561653c9794eb79d03ae95db5848badd5565005e6227ca32c8d04ad678a9f",
+          "benchmarkReadme": "275e960cdba0f5b03e7d9ef2b3ea7fa87aad963d4e14cc94c63c17893c78e964",
+          "desktopScreenshot": "751df53fcc66d376f893cf4537802928161ff49a65421c07a5aed6ef2bcf0f09",
+          "mobileScreenshot": "0757715aa223056f0e8910844ec5e230eb84ec4d8f8b79b22976ef80b023b4a0"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 5
+        },
+        "total": 24,
+        "reviewer": "Codex",
+        "notes": "The untouched final artifact fully satisfies the request with a polished, responsive, dependency-free dashboard built from a clearly sourced FRED snapshot. It offers three transparent baseline models, adjustable horizon/lookback/drift/volatility/confidence controls, responsive SVG charting, scenarios, rolling-origin backtests, and CSV export. Methodology is strong for an educational baseline but deliberately omits macro, valuation, regime, options, and fat-tail modeling. Uncertainty limitations and non-advice status are unusually explicit. The benchmark's final browser and offline formula suites passed after the model fixed issues it found before completion, and independent import validation found no console errors or horizontal overflow."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-browser-interaction-suite",
+            "passed": true,
+            "details": "The final Puppeteer/Chrome suite passed horizon, model, lookback, drift, risk, confidence, tooltip, reset, CSV export, mobile navigation, desktop/mobile overflow, chart, and browser-error assertions."
+          },
+          {
+            "name": "benchmark-offline-formula-validation",
+            "passed": true,
+            "details": "A direct file:// Chrome run matched 2,512 embedded observations, the expected endpoint and lognormal formula to floating-point precision, 55 backtest windows, zero overflow, and zero console errors."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "The source, original, and displayed HTML SHA-256 hashes match exactly; no importer rendering repair was required."
+          },
+          {
+            "name": "independent-browser-validation",
+            "passed": true,
+            "details": "The in-app browser independently opened the displayed HTML, exercised horizon/model/confidence/lookback/reset controls, confirmed four chart paths and responsive mobile navigation, and found no error-level browser logs."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "After rebasing onto current main, npm run validate passed for 23 runs; npm test passed all 5 unit tests and 5 browser tests with 1 intentional project skip."
+          },
+          {
+            "name": "table-row-open",
+            "passed": true,
+            "details": "The populated showcase exposed exactly one new Max row and one gpt-5.6-sol model link; clicking it opened the standalone artifact with populated forecast and provenance fields, four chart paths, and no error-level browser logs."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-sol at native max reasoning in a fresh temporary workspace, fetched and embedded a FRED S&P 500 snapshot, produced and comprehensively browser-validated a standalone interactive forecast dashboard with three transparent baseline models and rolling-origin backtesting, and imported byte-identical original and displayed HTML without a repair."
     }
   ]
 }

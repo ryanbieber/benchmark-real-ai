@@ -1,0 +1,189 @@
+{
+  "runId": "openai-gpt-5-6-sol-max-codex-20260813",
+  "workspace": "/tmp/benchmark-real-ai-gpt-5-6-sol-max-yfcwRBas/workspace",
+  "captureDirectory": "/tmp/benchmark-real-ai-gpt-5-6-sol-max-yfcwRBas/evidence",
+  "timestamps": {
+    "startedAt": "2026-08-13T11:37:35.349029173Z",
+    "finishedAt": "2026-08-13T11:52:59.180227093Z",
+    "durationMs": 923831,
+    "timeToFirstTokenMs": null,
+    "latencyMs": null
+  },
+  "usage": {
+    "inputTokens": 1746464,
+    "cachedInputTokens": 1657472,
+    "outputTokens": 43567,
+    "reasoningOutputTokens": 8954,
+    "totalTokens": 1790031,
+    "source": "Codex CLI final turn.completed usage event in validation/openai-gpt-5-6-sol-max-codex-20260813.session.jsonl",
+    "actualCostUsd": null
+  },
+  "sessionMetadata": {
+    "threadId": "019ffae9-d752-7ce0-9aa1-306dfc5c95b2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "max",
+    "source": "exec",
+    "originator": "Codex Desktop",
+    "cliVersion": "0.144.4",
+    "cwd": "/tmp/benchmark-real-ai-gpt-5-6-sol-max-yfcwRBas/workspace",
+    "approvalPolicy": "never",
+    "sandboxPolicy": "danger-full-access"
+  },
+  "promptProtocol": {
+    "submittedPrompt": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+    "source": "single CLI argument",
+    "followUpPrompts": 0,
+    "repositoryContextProvided": false,
+    "notes": "The submitted benchmark prompt was exact and was sent once. Codex supplied its normal automatic base instructions and environment/plugin-catalog envelope; user configuration and repository rules were ignored, and the empty workspace contained no repository files."
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "command": "codex --model gpt-5.6-sol -c 'model_reasoning_effort=\"max\"' --sandbox danger-full-access --ask-for-approval never --search --cd /tmp/benchmark-real-ai-gpt-5-6-sol-max-yfcwRBas/workspace exec --json --color never --skip-git-repo-check --ignore-user-config --ignore-rules 'I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.'",
+    "configuration": {
+      "freshWorkspace": true,
+      "ignoreUserConfig": true,
+      "ignoreRules": true,
+      "skipGitRepoCheck": true,
+      "model": "gpt-5.6-sol",
+      "reasoningLevel": "max",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": "never",
+      "webSearch": true,
+      "jsonEvents": true,
+      "promptSource": "argument",
+      "outputLastMessage": false,
+      "normalToolsEnabled": true
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "web-search",
+      "network-access",
+      "local-http-server",
+      "headless-Chrome validation",
+      "screenshot capture"
+    ]
+  },
+  "dataSource": {
+    "type": "historical-snapshot",
+    "source": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500&cosd=2016-01-01",
+    "series": "FRED SP500",
+    "snapshotThrough": "2026-08-12",
+    "rawRows": 2608,
+    "embeddedValidObservations": 2512,
+    "notes": "The run fetched FRED's SP500 CSV live, omitted missing observations, and embedded 2,512 daily closes in the standalone HTML. The published default view uses that fixed snapshot and makes no runtime market-data request."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "empty-workspace-inspection",
+        "command": "pwd && rg --files -g '!node_modules*' -g '!*.lock' | sed -n '1,160p'; ls -la && find . -maxdepth 2 -type f -print | sed -n '1,160p'",
+        "exitCode": 0,
+        "result": "The working directory was /tmp/benchmark-real-ai-gpt-5-6-sol-max-yfcwRBas/workspace and contained no files."
+      },
+      {
+        "name": "market-data-source-probes",
+        "command": "curl the Stooq, Yahoo Finance, GitHub datasets, and FRED SP500 endpoints (event-stream items 4, 5, 7, 8, and 9)",
+        "exitCode": 0,
+        "result": "Stooq returned an anti-bot page and Yahoo returned HTTP 429. The GitHub monthly dataset and FRED daily CSV responded; the run selected FRED, whose final observations reached 2026-08-12."
+      },
+      {
+        "name": "initial-headless-render",
+        "command": "google-chrome --headless=new --no-sandbox --disable-gpu --window-size=1440,1000 --screenshot=/tmp/northstar.png http://127.0.0.1:4173/",
+        "exitCode": 0,
+        "result": "Chrome wrote a 1440x1000, 351,889-byte PNG."
+      },
+      {
+        "name": "full-browser-interaction-suite",
+        "command": "NODE_PATH=/tmp/northstar-validation/node_modules node - <<'JS' ... JS (exact script and output in session-log item 28)",
+        "exitCode": 0,
+        "result": "Title Northstar — S&P 500 Forecast Lab; latest close 7,748.50; default forecast 7,922 with 7,194–8,723 range; 55 backtest windows; four chart paths; horizon/model/lookback/drift/risk/confidence controls changed the forecast to 9,493; tooltip activated; CSV export produced 254 rows; reset restored defaults; desktop and 390px mobile overflow were zero; mobile navigation opened; no console, page, or request errors."
+      },
+      {
+        "name": "offline-formula-and-data-check",
+        "command": "Open file:///tmp/benchmark-real-ai-gpt-5-6-sol-max-yfcwRBas/workspace/index.html in Puppeteer/Chrome and assert parsed-row count, endpoint, median formula, log-width formula, backtest output, overflow, and console errors (exact script and output in session-log item 32)",
+        "exitCode": 0,
+        "result": "Offline open passed with 2,512 valid and rendered observations through 2026-08-12; final close 7,748.5; median 7,921.62290227605; median delta 1.8189894035458565e-12; log-width delta 8.604228440844963e-16; 55 backtest windows; zero overflow and zero console errors."
+      },
+      {
+        "name": "benchmark-process-exit",
+        "command": "Codex exec wrapper",
+        "exitCode": 0,
+        "result": "The run completed normally and emitted a final visible response plus turn.completed usage."
+      }
+    ],
+    "resolvedFindings": [
+      "The first Puppeteer suite incorrectly expected 2,608 rendered observations; inspection showed 2,512 valid rows after missing FRED values were omitted, so the validator expectation was corrected.",
+      "A desktop tooltip position caused horizontal overflow after resizing to mobile; the benchmark model fixed the tooltip state before its final passing run.",
+      "A favicon request produced HTTP 404; the benchmark model embedded a data-URI favicon before its final passing run."
+    ],
+    "warnings": [
+      "Stooq and Yahoo were unavailable during collection; the run selected the accessible FRED source.",
+      "Harness stderr says it was reading additional input from stdin, but no stdin text or follow-up instruction was sent.",
+      "Harness stderr contains one non-fatal file-watcher warning after completion."
+    ]
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "artifact-source-and-display-bytes",
+        "command": "cmp -s /tmp/benchmark-real-ai-gpt-5-6-sol-max-yfcwRBas/workspace/index.html runs/original/openai-gpt-5-6-sol-max-codex-20260813.html && cmp -s runs/original/openai-gpt-5-6-sol-max-codex-20260813.html runs/rendered/openai-gpt-5-6-sol-max-codex-20260813.html",
+        "exitCode": 0,
+        "result": "The source, original, and displayed HTML are byte-identical; no rendering repair was required."
+      },
+      {
+        "name": "independent-dashboard-controls",
+        "command": "In-app browser opened the rendered artifact and exercised 1Y horizon, Trend model, 95% interval, 1-year training window, and reset controls.",
+        "exitCode": 0,
+        "result": "1Y changed the base to 8,465; Trend changed it to 9,247; 95% expanded the range to 6,887–12,416 with 100% rolling coverage; a 1-year lookback changed the base to 9,030 and sample count to 252; reset restored horizon 63, Damped, 80%, lookback 756, drift 0, risk 1, and base 7,922."
+      },
+      {
+        "name": "independent-responsive-and-console-check",
+        "command": "In-app browser set a 390x844 viewport, inspected rendered state, opened the mobile navigation, and queried error-level browser logs.",
+        "exitCode": 0,
+        "result": "Title Northstar — S&P 500 Forecast Lab; base 7,922; four chart paths; viewport 390px; document scroll width 375px; mobile menu display grid; sidebar and overlay opened with aria-expanded=true; browser error log was empty."
+      },
+      {
+        "name": "repository-validation-and-tests",
+        "command": "npm run validate && npm test",
+        "exitCode": 0,
+        "result": "After rebasing onto current main, manifest validation passed for 23 runs. All 5 unit tests passed. The Playwright suite reported 5 passed and 1 intentional project skip."
+      },
+      {
+        "name": "new-table-row-open",
+        "command": "Serve the populated repository at http://127.0.0.1:4327/, find the single tr.run-row containing the exact rendered-artifact href and Max text, locate its single gpt-5.6-sol model link, click it, and inspect the opened page in the in-app browser.",
+        "exitCode": 0,
+        "result": "Exactly one row and one model link matched. The link opened /runs/rendered/openai-gpt-5-6-sol-max-codex-20260813.html with title Northstar — S&P 500 Forecast Lab, latest close 7,748.50, base 7,922, range 7,194–8,723, 55 test windows, four chart paths, the 2,512-observation FRED snapshot disclosure, and no error-level browser logs."
+      }
+    ],
+    "result": "The imported byte-identical dashboard independently opened and responded correctly in the browser, all repository checks passed, and the single new table row opened the standalone artifact directly."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-6-sol-max-codex-20260813.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-6-sol-max-codex-20260813.html",
+    "responseRecord": "responses/openai-gpt-5-6-sol-max-codex-20260813.md",
+    "validationEvidence": "validation/openai-gpt-5-6-sol-max-codex-20260813.json",
+    "sessionLog": "validation/openai-gpt-5-6-sol-max-codex-20260813.session.jsonl",
+    "stderrLog": "validation/openai-gpt-5-6-sol-max-codex-20260813.stderr.txt",
+    "benchmarkReadme": "validation/openai-gpt-5-6-sol-max-codex-20260813.benchmark-readme.md",
+    "screenshots": [
+      "validation/openai-gpt-5-6-sol-max-codex-20260813-desktop.png",
+      "validation/openai-gpt-5-6-sol-max-codex-20260813-mobile.png"
+    ],
+    "sha256": {
+      "originalHtml": "04af24a3378956e78dfdbc2e689eb565c274c8ce70b73ce2f59634910ada8b84",
+      "displayHtml": "04af24a3378956e78dfdbc2e689eb565c274c8ce70b73ce2f59634910ada8b84",
+      "responseRecord": "fe542866c0314e392f4b278313511f6345f8dfaa33b6fa6ecc495a7ed4bfa6c5",
+      "sessionLog": "ce90cf02520a41aac361465ee4b1fc29fb5feb1493df1ca23c9e480899159600",
+      "stderrLog": "d03561653c9794eb79d03ae95db5848badd5565005e6227ca32c8d04ad678a9f",
+      "benchmarkReadme": "275e960cdba0f5b03e7d9ef2b3ea7fa87aad963d4e14cc94c63c17893c78e964",
+      "desktopScreenshot": "751df53fcc66d376f893cf4537802928161ff49a65421c07a5aed6ef2bcf0f09",
+      "mobileScreenshot": "0757715aa223056f0e8910844ec5e230eb84ec4d8f8b79b22976ef80b023b4a0"
+    }
+  },
+  "unresolvedFailures": []
+}
