@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive S&P 500 scenario forecast dashboard using historical return resampling.">
+  <title>Northstar — S&P 500 Scenario Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="openai-gpt-5-6-sol-high-codex-20260813.styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Northstar home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>NORTHSTAR</span>
+      </a>
+      <div class="topbar-center">
+        <span class="eyebrow">MARKET LAB</span>
+        <span class="divider"></span>
+        <span>S&amp;P 500 / SPX</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-button" id="methodButton" aria-label="Open methodology" title="Methodology">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+        </button>
+        <button class="button button-secondary" id="exportButton">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"></path></svg>
+          Export
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <div class="status-line"><span class="pulse"></span><span>MODEL READY</span><span>•</span><span id="asOfLabel">AS OF —</span></div>
+          <h1>Where might the market<br><em>go next?</em></h1>
+          <p>Explore a range of plausible S&amp;P 500 paths—not a single-point promise. Tune the assumptions, inspect the uncertainty, and stress-test the story.</p>
+        </div>
+        <div class="hero-stamp" aria-hidden="true">
+          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="55"></circle><path d="M60 19v82M19 60h82"></path><path class="arrow" d="M35 77l18-19 13 10 21-28"></path></svg>
+          <span>SCENARIO<br>ENGINE 01</span>
+        </div>
+      </section>
+
+      <section class="kpi-grid" aria-label="Market summary">
+        <article class="kpi-card">
+          <span class="kpi-label">LAST CLOSE</span>
+          <strong id="lastClose">—</strong>
+          <small id="lastDate">—</small>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">TRAILING 12M</span>
+          <strong id="trailingReturn">—</strong>
+          <small>Price return</small>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">REALIZED VOL.</span>
+          <strong id="realizedVol">—</strong>
+          <small>Annualized · selected window</small>
+        </article>
+        <article class="kpi-card accent-card">
+          <span class="kpi-label">BASE DRIFT</span>
+          <strong id="baseDrift">—</strong>
+          <small>Annualized geometric trend</small>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <div class="chart-column">
+          <div class="panel chart-panel">
+            <div class="panel-head">
+              <div>
+                <span class="section-tag">01 / PATH EXPLORER</span>
+                <h2>History meets possibility</h2>
+              </div>
+              <div class="legend" aria-label="Chart legend">
+                <span><i class="legend-history"></i>History</span>
+                <span><i class="legend-forecast"></i>Median path</span>
+                <span><i class="legend-band"></i><b id="legendInterval">80%</b> range</span>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="forecastChart" role="img" aria-label="Historical S&P 500 prices and simulated forecast range"></canvas>
+              <div class="chart-tooltip" id="chartTooltip" hidden></div>
+            </div>
+            <div class="chart-foot">
+              <span><i class="history-line"></i> OBSERVED</span>
+              <span class="forecast-zone"><i></i> FORECAST ZONE</span>
+            </div>
+          </div>
+
+          <div class="panel signal-panel">
+            <div class="panel-head compact">
+              <div>
+                <span class="section-tag">02 / RANGE READOUT</span>
+                <h2>What the model is saying</h2>
+              </div>
+              <span class="horizon-pill" id="horizonPill">12 MONTH VIEW</span>
+            </div>
+            <div class="signal-grid">
+              <div class="signal-main">
+                <span>MEDIAN END LEVEL</span>
+                <strong id="medianEnd">—</strong>
+                <small id="medianReturn">—</small>
+              </div>
+              <div class="signal-stat">
+                <span>PLAUSIBLE RANGE</span>
+                <strong id="rangeEnd">—</strong>
+                <small id="rangeCaption">80% simulated interval</small>
+              </div>
+              <div class="signal-stat">
+                <span>ABOVE TODAY</span>
+                <strong id="probAbove">—</strong>
+                <small>Share of simulated paths</small>
+              </div>
+              <div class="signal-stat">
+                <span>HIST. MAX DRAWDOWN</span>
+                <strong id="maxDrawdown">—</strong>
+                <small>Selected lookback</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel validation-panel">
+            <div class="panel-head compact">
+              <div>
+                <span class="section-tag">03 / REALITY CHECK</span>
+                <h2>Rolling backtest</h2>
+              </div>
+              <span class="validation-badge">OUT-OF-SAMPLE</span>
+            </div>
+            <p class="validation-copy">One-year forecasts are rebuilt using only data available at each past starting point.</p>
+            <div class="validation-grid">
+              <div><span>MEDIAN ERROR</span><strong id="backtestError">—</strong><small>Mean absolute % error</small></div>
+              <div><span>DIRECTION HIT RATE</span><strong id="directionRate">—</strong><small>Up vs. down</small></div>
+              <div><span>INTERVAL COVERAGE</span><strong id="coverageRate">—</strong><small id="coverageCaption">Inside 80% range</small></div>
+              <div><span>TEST WINDOWS</span><strong id="testWindows">—</strong><small>Rolling 12-month periods</small></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="control-panel panel" aria-label="Forecast controls">
+          <div class="control-heading">
+            <div>
+              <span class="section-tag">MODEL CONTROLS</span>
+              <h2>Shape the scenario</h2>
+            </div>
+            <button class="text-button" id="resetButton">Reset</button>
+          </div>
+
+          <div class="control-group">
+            <label for="horizon">Forecast horizon <output id="horizonOutput">12 mo</output></label>
+            <input type="range" id="horizon" min="3" max="36" value="12" step="3">
+            <div class="range-labels"><span>3 mo</span><span>36 mo</span></div>
+          </div>
+
+          <div class="control-group">
+            <label>History window</label>
+            <div class="segmented" id="lookbackGroup">
+              <button data-value="36">3Y</button>
+              <button data-value="60" class="active">5Y</button>
+              <button data-value="120">10Y</button>
+            </div>
+            <small>Sets the returns used to estimate drift and risk.</small>
+          </div>
+
+          <div class="control-group">
+            <label for="driftAdjustment">Annual drift adjustment <output id="driftOutput">+0.0%</output></label>
+            <input type="range" id="driftAdjustment" min="-12" max="12" value="0" step="0.5">
+            <div class="range-labels"><span>−12%</span><span>+12%</span></div>
+          </div>
+
+          <div class="control-group">
+            <label>Quick scenarios</label>
+            <div class="scenario-buttons">
+              <button data-drift="-8"><span class="scenario-dot bear"></span>Bear</button>
+              <button data-drift="0" class="active"><span class="scenario-dot base"></span>Base</button>
+              <button data-drift="8"><span class="scenario-dot bull"></span>Bull</button>
+            </div>
+          </div>
+
+          <div class="control-group split-controls">
+            <div>
+              <label for="confidence">Interval</label>
+              <select id="confidence">
+                <option value="0.50">50%</option>
+                <option value="0.80" selected>80%</option>
+                <option value="0.95">95%</option>
+              </select>
+            </div>
+            <div>
+              <label for="simulations">Simulations</label>
+              <select id="simulations">
+                <option value="1000">1,000</option>
+                <option value="3000" selected>3,000</option>
+                <option value="6000">6,000</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="button button-primary" id="runButton">
+            <span>Run forecast</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"></path></svg>
+          </button>
+
+          <div class="data-box">
+            <div>
+              <span class="data-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M7 3v4m10-4v4M6 11h3m3 0h3m3 0h1M6 15h3m3 0h3m3 0h1M6 19h3m3 0h3"></path></svg></span>
+              <div><strong id="dataTitle">FRED sample</strong><small id="dataSubtitle">121 month-end closes</small></div>
+            </div>
+            <label class="upload-label" for="csvInput">Import CSV</label>
+            <input type="file" id="csvInput" accept=".csv,text/csv" hidden>
+          </div>
+          <p class="csv-help">CSV columns: <code>date</code> and <code>close</code>. Daily data is converted to month-end observations.</p>
+
+          <div class="assumption-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3Z"></path><path d="M12 9v5m0 3h.01"></path></svg>
+            <p><strong>Use ranges, not promises.</strong> This statistical scenario is based only on historical price behavior. It excludes dividends, fees, valuation, macro conditions, and market shocks not present in the sample.</p>
+          </div>
+        </aside>
+      </section>
+
+      <footer>
+        <div><strong>NORTHSTAR / MARKET LAB</strong><span>Educational analysis only · Not investment advice</span></div>
+        <p>Source: <a href="https://fred.stlouisfed.org/series/SP500" target="_blank" rel="noopener">S&amp;P 500 via FRED</a>. Past performance does not predict future results. <a href="https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-47" target="_blank" rel="noopener">SEC guidance</a>.</p>
+      </footer>
+    </main>
+  </div>
+
+  <dialog id="methodDialog">
+    <form method="dialog">
+      <button class="dialog-close" aria-label="Close">×</button>
+      <span class="section-tag">MODEL NOTES</span>
+      <h2>How this forecast works</h2>
+      <ol>
+        <li><strong>Measure.</strong> Convert month-end closes in the selected lookback into continuously compounded (log) returns.</li>
+        <li><strong>Resample.</strong> Build thousands of paths by drawing centered historical returns with replacement, retaining the observed distribution’s asymmetry and large moves.</li>
+        <li><strong>Adjust.</strong> Add the selected scenario adjustment to the historical geometric drift. No hidden “AI prediction” is applied.</li>
+        <li><strong>Summarize.</strong> Show the median and selected percentile interval. The backtest rebuilds one-year forecasts using only earlier data.</li>
+      </ol>
+      <div class="dialog-callout">This is a price-index scenario, not a total-return forecast. It ignores dividends, taxes, fees and intramonth moves. Forecast intervals are conditional on the historical sample and can materially understate future risk.</div>
+      <button class="button button-primary dialog-done">Got it</button>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="openai-gpt-5-6-sol-high-codex-20260813.app.js"></script>
+</body>
+</html>
