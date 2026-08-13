@@ -12,7 +12,7 @@
       "max",
       "ultra"
     ],
-    "updatedAt": "2026-08-13T12:17:38Z",
+    "updatedAt": "2026-08-13T12:20:54Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -3038,7 +3038,7 @@
       },
       "reasoning": {
         "native": "ultra",
-        "normalized": "max"
+        "normalized": "ultra"
       },
       "harness": {
         "name": "Codex CLI",
@@ -3121,10 +3121,10 @@
           "runs/rendered/openai-gpt-5-6-sol-ultra-codex-20260813/styles.css"
         ],
         "sha256": {
-          "rawResponse": "28f21995039e834df1810e02db8e23143d9b74d0dac4bd2b7eb33160906cbb75",
+          "rawResponse": "6b2907be2abe2d4936c91f0886d41cec16f8eb3f4ffbf3b479c67ec054998345",
           "originalHtml": "1d744c232efd6dbde4941286513860ae44f969ab5d90618282672caa0c048615",
           "displayHtml": "1d744c232efd6dbde4941286513860ae44f969ab5d90618282672caa0c048615",
-          "validationEvidence": "3a437e30ac63f52ea8f44edaefe222dba035a919744d7d89c05c1e23ca14ec2b",
+          "validationEvidence": "d36ec71b47b010d6b088dbc7090e526d7d20a9e34203d31550aab502eebe83d0",
           "eventStream": "220a044377f6feffa1405fca072f060a0dbe1790429f8a9dd43b8fce3f5264a5",
           "stderrLog": "1654403e9bad82470968c40b633e8e9dd77df8714e528413130b9fffffc0c355",
           "visibleResponse": "2428f675ee3d794c2db1dfe2e3d08000cfe947a9124bdd89dae3f912d17ac5a1",
@@ -3282,7 +3282,7 @@
           "rawResponse": "f887013fc441325e1d61a71c0af3ddb30fe092bf47ae6061991d2a031b37bf41",
           "originalHtml": "47991e55d907bc254e9f396d9828ec8d6579ee0c1f0174bb2f3be99ca8f26a93",
           "displayHtml": "47991e55d907bc254e9f396d9828ec8d6579ee0c1f0174bb2f3be99ca8f26a93",
-          "validationEvidence": "089e51b9a688df0ed489953ea30f9e7b5cc67ae2e04e5f8aa6bf77a784bb3894",
+          "validationEvidence": "d8e58cbf2a1bf1d2470b4548588dcd33953a0915f096daf88a4cdea0a6b6ea79",
           "eventStream": "ad7ea52d5ded26ff11431d9bc44dfe6fcdf74fcfa79747ec246d0f5e17006f51",
           "stderrLog": "6aba72c3a0f028fdabaedb63627112eb79efc44fee8f5fa8face4520dc11f405"
         },
@@ -3322,12 +3322,12 @@
           {
             "name": "repository-checks",
             "passed": true,
-            "details": "After rebasing onto current main, npm run validate checked 25 runs and npm test passed all 5 unit tests and 5 browser tests, with one intentionally skipped browser-project duplicate, on the committed default local-server configuration."
+            "details": "After rebasing onto current main, npm run validate checked 26 runs and npm test passed all 5 unit tests and 5 browser tests, with one intentionally skipped browser-project duplicate, on the committed default local-server configuration."
           },
           {
             "name": "table-row-target",
             "passed": true,
-            "details": "After the rebase, the in-app browser found exactly one matching row and model link among 25 rows, opened the rendered HTML with title S&P 500 Forecast Lab, heading Make the uncertainty visible., six SVG elements, the synthetic disclosure, and no browser errors."
+            "details": "After the rebase, the in-app browser found exactly one matching row and model link among 26 rows, opened the rendered HTML with title S&P 500 Forecast Lab, heading Make the uncertainty visible., six SVG elements, the synthetic disclosure, and no browser errors."
           }
         ]
       },

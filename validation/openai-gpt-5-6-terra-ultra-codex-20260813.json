@@ -143,25 +143,25 @@
         "name": "manifest-validate",
         "command": "npm run validate",
         "exitCode": 0,
-        "result": "Manifest valid: 25 runs checked after rebasing onto the current main branch."
+        "result": "Manifest valid: 26 runs checked after rebasing onto the current main branch."
       },
       {
         "name": "full-test-suite",
         "command": "npm test",
         "exitCode": 0,
-        "result": "The validator passed for 25 runs, all 5 unit tests passed, and all 5 browser tests passed. One browser project duplicate was intentionally skipped. The browser suite includes the Ultra facet, the Terra Ultra row, the Terra Max-then-Ultra reasoning order, and the plot-label assertions."
+        "result": "The validator passed for 26 runs, all 5 unit tests passed, and all 5 browser tests passed. One browser project duplicate was intentionally skipped. The browser suite includes the Ultra facet, the Terra Ultra row, the Terra Max-then-Ultra reasoning order, and the plot-label assertions."
       },
       {
         "name": "new-row-opens-standalone-dashboard",
-        "command": "After the rebase, serve the repository at http://127.0.0.1:4893/, locate the unique tr.run-row whose data-artifact is runs/rendered/openai-gpt-5-6-terra-ultra-codex-20260813.html, then click its unique model link in the in-app browser.",
+        "command": "After the rebase, serve the repository at http://127.0.0.1:4894/, locate the unique tr.run-row whose data-artifact is runs/rendered/openai-gpt-5-6-terra-ultra-codex-20260813.html, then click its unique model link in the in-app browser.",
         "exitCode": 0,
-        "result": "The rebased showcase reported 25 rows. The target row and model link each had count 1. Clicking opened http://127.0.0.1:4893/runs/rendered/openai-gpt-5-6-terra-ultra-codex-20260813.html with title S&P 500 Forecast Lab, heading Make the uncertainty visible., six SVG elements, the Synthetic demo data disclosure, and no browser errors."
+        "result": "The rebased showcase reported 26 rows. The target row and model link each had count 1. Clicking opened http://127.0.0.1:4894/runs/rendered/openai-gpt-5-6-terra-ultra-codex-20260813.html with title S&P 500 Forecast Lab, heading Make the uncertainty visible., six SVG elements, the Synthetic demo data disclosure, and no browser errors."
       }
     ],
     "warnings": [
       "A first isolated browser-test attempt could not bind port 4331 because another concurrent local workspace was using it. It did not execute browser tests; a recovery rerun on port 4891 passed with committed configuration restored, and the later final npm test on the committed default port also passed."
     ],
-    "result": "After rebasing onto current main, repository validation and the complete test suite pass for 25 runs, and the new table row opens the standalone dashboard directly from the showcase."
+    "result": "After rebasing onto current main, repository validation and the complete test suite pass for 26 runs, and the new table row opens the standalone dashboard directly from the showcase."
   },
   "artifacts": {
     "originalHtml": "runs/original/openai-gpt-5-6-terra-ultra-codex-20260813.html",
