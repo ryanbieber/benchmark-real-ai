@@ -11,7 +11,7 @@
       "xhigh",
       "max"
     ],
-    "updatedAt": "2026-08-13T11:47:34Z",
+    "updatedAt": "2026-08-13T11:57:07Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -2594,6 +2594,146 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.6-sol at high reasoning in a fresh temporary workspace, fetched and embedded a FRED S&P 500 month-end snapshot, built an interactive Monte Carlo scenario dashboard with rolling backtests and CSV import/export, and required only a documented collision-safe support-asset path repair for publication."
+    },
+    {
+      "id": "openai-gpt-5-6-terra-max-codex-20260813",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-5.6-terra",
+        "name": "gpt-5.6-terra",
+        "version": "gpt-5.6-terra"
+      },
+      "reasoning": {
+        "native": "max",
+        "normalized": "max"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.144.4",
+        "interface": "exec",
+        "configuration": {
+          "cd": "/tmp/benchmark-real-ai-gpt-5-6-terra-max-vlJktU",
+          "ignoreUserConfig": true,
+          "ignoreRules": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-5.6-terra",
+          "reasoningLevel": "max",
+          "reasoningLevelConfigKey": "model_reasoning_effort",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": null,
+          "webSearch": null,
+          "jsonEvents": true,
+          "outputLastMessage": true,
+          "normalToolsEnabled": true
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "network-access",
+          "local-http-server",
+          "headless-Chrome validation",
+          "Chrome DevTools Protocol interaction",
+          "screenshot capture"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-08-13T11:29:29.595Z",
+        "finishedAt": "2026-08-13T11:41:20.821Z",
+        "durationSeconds": 711.226
+      },
+      "run": {
+        "threadId": "019ffae2-7b31-7272-885f-0e87844d3831",
+        "completedAt": "2026-08-13T11:41:20.821Z",
+        "timeToFirstTokenMs": null,
+        "latencyMs": null
+      },
+      "usage": {
+        "inputTokens": 1256837,
+        "cachedInputTokens": 1122816,
+        "outputTokens": 33389,
+        "reasoningOutputTokens": 11425,
+        "totalTokens": 1290226,
+        "source": "Final cumulative Codex token_count event at 2026-08-13T11:41:20.816Z, transcribed in validation/openai-gpt-5-6-terra-max-codex-20260813.json; totalTokens is inputTokens plus outputTokens.",
+        "actualCostUsd": null
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "The final standalone HTML embeds 761 FRED-format daily S&P 500 observations dated 2023-08-01 through 2026-08-12. It loads the bundled snapshot by default and permits CSV replacement, so its default display does not make a runtime network request."
+      },
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-5-6-terra-max-codex-20260813.md",
+        "originalHtml": "runs/original/openai-gpt-5-6-terra-max-codex-20260813.html",
+        "displayHtml": "runs/rendered/openai-gpt-5-6-terra-max-codex-20260813.html",
+        "validationEvidence": "validation/openai-gpt-5-6-terra-max-codex-20260813.json",
+        "visibleResponse": "validation/openai-gpt-5-6-terra-max-codex-20260813.final-response.md",
+        "desktopScreenshot": "validation/openai-gpt-5-6-terra-max-codex-20260813-dashboard.png",
+        "mobileScreenshot": "validation/openai-gpt-5-6-terra-max-codex-20260813-mobile.png",
+        "sha256": {
+          "rawResponse": "fd729bef8fbdcf852e8d364d233150ca907af22a78c26e3a0f72fd832e2fb370",
+          "originalHtml": "602aa6ec72bc7a3a8c47c8c7554d2124974adcfeec0423387f4dbd835ad507e6",
+          "displayHtml": "602aa6ec72bc7a3a8c47c8c7554d2124974adcfeec0423387f4dbd835ad507e6",
+          "validationEvidence": "9e8aed525288121001f0aa4ad4d16a6eb2493519f12ab39d955f37f0d2f44f71",
+          "visibleResponse": "bce3d98affeb6b60f74c3d1095b4857b33d26c0781fb50413a92832b11c91c57",
+          "desktopScreenshot": "e885b186accbb5fca5e541729db6868ff56b8e4c8432e8342f47f1898387a379",
+          "mobileScreenshot": "d8af364cb243572ad3fdb00d6a356ea579528ade968a6b2b09d975543c6670cc"
+        },
+        "repaired": false,
+        "repairLog": null
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 5,
+          "forecastingMethodology": 3,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 5
+        },
+        "total": 23,
+        "reviewer": "Codex",
+        "notes": "The original single-file artifact fully delivers an interactive and validated dashboard: adjustable baseline model, lookback, horizon, and interval controls; hover inspection; rolling-origin backtests; checkpoint table; CSV import/reset; a bundled historical snapshot; and desktop/mobile Chrome validation. Its simple bounded drift, EWMA/trend, lognormal interval, and rolling-origin diagnostics are transparent educational baselines rather than a calibrated or dependable market forecast. The dashboard explicitly warns that it is not investment advice and that model probabilities do not predict market outcomes. Final syntax, browser interactions, screenshots, responsive bounds, and standalone delivery all passed without a display repair."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-inline-javascript-syntax",
+            "passed": true,
+            "details": "The benchmark run extracted the final inline script and reported `JavaScript syntax: OK`."
+          },
+          {
+            "name": "benchmark-headless-chrome-render",
+            "passed": true,
+            "details": "Local HTTP delivery and headless Chrome produced populated dashboard state with 761 rows, forecast metrics, backtest metrics, and a nonzero canvas."
+          },
+          {
+            "name": "benchmark-interactive-controls",
+            "passed": true,
+            "details": "The final Chrome DevTools Protocol interaction test changed control state, imported/reset CSV data, observed tooltips and checkpoint rows, and returned passed=true with no failures."
+          },
+          {
+            "name": "benchmark-responsive-render",
+            "passed": true,
+            "details": "Desktop and mobile screenshots were captured; the 390px viewport reported no horizontal overflow."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed HTML SHA-256 hashes match exactly; no rendering repair was required."
+          },
+          {
+            "name": "repository-validate-and-test",
+            "passed": true,
+            "details": "Initial import validation passed for 21 runs; after rebasing onto current main, final validation passed for 22. The isolated local-server npm test rerun against the final rebased checkout passed all 5 unit and 5 browser tests, with 1 intentional desktop-project skip; the temporary test-port configuration was restored."
+          },
+          {
+            "name": "table-row-target",
+            "passed": true,
+            "details": "The in-app browser found exactly one target run row and model link, then opened the displayed standalone HTML with populated dashboard state and no error logs."
+          }
+        ]
+      },
+      "summary": "Codex CLI ran gpt-5.6-terra at max reasoning in an empty temporary workspace, fetched and embedded a FRED S&P 500 historical snapshot, built a dependency-free interactive forecast dashboard with rolling backtests and CSV import, and completed Chrome desktop/mobile interaction validation without a rendering repair."
     }
   ]
 }

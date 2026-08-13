@@ -1,0 +1,203 @@
+{
+  "runId": "openai-gpt-5-6-terra-max-codex-20260813",
+  "prompt": "I want to forecast the sp500, show me how to do it in an interactive dashboard in html. Do not stop until you have a working and validated dashboard.",
+  "collection": {
+    "freshWorkspace": "/tmp/benchmark-real-ai-gpt-5-6-terra-max-vlJktU",
+    "userPromptCount": 1,
+    "followUpUserInstructions": 0,
+    "repositoryContextProvided": false,
+    "sessionLogPublished": false,
+    "sessionLogPublicationReason": "The raw Codex JSONL contains hidden harness context and encrypted reasoning. This public record retains only the visible final response, tool/command summaries, and final usage event required by AGENTS.md."
+  },
+  "timestamps": {
+    "startedAt": "2026-08-13T11:29:29.595Z",
+    "finishedAt": "2026-08-13T11:41:20.821Z",
+    "durationMs": 711226,
+    "durationSeconds": 711.226,
+    "timeToFirstTokenMs": null,
+    "latencyMs": null,
+    "source": "startedAt was printed immediately before the clean Codex invocation. finishedAt is the clean session's task_complete event timestamp. Codex did not emit time-to-first-token or latency fields."
+  },
+  "usage": {
+    "inputTokens": 1256837,
+    "cachedInputTokens": 1122816,
+    "outputTokens": 33389,
+    "reasoningOutputTokens": 11425,
+    "totalTokens": 1290226,
+    "actualCostUsd": null,
+    "source": "Final cumulative Codex token_count event at 2026-08-13T11:41:20.816Z in the clean session. The raw session is not published because it contains hidden context and encrypted reasoning; these final event values are transcribed here. totalTokens equals inputTokens plus outputTokens, while cached input and reasoning output are subsets."
+  },
+  "harness": {
+    "name": "Codex CLI",
+    "version": "0.144.4",
+    "interface": "exec",
+    "command": "codex exec --json --ignore-user-config --ignore-rules --skip-git-repo-check -C /tmp/benchmark-real-ai-gpt-5-6-terra-max-vlJktU --sandbox danger-full-access --model gpt-5.6-terra -c model_reasoning_effort=\"max\" --output-last-message /tmp/benchmark-real-ai-record-gpt-5-6-terra-max-emSIQ3/final-response.md [exact benchmark prompt passed as argv]",
+    "configuration": {
+      "cd": "/tmp/benchmark-real-ai-gpt-5-6-terra-max-vlJktU",
+      "ignoreUserConfig": true,
+      "ignoreRules": true,
+      "skipGitRepoCheck": true,
+      "model": "gpt-5.6-terra",
+      "reasoningLevel": "max",
+      "reasoningLevelConfigKey": "model_reasoning_effort",
+      "sandbox": "danger-full-access",
+      "approvalPolicy": null,
+      "webSearch": null,
+      "jsonEvents": true,
+      "outputLastMessage": "/tmp/benchmark-real-ai-record-gpt-5-6-terra-max-emSIQ3/final-response.md",
+      "normalToolsEnabled": true
+    },
+    "capabilities": [
+      "shell",
+      "file-editing",
+      "network-access",
+      "local-http-server",
+      "headless-Chrome validation",
+      "Chrome DevTools Protocol interaction",
+      "screenshot capture"
+    ]
+  },
+  "dataSource": {
+    "type": "historical-snapshot",
+    "source": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500",
+    "notes": "The benchmark run successfully fetched FRED's SP500 CSV, and the final single-file HTML embeds 761 `observation_date,SP500` rows dated 2023-08-01 through 2026-08-12. On load the dashboard calls parseCsv(BUILT_IN_DATA) and labels the result `Bundled S&P 500 close snapshot`; the default standalone display makes no runtime network request. CSV import can replace the snapshot."
+  },
+  "benchmarkRunValidation": {
+    "commands": [
+      {
+        "name": "fresh-workspace",
+        "command": "pwd && rg --files -g '!node_modules' -g '!*.lock' | sed -n '1,160p'",
+        "exitCode": 0,
+        "result": "Reported /tmp/benchmark-real-ai-gpt-5-6-terra-max-vlJktU with no files."
+      },
+      {
+        "name": "data-source-probes",
+        "command": "curl probes to Stooq, FRED, and Yahoo Finance endpoints",
+        "exitCode": 0,
+        "result": "Stooq returned an anti-bot page, Yahoo Finance returned HTTP 429, and FRED returned HTTP 200 CSV data. The final artifact embeds the FRED-derived snapshot."
+      },
+      {
+        "name": "inline-javascript-syntax",
+        "command": "Extract the inline script from index.html and run node --check",
+        "exitCode": 0,
+        "result": "The benchmark run reported `JavaScript syntax: OK` for the final single-file dashboard."
+      },
+      {
+        "name": "headless-chrome-initial-render",
+        "command": "python3 -m http.server 4173 --bind 127.0.0.1; google-chrome --headless=new --no-sandbox --disable-gpu --virtual-time-budget=2500 --dump-dom http://127.0.0.1:4173/",
+        "exitCode": 0,
+        "result": "Chrome served and rendered the dashboard locally; the final CDP state reported 761 data points, 21-day blended forecast expected close 7912.37, interval [7414.51, 8443.65], 41 backtest windows, and a 692x341 canvas."
+      },
+      {
+        "name": "browser-interaction-smoke-test",
+        "command": "Launch Chrome with --remote-debugging-port=9222 and use Chrome DevTools Protocol to change model/horizon/interval, inspect tooltip and checkpoints, import/reset a CSV, and inspect backtest results",
+        "exitCode": 0,
+        "result": "Final rerun returned `passed: true` with 761 initial rows, 17 random-walk backtest windows, 96 imported rows, 27 momentum backtest windows, a visible tooltip, three checkpoint rows, and no failures."
+      },
+      {
+        "name": "desktop-screenshot",
+        "command": "google-chrome --headless=new --no-sandbox --disable-gpu --hide-scrollbars --screenshot=/tmp/sp500-forecast-dashboard.png --window-size=1440,1280 --virtual-time-budget=1800 http://127.0.0.1:4173/",
+        "exitCode": 0,
+        "result": "Created a non-empty 1440x1280 PNG (293928 bytes)."
+      },
+      {
+        "name": "mobile-render-and-layout",
+        "command": "google-chrome --headless=new --no-sandbox --disable-gpu --hide-scrollbars --screenshot=/tmp/sp500-forecast-mobile.png --window-size=390,1100 --virtual-time-budget=1800 http://127.0.0.1:4173/; inspect viewport/bounding boxes through Chrome DevTools Protocol",
+        "exitCode": 0,
+        "result": "Created a non-empty 390x1100 PNG (100554 bytes). The final viewport check reported innerWidth 390, scrollWidth 390, bodyWidth 390, and all inspected topbar/control/metrics bounds at or within right edge 374."
+      }
+    ],
+    "warnings": [
+      "During development, two intermediate Chrome DevTools Protocol assertions failed: one assumed a directional result for the random-walk baseline and one detected a projection/validation rendering assertion issue. The model repaired its own artifact before completion and the final complete interaction rerun passed with no failures.",
+      "The local HTTP server logged expected favicon 404s while Chrome rendered the standalone dashboard; the HTML itself returned HTTP 200."
+    ],
+    "observedOutputs": {
+      "defaultDashboard": {
+        "sourceLabel": "Bundled S&P 500 close snapshot",
+        "dataPoints": 761,
+        "lastClose": 7749,
+        "projectedClose": 7912,
+        "horizonTradingDays": 21,
+        "interval90": [7415, 8444],
+        "backtestWindows": 41,
+        "backtestCoveragePercent": 92.7
+      },
+      "interactionValidation": {
+        "randomWalkHorizon": 63,
+        "randomWalkBacktestWindows": 17,
+        "importedCsvRows": 96,
+        "momentumHorizon": 42,
+        "momentumBacktestWindows": 27,
+        "tooltipVisible": true,
+        "checkpointRows": 3
+      }
+    }
+  },
+  "importVerification": {
+    "commands": [
+      {
+        "name": "artifact-bytes",
+        "command": "cmp -s source/index.html runs/original/openai-gpt-5-6-terra-max-codex-20260813.html && cmp -s runs/original/openai-gpt-5-6-terra-max-codex-20260813.html runs/rendered/openai-gpt-5-6-terra-max-codex-20260813.html",
+        "exitCode": 0,
+        "result": "The source HTML, original artifact, and displayed artifact are byte-identical."
+      },
+      {
+        "name": "npm-install",
+        "command": "npm install",
+        "exitCode": 0,
+        "result": "Added 3 packages, audited 4 packages, and reported 0 vulnerabilities."
+      },
+      {
+        "name": "manifest-validate",
+        "command": "npm run validate",
+        "exitCode": 0,
+        "result": "Manifest valid: 21 runs checked."
+      },
+      {
+        "name": "repository-test-initial-port-conflict",
+        "command": "npm test",
+        "exitCode": 1,
+        "result": "Playwright reused an unrelated Python server from another workspace that was already listening on 127.0.0.1:4321. That stale site served 20 rows while this manifest contained 21, so the first landing-page count assertion failed. The failure did not exercise this checkout."
+      },
+      {
+        "name": "repository-test-isolated-server",
+        "command": "Temporarily serve this checkout on 127.0.0.1:4322 through a restored local-only Playwright configuration override, then run npm test",
+        "exitCode": 0,
+        "result": "The same npm test command passed: 5 unit tests and 5 browser tests passed; 1 desktop-project mobile-only test was intentionally skipped. The Playwright configuration was restored before recording the result."
+      },
+      {
+        "name": "post-rebase-repository-validation-and-test",
+        "command": "After rebasing this benchmark commit onto origin/main, run npm run validate and the isolated-server npm test rerun",
+        "exitCode": 0,
+        "result": "The final rebased manifest validated 22 runs. npm test then passed all 5 unit and 5 browser tests, with 1 intentional desktop-project mobile-only test skipped. The temporary Playwright configuration override was restored."
+      },
+      {
+        "name": "new-row-opens-standalone-dashboard",
+        "command": "Serve this repository on 127.0.0.1:4322, locate tr.run-row containing 1,290,226 tokens in the in-app browser, click its unique gpt-5.6-terra historical-snapshot model link, and inspect the navigated page",
+        "exitCode": 0,
+        "result": "The target row and model link each had count 1. Clicking navigated to runs/rendered/openai-gpt-5-6-terra-max-codex-20260813.html, whose title was S&P 500 Forecast Lab. The page displayed the 761-row bundled snapshot, populated forecast/backtest/checkpoint values, and no error logs."
+      }
+    ],
+    "warnings": [
+      "The default Playwright configuration uses reuseExistingServer on port 4321. An unrelated live server from another workspace occupied that port during the first npm test attempt. The isolated rerun served this exact checkout and passed; no repository test or application source changes were retained."
+    ],
+    "result": "Artifact bytes match, initial import and final post-rebase manifest validation passed, the isolated full repository test suite passed on the final rebased tree, and the new table row opened the standalone dashboard directly."
+  },
+  "artifacts": {
+    "originalHtml": "runs/original/openai-gpt-5-6-terra-max-codex-20260813.html",
+    "displayHtml": "runs/rendered/openai-gpt-5-6-terra-max-codex-20260813.html",
+    "visibleResponse": "validation/openai-gpt-5-6-terra-max-codex-20260813.final-response.md",
+    "responseRecord": "responses/openai-gpt-5-6-terra-max-codex-20260813.md",
+    "desktopScreenshot": "validation/openai-gpt-5-6-terra-max-codex-20260813-dashboard.png",
+    "mobileScreenshot": "validation/openai-gpt-5-6-terra-max-codex-20260813-mobile.png",
+    "sha256": {
+      "responseRecord": "fd729bef8fbdcf852e8d364d233150ca907af22a78c26e3a0f72fd832e2fb370",
+      "originalHtml": "602aa6ec72bc7a3a8c47c8c7554d2124974adcfeec0423387f4dbd835ad507e6",
+      "displayHtml": "602aa6ec72bc7a3a8c47c8c7554d2124974adcfeec0423387f4dbd835ad507e6",
+      "visibleResponse": "bce3d98affeb6b60f74c3d1095b4857b33d26c0781fb50413a92832b11c91c57",
+      "desktopScreenshot": "e885b186accbb5fca5e541729db6868ff56b8e4c8432e8342f47f1898387a379",
+      "mobileScreenshot": "d8af364cb243572ad3fdb00d6a356ea579528ade968a6b2b09d975543c6670cc"
+    }
+  },
+  "unresolvedFailures": []
+}

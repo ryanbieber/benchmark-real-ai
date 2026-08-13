@@ -1,0 +1,1442 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive S&P 500 forecasting and backtesting dashboard.">
+  <title>S&amp;P 500 Forecast Lab</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #eaf0ff;
+      --muted: #9aaccc;
+      --panel: rgba(18, 31, 58, .83);
+      --panel-2: #101e38;
+      --stroke: rgba(154, 177, 224, .17);
+      --blue: #6ea8ff;
+      --teal: #41d8c5;
+      --orange: #ffb86a;
+      --red: #ff808f;
+      --good: #60d49d;
+      --bad: #ff8492;
+      --shadow: 0 18px 56px rgba(0, 0, 0, .24);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(63, 95, 175, .22), transparent 28rem),
+        radial-gradient(circle at 93% 6%, rgba(36, 164, 163, .12), transparent 26rem),
+        #071120;
+    }
+    button, select, input { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1530px; margin: 0 auto; padding: 28px clamp(16px, 3vw, 48px) 44px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 25px; }
+    .brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
+    .brand-mark {
+      display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px;
+      background: linear-gradient(145deg, #78a9ff, #4b67ef); box-shadow: 0 8px 24px rgba(80, 113, 248, .35);
+    }
+    .brand-mark svg { width: 25px; height: 25px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(1.12rem, 2vw, 1.38rem); letter-spacing: -.03em; }
+    .eyebrow, .label, .metric-label, .field label, .table-caption {
+      color: var(--muted); font-size: .7rem; font-weight: 700; letter-spacing: .085em; text-transform: uppercase;
+    }
+    .eyebrow { margin-top: 3px; }
+    .source-pill {
+      display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; max-width: 50%;
+      border: 1px solid var(--stroke); border-radius: 999px; color: #b9c9e5; background: rgba(15, 30, 57, .72);
+      font-size: .77rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pulse { width: 7px; height: 7px; border-radius: 99px; background: var(--teal); box-shadow: 0 0 0 4px rgba(65, 216, 197, .12); flex: 0 0 auto; }
+    .layout { display: grid; grid-template-columns: 274px minmax(0, 1fr); gap: 20px; }
+    .controls, .card { border: 1px solid var(--stroke); background: var(--panel); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
+    .controls { border-radius: 18px; padding: 20px; align-self: start; position: sticky; top: 18px; }
+    .panel-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 22px; }
+    h2 { font-size: .98rem; letter-spacing: -.015em; }
+    .settings { display: grid; gap: 18px; }
+    .field { display: grid; gap: 8px; }
+    .field select, .field input[type="number"] {
+      width: 100%; border: 1px solid rgba(162, 187, 237, .18); border-radius: 10px; padding: 10px 11px;
+      outline: none; background: #0b1931; color: var(--ink); transition: border-color .18s, box-shadow .18s;
+    }
+    .field select:focus, .field input[type="number"]:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(110, 168, 255, .14); }
+    .range-line { display: grid; grid-template-columns: 1fr 62px; align-items: center; gap: 9px; }
+    input[type="range"] { width: 100%; accent-color: var(--blue); }
+    input[type="number"] { min-width: 0; }
+    .control-note { color: var(--muted); font-size: .74rem; line-height: 1.5; }
+    .divider { height: 1px; margin: 20px 0; background: var(--stroke); }
+    .upload {
+      position: relative; display: grid; place-items: center; min-height: 42px; border: 1px dashed rgba(136, 169, 230, .38);
+      border-radius: 10px; color: #c9d7f2; background: rgba(32, 55, 98, .24); font-size: .8rem; font-weight: 650; transition: .18s;
+    }
+    .upload:hover { border-color: var(--blue); background: rgba(53, 85, 147, .29); }
+    .upload input { position: absolute; inset: 0; cursor: pointer; opacity: 0; }
+    .reset { width: 100%; margin-top: 9px; border: 0; border-radius: 10px; padding: 9px; color: var(--muted); background: transparent; font-size: .78rem; }
+    .reset:hover { color: var(--ink); background: rgba(159, 187, 239, .08); }
+    .data-status { min-height: 34px; margin-top: 10px; color: var(--muted); font-size: .73rem; line-height: 1.45; }
+    .disclaimer { margin-top: 18px; padding: 12px; border-radius: 10px; background: rgba(255, 184, 106, .08); color: #d8c19e; font-size: .72rem; line-height: 1.5; }
+
+    .workspace { min-width: 0; display: grid; gap: 18px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .metric { min-height: 112px; padding: 17px 17px 15px; border-radius: 16px; }
+    .metric-value { margin-top: 10px; font-size: clamp(1.15rem, 2.3vw, 1.62rem); font-weight: 750; letter-spacing: -.05em; white-space: nowrap; }
+    .metric-sub { margin-top: 6px; color: var(--muted); font-size: .74rem; }
+    .positive { color: var(--good); }
+    .negative { color: var(--bad); }
+    .chart-card { position: relative; overflow: hidden; border-radius: 18px; }
+    .chart-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 20px 22px 3px; }
+    .chart-header h2 { font-size: 1.08rem; }
+    .chart-kicker { margin-top: 5px; color: var(--muted); font-size: .78rem; }
+    .chart-actions { display: flex; align-items: center; gap: 9px; }
+    .live-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 9px; border-radius: 8px; color: #b8d5ff; background: rgba(91, 151, 255, .1); font-size: .72rem; }
+    .live-chip span { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+    .chart-wrap { height: 410px; padding: 4px 12px 0; position: relative; }
+    canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+    .tooltip {
+      position: absolute; z-index: 4; display: none; min-width: 148px; padding: 10px 11px; border: 1px solid rgba(151, 182, 237, .24);
+      border-radius: 10px; color: var(--ink); background: rgba(7, 17, 32, .95); box-shadow: 0 12px 26px rgba(0,0,0,.25); pointer-events: none; font-size: .75rem; line-height: 1.5;
+    }
+    .tooltip .tip-date { color: var(--muted); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .legend { display: flex; flex-wrap: wrap; gap: 16px; padding: 7px 22px 20px; color: var(--muted); font-size: .74rem; }
+    .legend-item { display: inline-flex; align-items: center; gap: 7px; }
+    .legend-line { display: inline-block; width: 20px; height: 2px; border-radius: 99px; background: var(--blue); }
+    .legend-line.forecast { background: var(--orange); }
+    .legend-band { width: 20px; height: 8px; border-radius: 3px; background: rgba(255, 128, 143, .22); border: 1px solid rgba(255, 128, 143, .45); }
+    .lower-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; }
+    .insight, .backtest { border-radius: 16px; padding: 20px; }
+    .insight-top, .backtest-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .signal { padding: 7px 9px; border-radius: 8px; font-size: .72rem; font-weight: 750; }
+    .signal.positive { background: rgba(96, 212, 157, .11); }
+    .signal.negative { background: rgba(255, 132, 146, .11); }
+    .insight-number { margin: 18px 0 3px; font-size: 2.05rem; font-weight: 780; letter-spacing: -.06em; }
+    .insight-text { color: #b6c5df; font-size: .82rem; line-height: 1.55; }
+    .method-list { display: grid; gap: 11px; margin-top: 18px; }
+    .method-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-top: 11px; border-top: 1px solid var(--stroke); color: var(--muted); font-size: .75rem; }
+    .method-row b { color: var(--ink); font-size: .8rem; font-weight: 650; text-align: right; }
+    .validation-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; margin-top: 18px; }
+    .validation-cell { padding: 12px 10px; border: 1px solid rgba(154, 177, 224, .12); border-radius: 11px; background: rgba(8, 19, 38, .35); }
+    .validation-cell span { display: block; color: var(--muted); font-size: .65rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .validation-cell b { display: block; margin-top: 7px; font-size: 1rem; letter-spacing: -.025em; }
+    .validation-note { margin-top: 13px; color: var(--muted); font-size: .74rem; line-height: 1.5; }
+    .projection-card { border-radius: 16px; overflow: hidden; }
+    .projection-header { display: flex; justify-content: space-between; align-items: center; padding: 17px 20px; border-bottom: 1px solid var(--stroke); }
+    .projection-header p { color: var(--muted); font-size: .76rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    th, td { padding: 12px 20px; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: var(--muted); font-size: .66rem; letter-spacing: .075em; text-transform: uppercase; }
+    tr + tr td { border-top: 1px solid rgba(154, 177, 224, .1); }
+    td { color: #cbd9f0; }
+    .footer-note { color: #7f91b3; font-size: .72rem; line-height: 1.5; text-align: center; }
+
+    @media (max-width: 1120px) { .layout { grid-template-columns: 238px minmax(0, 1fr); } .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 800px) { .shell { padding-top: 18px; } .layout { grid-template-columns: 1fr; } .controls { position: static; } .settings { grid-template-columns: repeat(2, minmax(0, 1fr)); } .upload-area { grid-column: span 2; } .disclaimer { grid-column: span 2; } .lower-grid { grid-template-columns: 1fr; } .chart-wrap { height: 345px; } }
+    @media (max-width: 540px) { .topbar { align-items: flex-start; } .source-pill { max-width: 44%; } .settings { grid-template-columns: 1fr; } .upload-area, .disclaimer { grid-column: auto; } .metrics { grid-template-columns: 1fr 1fr; gap: 9px; } .metric { min-height: 100px; padding: 14px; } .metric-value { font-size: 1.14rem; } .chart-header { padding: 17px 16px 3px; } .chart-wrap { padding-inline: 4px; height: 300px; } .legend { padding-inline: 16px; gap: 11px; } .validation-grid { grid-template-columns: 1fr 1fr; } th, td { padding: 11px 12px; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17.5 9.2 11l3.7 3.5L20 6.5"/><path d="M15.5 6.5H20V11"/></svg>
+        </div>
+        <div>
+          <h1>S&amp;P 500 Forecast Lab</h1>
+          <p class="eyebrow">Transparent projection + rolling backtest</p>
+        </div>
+      </div>
+      <div class="source-pill" id="sourcePill" title="Active data source"><span class="pulse"></span><span id="sourceLabel">Loading market history…</span></div>
+    </header>
+
+    <div class="layout">
+      <aside class="controls" aria-label="Forecast settings">
+        <div class="panel-heading"><h2>Forecast settings</h2><span class="label">Live controls</span></div>
+        <div class="settings">
+          <div class="field">
+            <label for="model">Model</label>
+            <select id="model">
+              <option value="blended">Blended trend</option>
+              <option value="momentum">Momentum-aware</option>
+              <option value="randomWalk">Random-walk baseline</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="lookback">Training window</label>
+            <select id="lookback">
+              <option value="252">Past 1 year</option>
+              <option value="504" selected>Past 2 years</option>
+              <option value="756">Past 3 years</option>
+              <option value="all">All loaded history</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="horizon">Forecast horizon (trading days)</label>
+            <div class="range-line">
+              <input id="horizon" type="range" min="5" max="126" step="1" value="21">
+              <input id="horizonNumber" type="number" min="5" max="126" step="1" value="21" aria-label="Forecast horizon in trading days">
+            </div>
+          </div>
+          <div class="field">
+            <label for="confidence">Prediction interval</label>
+            <select id="confidence">
+              <option value="0.8">80%</option>
+              <option value="0.9" selected>90%</option>
+              <option value="0.95">95%</option>
+            </select>
+          </div>
+          <div class="upload-area">
+            <div class="divider"></div>
+            <p class="label">Update history</p>
+            <label class="upload" for="fileInput">Import CSV (date + close)<input id="fileInput" type="file" accept=".csv,text/csv"></label>
+            <button class="reset" id="resetData" type="button">Restore bundled snapshot</button>
+            <p class="data-status" id="dataStatus"></p>
+          </div>
+          <p class="disclaimer">For learning and scenario analysis only — this is not investment advice. Forecasts are uncertain and do not predict market outcomes.</p>
+        </div>
+      </aside>
+
+      <section class="workspace" aria-label="Forecast dashboard">
+        <section class="metrics" aria-label="Forecast summary">
+          <article class="card metric"><p class="metric-label">Last close</p><p class="metric-value" id="lastClose">—</p><p class="metric-sub" id="lastCloseDate">—</p></article>
+          <article class="card metric"><p class="metric-label">Projected close</p><p class="metric-value" id="projectedClose">—</p><p class="metric-sub" id="forecastEndDate">—</p></article>
+          <article class="card metric"><p class="metric-label">Expected return</p><p class="metric-value" id="expectedReturn">—</p><p class="metric-sub" id="returnSub">over horizon</p></article>
+          <article class="card metric"><p class="metric-label" id="rangeMetricLabel">90% range</p><p class="metric-value" id="forecastRange">—</p><p class="metric-sub" id="rangeSub">model interval</p></article>
+        </section>
+
+        <section class="card chart-card">
+          <div class="chart-header">
+            <div><h2>Price history &amp; projected path</h2><p class="chart-kicker" id="chartKicker">Calculating forecast…</p></div>
+            <div class="chart-actions"><span class="live-chip"><span></span> Hover to inspect</span></div>
+          </div>
+          <div class="chart-wrap" id="chartWrap">
+            <canvas id="forecastChart" aria-label="S&P 500 historical close and forecast chart" role="img"></canvas>
+            <div class="tooltip" id="chartTooltip" role="status" aria-live="polite"></div>
+          </div>
+          <div class="legend"><span class="legend-item"><i class="legend-line"></i>Observed close</span><span class="legend-item"><i class="legend-line forecast"></i>Expected path</span><span class="legend-item"><i class="legend-band"></i>Prediction interval</span></div>
+        </section>
+
+        <div class="lower-grid">
+          <section class="card insight">
+            <div class="insight-top"><div><p class="label">Directional signal</p><h2 id="signalTitle" style="margin-top:7px">—</h2></div><span class="signal" id="signalBadge">—</span></div>
+            <p class="insight-number" id="upProbability">—</p>
+            <p class="insight-text" id="signalCopy">Estimating model probability…</p>
+            <div class="method-list">
+              <div class="method-row"><span>Implied daily drift</span><b id="dailyDrift">—</b></div>
+              <div class="method-row"><span>Recent daily volatility</span><b id="dailyVolatility">—</b></div>
+              <div class="method-row"><span>Training observations</span><b id="trainingObservations">—</b></div>
+            </div>
+          </section>
+
+          <section class="card backtest">
+            <div class="backtest-top"><div><p class="label">Historical validation</p><h2 style="margin-top:7px">Rolling-origin backtest</h2></div><span class="label" id="backtestCount">—</span></div>
+            <div class="validation-grid">
+              <div class="validation-cell"><span>MAE</span><b id="backtestMae">—</b></div>
+              <div class="validation-cell"><span>RMSE</span><b id="backtestRmse">—</b></div>
+              <div class="validation-cell"><span>Direction</span><b id="backtestDirection">—</b></div>
+              <div class="validation-cell"><span>Coverage</span><b id="backtestCoverage">—</b></div>
+            </div>
+            <p class="validation-note" id="backtestNote">Validation uses prior market windows only; it does not guarantee future accuracy.</p>
+          </section>
+        </div>
+
+        <section class="card projection-card">
+          <div class="projection-header"><div><h2>Projection checkpoints</h2><p>Expected close and interval at selected points</p></div><span class="label" id="projectionLabel">—</span></div>
+          <table>
+            <thead><tr><th>Date</th><th>Expected close</th><th>Change</th><th id="tableRangeHeader">90% range</th></tr></thead>
+            <tbody id="projectionRows"></tbody>
+          </table>
+        </section>
+        <p class="footer-note">Method: log-return trend estimate with exponentially weighted volatility. Dates advance by trading weekdays; holidays are not removed from future labels.</p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Bundled FRED-format S&P 500 close snapshot. Replace via the CSV importer to use newer data.
+    const BUILT_IN_DATA = `observation_date,SP500
+2023-08-01,4576.73
+2023-08-02,4513.39
+2023-08-03,4501.89
+2023-08-04,4478.03
+2023-08-07,4518.44
+2023-08-08,4499.38
+2023-08-09,4467.71
+2023-08-10,4468.83
+2023-08-11,4464.05
+2023-08-14,4489.72
+2023-08-15,4437.86
+2023-08-16,4404.33
+2023-08-17,4370.36
+2023-08-18,4369.71
+2023-08-21,4399.77
+2023-08-22,4387.55
+2023-08-23,4436.01
+2023-08-24,4376.31
+2023-08-25,4405.71
+2023-08-28,4433.31
+2023-08-29,4497.63
+2023-08-30,4514.87
+2023-08-31,4507.66
+2023-09-01,4515.77
+2023-09-04,
+2023-09-05,4496.83
+2023-09-06,4465.48
+2023-09-07,4451.14
+2023-09-08,4457.49
+2023-09-11,4487.46
+2023-09-12,4461.90
+2023-09-13,4467.44
+2023-09-14,4505.10
+2023-09-15,4450.32
+2023-09-18,4453.53
+2023-09-19,4443.95
+2023-09-20,4402.20
+2023-09-21,4330.00
+2023-09-22,4320.06
+2023-09-25,4337.44
+2023-09-26,4273.53
+2023-09-27,4274.51
+2023-09-28,4299.70
+2023-09-29,4288.05
+2023-10-02,4288.39
+2023-10-03,4229.45
+2023-10-04,4263.75
+2023-10-05,4258.19
+2023-10-06,4308.50
+2023-10-09,4335.66
+2023-10-10,4358.24
+2023-10-11,4376.95
+2023-10-12,4349.61
+2023-10-13,4327.78
+2023-10-16,4373.63
+2023-10-17,4373.20
+2023-10-18,4314.60
+2023-10-19,4278.00
+2023-10-20,4224.16
+2023-10-23,4217.04
+2023-10-24,4247.68
+2023-10-25,4186.77
+2023-10-26,4137.23
+2023-10-27,4117.37
+2023-10-30,4166.82
+2023-10-31,4193.80
+2023-11-01,4237.86
+2023-11-02,4317.78
+2023-11-03,4358.34
+2023-11-06,4365.98
+2023-11-07,4378.38
+2023-11-08,4382.78
+2023-11-09,4347.35
+2023-11-10,4415.24
+2023-11-13,4411.55
+2023-11-14,4495.70
+2023-11-15,4502.88
+2023-11-16,4508.24
+2023-11-17,4514.02
+2023-11-20,4547.38
+2023-11-21,4538.19
+2023-11-22,4556.62
+2023-11-23,
+2023-11-24,4559.34
+2023-11-27,4550.43
+2023-11-28,4554.89
+2023-11-29,4550.58
+2023-11-30,4567.80
+2023-12-01,4594.63
+2023-12-04,4569.78
+2023-12-05,4567.18
+2023-12-06,4549.34
+2023-12-07,4585.59
+2023-12-08,4604.37
+2023-12-11,4622.44
+2023-12-12,4643.70
+2023-12-13,4707.09
+2023-12-14,4719.55
+2023-12-15,4719.19
+2023-12-18,4740.56
+2023-12-19,4768.37
+2023-12-20,4698.35
+2023-12-21,4746.75
+2023-12-22,4754.63
+2023-12-25,
+2023-12-26,4774.75
+2023-12-27,4781.58
+2023-12-28,4783.35
+2023-12-29,4769.83
+2024-01-01,
+2024-01-02,4742.83
+2024-01-03,4704.81
+2024-01-04,4688.68
+2024-01-05,4697.24
+2024-01-08,4763.54
+2024-01-09,4756.50
+2024-01-10,4783.45
+2024-01-11,4780.24
+2024-01-12,4783.83
+2024-01-15,
+2024-01-16,4765.98
+2024-01-17,4739.21
+2024-01-18,4780.94
+2024-01-19,4839.81
+2024-01-22,4850.43
+2024-01-23,4864.60
+2024-01-24,4868.55
+2024-01-25,4894.16
+2024-01-26,4890.97
+2024-01-29,4927.93
+2024-01-30,4924.97
+2024-01-31,4845.65
+2024-02-01,4906.19
+2024-02-02,4958.61
+2024-02-05,4942.81
+2024-02-06,4954.23
+2024-02-07,4995.06
+2024-02-08,4997.91
+2024-02-09,5026.61
+2024-02-12,5021.84
+2024-02-13,4953.17
+2024-02-14,5000.62
+2024-02-15,5029.73
+2024-02-16,5005.57
+2024-02-19,
+2024-02-20,4975.51
+2024-02-21,4981.80
+2024-02-22,5087.03
+2024-02-23,5088.80
+2024-02-26,5069.53
+2024-02-27,5078.18
+2024-02-28,5069.76
+2024-02-29,5096.27
+2024-03-01,5137.08
+2024-03-04,5130.95
+2024-03-05,5078.65
+2024-03-06,5104.76
+2024-03-07,5157.36
+2024-03-08,5123.69
+2024-03-11,5117.94
+2024-03-12,5175.27
+2024-03-13,5165.31
+2024-03-14,5150.48
+2024-03-15,5117.09
+2024-03-18,5149.42
+2024-03-19,5178.51
+2024-03-20,5224.62
+2024-03-21,5241.53
+2024-03-22,5234.18
+2024-03-25,5218.19
+2024-03-26,5203.58
+2024-03-27,5248.49
+2024-03-28,5254.35
+2024-03-29,
+2024-04-01,5243.77
+2024-04-02,5205.81
+2024-04-03,5211.49
+2024-04-04,5147.21
+2024-04-05,5204.34
+2024-04-08,5202.39
+2024-04-09,5209.91
+2024-04-10,5160.64
+2024-04-11,5199.06
+2024-04-12,5123.41
+2024-04-15,5061.82
+2024-04-16,5051.41
+2024-04-17,5022.21
+2024-04-18,5011.12
+2024-04-19,4967.23
+2024-04-22,5010.60
+2024-04-23,5070.55
+2024-04-24,5071.63
+2024-04-25,5048.42
+2024-04-26,5099.96
+2024-04-29,5116.17
+2024-04-30,5035.69
+2024-05-01,5018.39
+2024-05-02,5064.20
+2024-05-03,5127.79
+2024-05-06,5180.74
+2024-05-07,5187.70
+2024-05-08,5187.67
+2024-05-09,5214.08
+2024-05-10,5222.68
+2024-05-13,5221.42
+2024-05-14,5246.68
+2024-05-15,5308.15
+2024-05-16,5297.10
+2024-05-17,5303.27
+2024-05-20,5308.13
+2024-05-21,5321.41
+2024-05-22,5307.01
+2024-05-23,5267.84
+2024-05-24,5304.72
+2024-05-27,
+2024-05-28,5306.04
+2024-05-29,5266.95
+2024-05-30,5235.48
+2024-05-31,5277.51
+2024-06-03,5283.40
+2024-06-04,5291.34
+2024-06-05,5354.03
+2024-06-06,5352.96
+2024-06-07,5346.99
+2024-06-10,5360.79
+2024-06-11,5375.32
+2024-06-12,5421.03
+2024-06-13,5433.74
+2024-06-14,5431.60
+2024-06-17,5473.23
+2024-06-18,5487.03
+2024-06-19,
+2024-06-20,5473.17
+2024-06-21,5464.62
+2024-06-24,5447.87
+2024-06-25,5469.30
+2024-06-26,5477.90
+2024-06-27,5482.87
+2024-06-28,5460.48
+2024-07-01,5475.09
+2024-07-02,5509.01
+2024-07-03,5537.02
+2024-07-04,
+2024-07-05,5567.19
+2024-07-08,5572.85
+2024-07-09,5576.98
+2024-07-10,5633.91
+2024-07-11,5584.54
+2024-07-12,5615.35
+2024-07-15,5631.22
+2024-07-16,5667.20
+2024-07-17,5588.27
+2024-07-18,5544.59
+2024-07-19,5505.00
+2024-07-22,5564.41
+2024-07-23,5555.74
+2024-07-24,5427.13
+2024-07-25,5399.22
+2024-07-26,5459.10
+2024-07-29,5463.54
+2024-07-30,5436.44
+2024-07-31,5522.30
+2024-08-01,5446.68
+2024-08-02,5346.56
+2024-08-05,5186.33
+2024-08-06,5240.03
+2024-08-07,5199.50
+2024-08-08,5319.31
+2024-08-09,5344.16
+2024-08-12,5344.39
+2024-08-13,5434.43
+2024-08-14,5455.21
+2024-08-15,5543.22
+2024-08-16,5554.25
+2024-08-19,5608.25
+2024-08-20,5597.12
+2024-08-21,5620.85
+2024-08-22,5570.64
+2024-08-23,5634.61
+2024-08-26,5616.84
+2024-08-27,5625.80
+2024-08-28,5592.18
+2024-08-29,5591.96
+2024-08-30,5648.40
+2024-09-02,
+2024-09-03,5528.93
+2024-09-04,5520.07
+2024-09-05,5503.41
+2024-09-06,5408.42
+2024-09-09,5471.05
+2024-09-10,5495.52
+2024-09-11,5554.13
+2024-09-12,5595.76
+2024-09-13,5626.02
+2024-09-16,5633.09
+2024-09-17,5634.58
+2024-09-18,5618.26
+2024-09-19,5713.64
+2024-09-20,5702.55
+2024-09-23,5718.57
+2024-09-24,5732.93
+2024-09-25,5722.26
+2024-09-26,5745.37
+2024-09-27,5738.17
+2024-09-30,5762.48
+2024-10-01,5708.75
+2024-10-02,5709.54
+2024-10-03,5699.94
+2024-10-04,5751.07
+2024-10-07,5695.94
+2024-10-08,5751.13
+2024-10-09,5792.04
+2024-10-10,5780.05
+2024-10-11,5815.03
+2024-10-14,5859.85
+2024-10-15,5815.26
+2024-10-16,5842.47
+2024-10-17,5841.47
+2024-10-18,5864.67
+2024-10-21,5853.98
+2024-10-22,5851.20
+2024-10-23,5797.42
+2024-10-24,5809.86
+2024-10-25,5808.12
+2024-10-28,5823.52
+2024-10-29,5832.92
+2024-10-30,5813.67
+2024-10-31,5705.45
+2024-11-01,5728.80
+2024-11-04,5712.69
+2024-11-05,5782.76
+2024-11-06,5929.04
+2024-11-07,5973.10
+2024-11-08,5995.54
+2024-11-11,6001.35
+2024-11-12,5983.99
+2024-11-13,5985.38
+2024-11-14,5949.17
+2024-11-15,5870.62
+2024-11-18,5893.62
+2024-11-19,5916.98
+2024-11-20,5917.11
+2024-11-21,5948.71
+2024-11-22,5969.34
+2024-11-25,5987.37
+2024-11-26,6021.63
+2024-11-27,5998.74
+2024-11-28,
+2024-11-29,6032.38
+2024-12-02,6047.15
+2024-12-03,6049.88
+2024-12-04,6086.49
+2024-12-05,6075.11
+2024-12-06,6090.27
+2024-12-09,6052.85
+2024-12-10,6034.91
+2024-12-11,6084.19
+2024-12-12,6051.25
+2024-12-13,6051.09
+2024-12-16,6074.08
+2024-12-17,6050.61
+2024-12-18,5872.16
+2024-12-19,5867.08
+2024-12-20,5930.85
+2024-12-23,5974.07
+2024-12-24,6040.04
+2024-12-25,
+2024-12-26,6037.59
+2024-12-27,5970.84
+2024-12-30,5906.94
+2024-12-31,5881.63
+2025-01-01,
+2025-01-02,5868.55
+2025-01-03,5942.47
+2025-01-06,5975.38
+2025-01-07,5909.03
+2025-01-08,5918.25
+2025-01-09,
+2025-01-10,5827.04
+2025-01-13,5836.22
+2025-01-14,5842.91
+2025-01-15,5949.91
+2025-01-16,5937.34
+2025-01-17,5996.66
+2025-01-20,
+2025-01-21,6049.24
+2025-01-22,6086.37
+2025-01-23,6118.71
+2025-01-24,6101.24
+2025-01-27,6012.28
+2025-01-28,6067.70
+2025-01-29,6039.31
+2025-01-30,6071.17
+2025-01-31,6040.53
+2025-02-03,5994.57
+2025-02-04,6037.88
+2025-02-05,6061.48
+2025-02-06,6083.57
+2025-02-07,6025.99
+2025-02-10,6066.44
+2025-02-11,6068.50
+2025-02-12,6051.97
+2025-02-13,6115.07
+2025-02-14,6114.63
+2025-02-17,
+2025-02-18,6129.58
+2025-02-19,6144.15
+2025-02-20,6117.52
+2025-02-21,6013.13
+2025-02-24,5983.25
+2025-02-25,5955.25
+2025-02-26,5956.06
+2025-02-27,5861.57
+2025-02-28,5954.50
+2025-03-03,5849.72
+2025-03-04,5778.15
+2025-03-05,5842.63
+2025-03-06,5738.52
+2025-03-07,5770.20
+2025-03-10,5614.56
+2025-03-11,5572.07
+2025-03-12,5599.30
+2025-03-13,5521.52
+2025-03-14,5638.94
+2025-03-17,5675.12
+2025-03-18,5614.66
+2025-03-19,5675.29
+2025-03-20,5662.89
+2025-03-21,5667.56
+2025-03-24,5767.57
+2025-03-25,5776.65
+2025-03-26,5712.20
+2025-03-27,5693.31
+2025-03-28,5580.94
+2025-03-31,5611.85
+2025-04-01,5633.07
+2025-04-02,5670.97
+2025-04-03,5396.52
+2025-04-04,5074.08
+2025-04-07,5062.25
+2025-04-08,4982.77
+2025-04-09,5456.90
+2025-04-10,5268.05
+2025-04-11,5363.36
+2025-04-14,5405.97
+2025-04-15,5396.63
+2025-04-16,5275.70
+2025-04-17,5282.70
+2025-04-18,
+2025-04-21,5158.20
+2025-04-22,5287.76
+2025-04-23,5375.86
+2025-04-24,5484.77
+2025-04-25,5525.21
+2025-04-28,5528.75
+2025-04-29,5560.83
+2025-04-30,5569.06
+2025-05-01,5604.14
+2025-05-02,5686.67
+2025-05-05,5650.38
+2025-05-06,5606.91
+2025-05-07,5631.28
+2025-05-08,5663.94
+2025-05-09,5659.91
+2025-05-12,5844.19
+2025-05-13,5886.55
+2025-05-14,5892.58
+2025-05-15,5916.93
+2025-05-16,5958.38
+2025-05-19,5963.60
+2025-05-20,5940.46
+2025-05-21,5844.61
+2025-05-22,5842.01
+2025-05-23,5802.82
+2025-05-26,
+2025-05-27,5921.54
+2025-05-28,5888.55
+2025-05-29,5912.17
+2025-05-30,5911.69
+2025-06-02,5935.94
+2025-06-03,5970.37
+2025-06-04,5970.81
+2025-06-05,5939.30
+2025-06-06,6000.36
+2025-06-09,6005.88
+2025-06-10,6038.81
+2025-06-11,6022.24
+2025-06-12,6045.26
+2025-06-13,5976.97
+2025-06-16,6033.11
+2025-06-17,5982.72
+2025-06-18,5980.87
+2025-06-19,
+2025-06-20,5967.84
+2025-06-23,6025.17
+2025-06-24,6092.18
+2025-06-25,6092.16
+2025-06-26,6141.02
+2025-06-27,6173.07
+2025-06-30,6204.95
+2025-07-01,6198.01
+2025-07-02,6227.42
+2025-07-03,6279.35
+2025-07-04,
+2025-07-07,6229.98
+2025-07-08,6225.52
+2025-07-09,6263.26
+2025-07-10,6280.46
+2025-07-11,6259.75
+2025-07-14,6268.56
+2025-07-15,6243.76
+2025-07-16,6263.70
+2025-07-17,6297.36
+2025-07-18,6296.79
+2025-07-21,6305.60
+2025-07-22,6309.62
+2025-07-23,6358.91
+2025-07-24,6363.35
+2025-07-25,6388.64
+2025-07-28,6389.77
+2025-07-29,6370.86
+2025-07-30,6362.90
+2025-07-31,6339.39
+2025-08-01,6238.01
+2025-08-04,6329.94
+2025-08-05,6299.19
+2025-08-06,6345.06
+2025-08-07,6340.00
+2025-08-08,6389.45
+2025-08-11,6373.45
+2025-08-12,6445.76
+2025-08-13,6466.58
+2025-08-14,6468.54
+2025-08-15,6449.80
+2025-08-18,6449.15
+2025-08-19,6411.37
+2025-08-20,6395.78
+2025-08-21,6370.17
+2025-08-22,6466.91
+2025-08-25,6439.32
+2025-08-26,6465.94
+2025-08-27,6481.40
+2025-08-28,6501.86
+2025-08-29,6460.26
+2025-09-01,
+2025-09-02,6415.54
+2025-09-03,6448.26
+2025-09-04,6502.08
+2025-09-05,6481.50
+2025-09-08,6495.15
+2025-09-09,6512.61
+2025-09-10,6532.04
+2025-09-11,6587.47
+2025-09-12,6584.29
+2025-09-15,6615.28
+2025-09-16,6606.76
+2025-09-17,6600.35
+2025-09-18,6631.96
+2025-09-19,6664.36
+2025-09-22,6693.75
+2025-09-23,6656.92
+2025-09-24,6637.97
+2025-09-25,6604.72
+2025-09-26,6643.70
+2025-09-29,6661.21
+2025-09-30,6688.46
+2025-10-01,6711.20
+2025-10-02,6715.35
+2025-10-03,6715.79
+2025-10-06,6740.28
+2025-10-07,6714.59
+2025-10-08,6753.72
+2025-10-09,6735.11
+2025-10-10,6552.51
+2025-10-13,6654.72
+2025-10-14,6644.31
+2025-10-15,6671.06
+2025-10-16,6629.07
+2025-10-17,6664.01
+2025-10-20,6735.13
+2025-10-21,6735.35
+2025-10-22,6699.40
+2025-10-23,6738.44
+2025-10-24,6791.69
+2025-10-27,6875.16
+2025-10-28,6890.89
+2025-10-29,6890.59
+2025-10-30,6822.34
+2025-10-31,6840.20
+2025-11-03,6851.97
+2025-11-04,6771.55
+2025-11-05,6796.29
+2025-11-06,6720.32
+2025-11-07,6728.80
+2025-11-10,6832.43
+2025-11-11,6846.61
+2025-11-12,6850.92
+2025-11-13,6737.49
+2025-11-14,6734.11
+2025-11-17,6672.41
+2025-11-18,6617.32
+2025-11-19,6642.16
+2025-11-20,6538.76
+2025-11-21,6602.99
+2025-11-24,6705.12
+2025-11-25,6765.88
+2025-11-26,6812.61
+2025-11-27,
+2025-11-28,6849.09
+2025-12-01,6812.63
+2025-12-02,6829.37
+2025-12-03,6849.72
+2025-12-04,6857.12
+2025-12-05,6870.40
+2025-12-08,6846.51
+2025-12-09,6840.51
+2025-12-10,6886.68
+2025-12-11,6901.00
+2025-12-12,6827.41
+2025-12-15,6816.51
+2025-12-16,6800.26
+2025-12-17,6721.43
+2025-12-18,6774.76
+2025-12-19,6834.50
+2025-12-22,6878.49
+2025-12-23,6909.79
+2025-12-24,6932.05
+2025-12-25,
+2025-12-26,6929.94
+2025-12-29,6905.74
+2025-12-30,6896.24
+2025-12-31,6845.50
+2026-01-01,
+2026-01-02,6858.47
+2026-01-05,6902.05
+2026-01-06,6944.82
+2026-01-07,6920.93
+2026-01-08,6921.46
+2026-01-09,6966.28
+2026-01-12,6977.27
+2026-01-13,6963.74
+2026-01-14,6926.60
+2026-01-15,6944.47
+2026-01-16,6940.01
+2026-01-19,
+2026-01-20,6796.86
+2026-01-21,6875.62
+2026-01-22,6913.35
+2026-01-23,6915.61
+2026-01-26,6950.23
+2026-01-27,6978.60
+2026-01-28,6978.03
+2026-01-29,6969.01
+2026-01-30,6939.03
+2026-02-02,6976.44
+2026-02-03,6917.81
+2026-02-04,6882.72
+2026-02-05,6798.40
+2026-02-06,6932.30
+2026-02-09,6964.82
+2026-02-10,6941.81
+2026-02-11,6941.47
+2026-02-12,6832.76
+2026-02-13,6836.17
+2026-02-16,
+2026-02-17,6843.22
+2026-02-18,6881.31
+2026-02-19,6861.89
+2026-02-20,6909.51
+2026-02-23,6837.75
+2026-02-24,6890.07
+2026-02-25,6946.13
+2026-02-26,6908.86
+2026-02-27,6878.88
+2026-03-02,6881.62
+2026-03-03,6816.63
+2026-03-04,6869.50
+2026-03-05,6830.71
+2026-03-06,6740.02
+2026-03-09,6795.99
+2026-03-10,6781.48
+2026-03-11,6775.80
+2026-03-12,6672.62
+2026-03-13,6632.19
+2026-03-16,6699.38
+2026-03-17,6716.09
+2026-03-18,6624.70
+2026-03-19,6606.49
+2026-03-20,6506.48
+2026-03-23,6581.00
+2026-03-24,6556.37
+2026-03-25,6591.90
+2026-03-26,6477.16
+2026-03-27,6368.85
+2026-03-30,6343.72
+2026-03-31,6528.52
+2026-04-01,6575.32
+2026-04-02,6582.69
+2026-04-03,
+2026-04-06,6611.83
+2026-04-07,6616.85
+2026-04-08,6782.81
+2026-04-09,6824.66
+2026-04-10,6816.89
+2026-04-13,6886.24
+2026-04-14,6967.38
+2026-04-15,7022.95
+2026-04-16,7041.28
+2026-04-17,7126.06
+2026-04-20,7109.14
+2026-04-21,7064.01
+2026-04-22,7137.90
+2026-04-23,7108.40
+2026-04-24,7165.08
+2026-04-27,7173.91
+2026-04-28,7138.80
+2026-04-29,7135.95
+2026-04-30,7209.01
+2026-05-01,7230.12
+2026-05-04,7200.75
+2026-05-05,7259.22
+2026-05-06,7365.12
+2026-05-07,7337.11
+2026-05-08,7398.93
+2026-05-11,7412.84
+2026-05-12,7400.96
+2026-05-13,7444.25
+2026-05-14,7501.24
+2026-05-15,7408.50
+2026-05-18,7403.05
+2026-05-19,7353.61
+2026-05-20,7432.97
+2026-05-21,7445.72
+2026-05-22,7473.47
+2026-05-25,
+2026-05-26,7519.12
+2026-05-27,7520.36
+2026-05-28,7563.63
+2026-05-29,7580.06
+2026-06-01,7599.96
+2026-06-02,7609.78
+2026-06-03,7553.68
+2026-06-04,7584.31
+2026-06-05,7383.74
+2026-06-08,7405.73
+2026-06-09,7386.65
+2026-06-10,7266.99
+2026-06-11,7394.30
+2026-06-12,7431.46
+2026-06-15,7554.29
+2026-06-16,7511.35
+2026-06-17,7420.10
+2026-06-18,7500.58
+2026-06-19,
+2026-06-22,7472.79
+2026-06-23,7365.46
+2026-06-24,7358.22
+2026-06-25,7357.49
+2026-06-26,7354.02
+2026-06-29,7440.43
+2026-06-30,7499.36
+2026-07-01,7483.23
+2026-07-02,7483.24
+2026-07-03,
+2026-07-06,7537.43
+2026-07-07,7503.85
+2026-07-08,7482.71
+2026-07-09,7543.64
+2026-07-10,7575.39
+2026-07-13,7515.34
+2026-07-14,7543.59
+2026-07-15,7572.40
+2026-07-16,7533.77
+2026-07-17,7457.69
+2026-07-20,7443.28
+2026-07-21,7509.20
+2026-07-22,7498.96
+2026-07-23,7408.30
+2026-07-24,7411.98
+2026-07-27,7413.18
+2026-07-28,7428.78
+2026-07-29,7316.15
+2026-07-30,7437.63
+2026-07-31,7489.72
+2026-08-03,7600.50
+2026-08-04,7736.52
+2026-08-05,7723.55
+2026-08-06,7709.96
+2026-08-07,7757.64
+2026-08-10,7753.11
+2026-08-11,7728.20
+2026-08-12,7748.50
+`;
+
+    const $ = (id) => document.getElementById(id);
+    const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+    const pct = new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1, signDisplay: 'exceptZero' });
+    const pctAbs = new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1, signDisplay: 'never' });
+    const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+    const shortDateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', year: '2-digit', timeZone: 'UTC' });
+    const zScores = { '0.8': 1.2815515655, '0.9': 1.644853627, '0.95': 1.959963985 };
+
+    const state = {
+      allData: [],
+      activeData: [],
+      source: 'Bundled S&P 500 close snapshot',
+      model: 'blended',
+      lookback: '504',
+      horizon: 21,
+      confidence: '0.9',
+      forecast: null,
+      chart: null,
+      renderQueued: false
+    };
+
+    function parseCsv(text) {
+      const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+      if (lines.length < 3) throw new Error('The CSV needs a header and at least two rows.');
+      const headers = lines[0].split(',').map(header => header.trim().toLowerCase());
+      const dateIndex = headers.findIndex(header => /^(date|observation_date|timestamp)$/.test(header));
+      let closeIndex = headers.findIndex(header => /^(close|adj close|adjusted_close|sp500|value|price)$/.test(header));
+      if (dateIndex < 0) throw new Error('Could not find a date column. Use “date” or “observation_date”.');
+      if (closeIndex < 0) closeIndex = headers.findIndex((header, index) => index !== dateIndex && /close|price|value|sp500/.test(header));
+      if (closeIndex < 0) throw new Error('Could not find a close column. Use “close”, “value”, or “SP500”.');
+      const seen = new Set();
+      const rows = [];
+      for (const line of lines.slice(1)) {
+        const cells = line.split(',').map(cell => cell.trim().replace(/^"|"$/g, ''));
+        const dateText = cells[dateIndex];
+        const value = Number(String(cells[closeIndex] ?? '').replace(/[$,]/g, ''));
+        const timestamp = Date.parse(`${dateText}T12:00:00Z`);
+        if (!dateText || !Number.isFinite(timestamp) || !Number.isFinite(value) || value <= 0) continue;
+        const key = new Date(timestamp).toISOString().slice(0, 10);
+        if (!seen.has(key)) { rows.push({ date: new Date(timestamp), close: value }); seen.add(key); }
+      }
+      rows.sort((a, b) => a.date - b.date);
+      if (rows.length < 50) throw new Error('At least 50 valid daily observations are needed for a forecast.');
+      return rows;
+    }
+
+    function mean(values) { return values.reduce((sum, value) => sum + value, 0) / values.length; }
+    function stdev(values, average = mean(values)) {
+      if (values.length < 2) return 0;
+      return Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / (values.length - 1));
+    }
+    function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+    function logReturns(data) { return data.slice(1).map((row, index) => Math.log(row.close / data[index].close)); }
+    function ewma(values, lambda = .94) {
+      let result = values[0] || 0;
+      for (let index = 1; index < values.length; index += 1) result = lambda * result + (1 - lambda) * values[index];
+      return result;
+    }
+    function regressionSlope(values) {
+      const n = values.length;
+      const xMean = (n - 1) / 2;
+      const yMean = mean(values);
+      let numerator = 0, denominator = 0;
+      values.forEach((value, index) => { numerator += (index - xMean) * (value - yMean); denominator += (index - xMean) ** 2; });
+      return denominator ? numerator / denominator : 0;
+    }
+    function nextTradingDate(date) {
+      const next = new Date(date);
+      next.setUTCDate(next.getUTCDate() + 1);
+      while (next.getUTCDay() === 0 || next.getUTCDay() === 6) next.setUTCDate(next.getUTCDate() + 1);
+      return next;
+    }
+    function normCdf(value) {
+      const sign = value < 0 ? -1 : 1;
+      const x = Math.abs(value) / Math.sqrt(2);
+      const t = 1 / (1 + .3275911 * x);
+      const erf = 1 - (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - .284496736) * t + .254829592) * t) * Math.exp(-x * x);
+      return .5 * (1 + sign * erf);
+    }
+    function modelName(model) { return ({ blended: 'Blended trend', momentum: 'Momentum-aware', randomWalk: 'Random-walk baseline' })[model]; }
+
+    function estimate(data, configuration) {
+      const returns = logReturns(data);
+      const recentReturns = returns.slice(-Math.min(60, returns.length));
+      const shortReturns = returns.slice(-Math.min(21, returns.length));
+      const longMean = mean(returns);
+      const shortMean = mean(shortReturns);
+      const trend = regressionSlope(data.map(row => Math.log(row.close)));
+      const weighted = ewma(returns.slice(-Math.min(126, returns.length)));
+      let drift;
+      if (configuration.model === 'randomWalk') drift = 0;
+      else if (configuration.model === 'momentum') drift = .50 * weighted + .30 * shortMean + .20 * longMean;
+      else drift = .45 * trend + .35 * weighted + .20 * longMean;
+      drift = clamp(drift, -.0045, .0045);
+      const dailyVol = Math.max(.0025, stdev(recentReturns));
+      return { drift, dailyVol, longMean, shortMean, trend, observations: data.length };
+    }
+
+    function buildForecast(data, configuration) {
+      const last = data[data.length - 1];
+      const parameters = estimate(data, configuration);
+      const z = zScores[configuration.confidence] || zScores['0.9'];
+      const points = [{ date: last.date, expected: last.close, lower: last.close, upper: last.close, day: 0 }];
+      let date = last.date;
+      for (let day = 1; day <= configuration.horizon; day += 1) {
+        date = nextTradingDate(date);
+        const expected = last.close * Math.exp(parameters.drift * day);
+        const spread = z * parameters.dailyVol * Math.sqrt(day);
+        points.push({ date, expected, lower: last.close * Math.exp(parameters.drift * day - spread), upper: last.close * Math.exp(parameters.drift * day + spread), day });
+      }
+      const end = points[points.length - 1];
+      const returnValue = end.expected / last.close - 1;
+      const probabilityUp = parameters.dailyVol ? normCdf((parameters.drift * Math.sqrt(configuration.horizon)) / parameters.dailyVol) : .5;
+      return { parameters, points, end, returnValue, probabilityUp, z };
+    }
+
+    function backtest(data, configuration) {
+      const horizon = configuration.horizon;
+      if (data.length < horizon + 80) return null;
+      const start = Math.max(60, data.length - Math.min(420, Math.max(160, Math.floor(data.length * .6))));
+      const stride = Math.max(5, Math.floor(horizon / 3));
+      const tests = [];
+      for (let origin = start; origin + horizon < data.length; origin += stride) {
+        const history = data.slice(0, origin + 1);
+        const forecast = buildForecast(history, configuration);
+        const actual = data[origin + horizon].close;
+        const predicted = forecast.end.expected;
+        const error = predicted / actual - 1;
+        const actualReturn = actual / data[origin].close - 1;
+        tests.push({ error, absoluteError: Math.abs(error), squaredError: error ** 2, correctDirection: configuration.model === 'randomWalk' ? null : Math.sign(forecast.returnValue) === Math.sign(actualReturn), covered: actual >= forecast.end.lower && actual <= forecast.end.upper });
+      }
+      if (!tests.length) return null;
+      return {
+        n: tests.length,
+        mae: mean(tests.map(test => test.absoluteError)),
+        rmse: Math.sqrt(mean(tests.map(test => test.squaredError))),
+        direction: configuration.model === 'randomWalk' ? null : tests.filter(test => test.correctDirection).length / tests.length,
+        coverage: tests.filter(test => test.covered).length / tests.length
+      };
+    }
+
+    function activeWindow() {
+      if (state.lookback === 'all') return state.allData.slice();
+      const requested = Number(state.lookback);
+      return state.allData.slice(-Math.min(requested, state.allData.length));
+    }
+    function money(value) { return Number.isFinite(value) ? nf.format(Math.round(value)) : '—'; }
+    function displayDate(date) { return dateFormatter.format(date); }
+    function signedClass(value) { return value >= 0 ? 'positive' : 'negative'; }
+
+    function renderMetrics(forecast) {
+      const last = state.activeData[state.activeData.length - 1];
+      const end = forecast.end;
+      $('lastClose').textContent = money(last.close);
+      $('lastCloseDate').textContent = `as of ${displayDate(last.date)}`;
+      $('projectedClose').textContent = money(end.expected);
+      $('forecastEndDate').textContent = displayDate(end.date);
+      $('expectedReturn').textContent = pct.format(forecast.returnValue);
+      $('expectedReturn').className = `metric-value ${signedClass(forecast.returnValue)}`;
+      $('returnSub').textContent = `${state.horizon} trading-day estimate`;
+      const confidencePercent = Math.round(Number(state.confidence) * 100);
+      $('rangeMetricLabel').textContent = `${confidencePercent}% range`;
+      $('forecastRange').textContent = `${money(end.lower)}–${money(end.upper)}`;
+      $('forecastRange').className = 'metric-value';
+      $('rangeSub').textContent = `at ${displayDate(end.date)}`;
+      $('chartKicker').textContent = `${modelName(state.model)} · ${state.activeData.length} observations · ${state.horizon}-day outlook`;
+    }
+
+    function renderInsight(forecast) {
+      const upward = forecast.returnValue >= 0;
+      $('signalTitle').textContent = upward ? 'Upward bias' : 'Downward bias';
+      $('signalBadge').textContent = upward ? 'POSITIVE' : 'CAUTIOUS';
+      $('signalBadge').className = `signal ${upward ? 'positive' : 'negative'}`;
+      $('upProbability').textContent = `${Math.round(forecast.probabilityUp * 100)}%`;
+      $('upProbability').className = `insight-number ${signedClass(forecast.returnValue)}`;
+      $('signalCopy').textContent = `The model assigns a ${Math.round(forecast.probabilityUp * 100)}% probability to an above-current expected close after ${state.horizon} trading days. This is a model output, not a probability of what the market will do.`;
+      $('dailyDrift').textContent = pct.format(forecast.parameters.drift);
+      $('dailyVolatility').textContent = pct.format(forecast.parameters.dailyVol);
+      $('trainingObservations').textContent = nf.format(forecast.parameters.observations);
+    }
+
+    function renderBacktest(result) {
+      if (!result) {
+        ['backtestMae', 'backtestRmse', 'backtestDirection', 'backtestCoverage'].forEach(id => { $(id).textContent = '—'; });
+        $('backtestCount').textContent = 'NEED MORE HISTORY';
+        $('backtestNote').textContent = 'Import more daily history to run a rolling backtest for this forecast horizon.';
+        return;
+      }
+      $('backtestMae').textContent = pctAbs.format(result.mae);
+      $('backtestRmse').textContent = pctAbs.format(result.rmse);
+      $('backtestDirection').textContent = result.direction == null ? 'N/A' : pctAbs.format(result.direction);
+      $('backtestCoverage').textContent = pctAbs.format(result.coverage);
+      $('backtestCount').textContent = `${result.n} PRIOR WINDOWS`;
+      $('backtestNote').textContent = result.direction == null
+        ? `Each window forecasts ${state.horizon} trading days ahead using only information available at that point. This baseline makes no directional call, so direction is not applicable.`
+        : `Each window forecasts ${state.horizon} trading days ahead using only information available at that point. Coverage is the share of realized closes within the selected interval.`;
+    }
+
+    function renderProjectionTable(forecast) {
+      const last = state.activeData[state.activeData.length - 1];
+      const checkpoints = [...new Set([Math.min(5, state.horizon), Math.min(10, state.horizon), state.horizon])];
+      const confidencePercent = Math.round(Number(state.confidence) * 100);
+      $('tableRangeHeader').textContent = `${confidencePercent}% range`;
+      $('projectionLabel').textContent = `${state.horizon} TRADING DAYS`;
+      $('projectionRows').innerHTML = checkpoints.map(day => {
+        const point = forecast.points[day];
+        const change = point.expected / last.close - 1;
+        return `<tr><td>${displayDate(point.date)}</td><td>${money(point.expected)}</td><td class="${signedClass(change)}">${pct.format(change)}</td><td>${money(point.lower)}–${money(point.upper)}</td></tr>`;
+      }).join('');
+    }
+
+    function chartGeometry(canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const width = Math.max(1, Math.round(rect.width * dpr));
+      const height = Math.max(1, Math.round(rect.height * dpr));
+      if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, width: rect.width, height: rect.height };
+    }
+    function niceTicks(min, max, count = 5) {
+      const span = Math.max(1, max - min);
+      const raw = span / (count - 1);
+      const power = 10 ** Math.floor(Math.log10(raw));
+      const normalized = raw / power;
+      const step = (normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10) * power;
+      const start = Math.floor(min / step) * step;
+      const ticks = [];
+      for (let value = start; value <= max + step; value += step) if (value >= min - step * .1) ticks.push(value);
+      return ticks;
+    }
+    function line(ctx, points, x, y, color, width = 2, dash = []) {
+      ctx.beginPath();
+      points.forEach((point, index) => { const px = x(point.date), py = y(point.value); index ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+      ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    function drawChart() {
+      const canvas = $('forecastChart');
+      const { ctx, width, height } = chartGeometry(canvas);
+      if (!state.forecast || width < 10 || height < 10) return;
+      const actual = state.activeData;
+      const projection = state.forecast.points;
+      const allDates = [...actual.map(row => row.date), ...projection.map(row => row.date)];
+      const allValues = [...actual.map(row => row.close), ...projection.flatMap(row => [row.lower, row.upper])];
+      const left = width < 480 ? 9 : 16, right = width < 480 ? 50 : 66, top = 17, bottom = 35;
+      const plot = { left, right: width - right, top, bottom: height - bottom };
+      const minDate = actual[0].date.getTime(), maxDate = projection[projection.length - 1].date.getTime();
+      const rawMin = Math.min(...allValues), rawMax = Math.max(...allValues);
+      const padding = (rawMax - rawMin || rawMax * .1) * .095;
+      const minValue = Math.max(0, rawMin - padding), maxValue = rawMax + padding;
+      const x = (date) => plot.left + ((date.getTime() - minDate) / (maxDate - minDate || 1)) * (plot.right - plot.left);
+      const y = (value) => plot.bottom - ((value - minValue) / (maxValue - minValue || 1)) * (plot.bottom - plot.top);
+      ctx.clearRect(0, 0, width, height);
+      ctx.font = '11px Inter, ui-sans-serif, system-ui';
+      ctx.textBaseline = 'middle';
+      const ticks = niceTicks(minValue, maxValue, 5);
+      ticks.forEach(value => {
+        const py = y(value);
+        ctx.beginPath(); ctx.moveTo(plot.left, py); ctx.lineTo(plot.right, py); ctx.strokeStyle = 'rgba(154,177,224,.12)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = 'rgba(181,200,232,.72)'; ctx.textAlign = 'right'; ctx.fillText(money(value), width - 5, py);
+      });
+      const xTickCount = width < 500 ? 3 : 5;
+      for (let index = 0; index < xTickCount; index += 1) {
+        const time = minDate + ((maxDate - minDate) * index) / (xTickCount - 1 || 1);
+        const date = new Date(time);
+        const px = x(date);
+        ctx.fillStyle = 'rgba(181,200,232,.67)'; ctx.textAlign = index === 0 ? 'left' : index === xTickCount - 1 ? 'right' : 'center';
+        ctx.fillText(shortDateFormatter.format(date), px, height - 12);
+      }
+      const boundaryX = x(actual[actual.length - 1].date);
+      ctx.beginPath(); ctx.moveTo(boundaryX, plot.top); ctx.lineTo(boundaryX, plot.bottom); ctx.strokeStyle = 'rgba(255,184,106,.42)'; ctx.setLineDash([4, 5]); ctx.stroke(); ctx.setLineDash([]);
+      const band = projection.slice(1);
+      ctx.beginPath();
+      band.forEach((point, index) => { const px = x(point.date), py = y(point.upper); index ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+      [...band].reverse().forEach(point => ctx.lineTo(x(point.date), y(point.lower)));
+      ctx.closePath(); ctx.fillStyle = 'rgba(255,128,143,.16)'; ctx.fill();
+      line(ctx, actual.map(row => ({ date: row.date, value: row.close })), x, y, '#6ea8ff', 2.2);
+      line(ctx, projection.map(row => ({ date: row.date, value: row.expected })), x, y, '#ffb86a', 2.2);
+      const last = actual[actual.length - 1];
+      ctx.beginPath(); ctx.arc(x(last.date), y(last.close), 4, 0, Math.PI * 2); ctx.fillStyle = '#6ea8ff'; ctx.fill();
+      state.chart = { x, y, plot, actual, projection, width, height };
+    }
+
+    function showTooltip(event) {
+      if (!state.chart) return;
+      const canvas = $('forecastChart'), rect = canvas.getBoundingClientRect();
+      const pointerX = event.clientX - rect.left;
+      const points = [
+        ...state.chart.actual.map(row => ({ date: row.date, actual: row.close })),
+        ...state.chart.projection.slice(1).map(row => ({ date: row.date, expected: row.expected, lower: row.lower, upper: row.upper }))
+      ];
+      let closest = points[0], closestDistance = Infinity;
+      points.forEach(point => { const distance = Math.abs(state.chart.x(point.date) - pointerX); if (distance < closestDistance) { closestDistance = distance; closest = point; } });
+      const tooltip = $('chartTooltip');
+      const confidencePercent = Math.round(Number(state.confidence) * 100);
+      tooltip.innerHTML = closest.actual
+        ? `<div class="tip-date">${displayDate(closest.date)}</div><b>Observed close&nbsp; ${money(closest.actual)}</b>`
+        : `<div class="tip-date">${displayDate(closest.date)}</div><b>Expected close&nbsp; ${money(closest.expected)}</b><br><span style="color:#aabbd8">${confidencePercent}% range&nbsp; ${money(closest.lower)}–${money(closest.upper)}</span>`;
+      const left = clamp(pointerX + 13, 5, rect.width - 165);
+      const top = clamp(event.clientY - rect.top - 36, 5, rect.height - 86);
+      tooltip.style.left = `${left}px`; tooltip.style.top = `${top}px`; tooltip.style.display = 'block';
+    }
+    function hideTooltip() { $('chartTooltip').style.display = 'none'; }
+
+    function updateDataStatus() {
+      const first = state.allData[0], last = state.allData[state.allData.length - 1];
+      $('sourceLabel').textContent = state.source;
+      $('sourcePill').title = `${state.source}: ${state.allData.length} rows, ${displayDate(first.date)} to ${displayDate(last.date)}`;
+      $('dataStatus').textContent = `${state.allData.length} valid closes · ${displayDate(first.date)} to ${displayDate(last.date)}`;
+    }
+    function updateForecast() {
+      state.activeData = activeWindow();
+      if (state.activeData.length < 50) return;
+      const config = { model: state.model, horizon: state.horizon, confidence: state.confidence };
+      state.forecast = buildForecast(state.activeData, config);
+      renderMetrics(state.forecast);
+      renderInsight(state.forecast);
+      renderBacktest(backtest(state.activeData, config));
+      renderProjectionTable(state.forecast);
+      updateDataStatus();
+      requestAnimationFrame(drawChart);
+      window.__forecastDashboard = {
+        dataPoints: state.activeData.length,
+        horizon: state.horizon,
+        model: state.model,
+        expectedClose: state.forecast.end.expected,
+        interval: [state.forecast.end.lower, state.forecast.end.upper],
+        backtest: backtest(state.activeData, config)
+      };
+    }
+    function queueRender() { if (!state.renderQueued) { state.renderQueued = true; requestAnimationFrame(() => { state.renderQueued = false; updateForecast(); }); } }
+    function setHorizon(value) {
+      const horizon = clamp(Math.round(Number(value) || 21), 5, 126);
+      state.horizon = horizon; $('horizon').value = horizon; $('horizonNumber').value = horizon; queueRender();
+    }
+    function attachEvents() {
+      $('model').addEventListener('change', event => { state.model = event.target.value; queueRender(); });
+      $('lookback').addEventListener('change', event => { state.lookback = event.target.value; queueRender(); });
+      $('confidence').addEventListener('change', event => { state.confidence = event.target.value; queueRender(); });
+      $('horizon').addEventListener('input', event => setHorizon(event.target.value));
+      $('horizonNumber').addEventListener('change', event => setHorizon(event.target.value));
+      $('fileInput').addEventListener('change', event => {
+        const [file] = event.target.files;
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            state.allData = parseCsv(String(reader.result));
+            state.source = `Imported: ${file.name}`;
+            $('dataStatus').textContent = 'CSV loaded successfully.';
+            queueRender();
+          } catch (error) { $('dataStatus').textContent = `Could not import CSV: ${error.message}`; }
+        };
+        reader.readAsText(file);
+      });
+      $('resetData').addEventListener('click', () => {
+        state.allData = parseCsv(BUILT_IN_DATA);
+        state.source = 'Bundled S&P 500 close snapshot';
+        $('fileInput').value = '';
+        queueRender();
+      });
+      $('forecastChart').addEventListener('pointermove', showTooltip);
+      $('forecastChart').addEventListener('pointerleave', hideTooltip);
+      window.addEventListener('resize', () => requestAnimationFrame(drawChart));
+      new ResizeObserver(() => requestAnimationFrame(drawChart)).observe($('chartWrap'));
+    }
+    function initialize() {
+      try {
+        state.allData = parseCsv(BUILT_IN_DATA);
+        attachEvents();
+        updateForecast();
+      } catch (error) {
+        console.error(error);
+        $('dataStatus').textContent = `Dashboard failed to load: ${error.message}`;
+        $('sourceLabel').textContent = 'Data error';
+      }
+    }
+    initialize();
+  </script>
+</body>
+</html>
