@@ -1,0 +1,144 @@
+{
+  "runId": "openai-gpt-6-astra-low-codex-20260917",
+  "source": {
+    "threadId": "01a0acea-70c9-74d0-8eae-b0660d02b2c9",
+    "eventFile": "validation/openai-gpt-6-astra-low-codex-20260917.session.jsonl",
+    "finalUsageEvent": {
+      "timestamp": "2026-09-17T01:18:11.403Z",
+      "ordinal": 94,
+      "type": "event_msg",
+      "payload": {
+        "type": "token_count",
+        "info": {
+          "total_token_usage": {
+            "input_tokens": 402156,
+            "cached_input_tokens": 343296,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 10078,
+            "reasoning_output_tokens": 82,
+            "total_tokens": 412234
+          },
+          "last_token_usage": {
+            "input_tokens": 44450,
+            "cached_input_tokens": 42496,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 140,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 44590
+          },
+          "model_context_window": 258400
+        },
+        "rate_limits": {
+          "limit_id": "codex",
+          "limit_name": null,
+          "primary": {
+            "used_percent": 59,
+            "window_minutes": 300,
+            "resets_at": 1789624453
+          },
+          "secondary": {
+            "used_percent": 76,
+            "window_minutes": 10080,
+            "resets_at": 1790043472
+          },
+          "credits": {
+            "has_credits": false,
+            "unlimited": false,
+            "balance": "0"
+          },
+          "individual_limit": null,
+          "spend_control_reached": null,
+          "plan_type": "plus",
+          "rate_limit_reached_type": null
+        }
+      }
+    },
+    "cliFinalUsage": {
+      "input_tokens": 402156,
+      "cached_input_tokens": 343296,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 10078,
+      "reasoning_output_tokens": 82
+    }
+  },
+  "timestamps": {
+    "startedAt": "2026-09-17T01:10:40.689Z",
+    "finishedAt": "2026-09-17T01:18:11.434Z",
+    "durationSeconds": 450.745
+  },
+  "usage": {
+    "inputTokens": 402156,
+    "cachedInputTokens": 343296,
+    "outputTokens": 10078,
+    "reasoningOutputTokens": 82,
+    "totalTokens": 412234,
+    "actualCostUsd": null,
+    "source": "Final cumulative token_count total_token_usage at 2026-09-17T01:18:11.403Z in validation/openai-gpt-6-astra-low-codex-20260917.session.jsonl; corroborated by CLI turn.completed.usage."
+  },
+  "checks": [
+    {
+      "name": "benchmark-model-and-browser",
+      "command": "node validate.js",
+      "result": "passed",
+      "output": "2,512 observations; 78 backtests; MAPE 9.075554314477499%, baseline 10.031748142466391%, coverage 94.87179487179486%. Flat/custom forecasts, interval ordering, leakage resistance, invalid dates/prices, insufficient history, controls, CSV import/export, recovery, reset, mobile overflow and no JS errors passed."
+    },
+    {
+      "name": "independent-import-review",
+      "command": "node validation/openai-gpt-6-astra-low-codex-20260917.review.mjs",
+      "result": "passed",
+      "output": {
+        "passed": true,
+        "rowText": "gpt-6-astra\nopenai · historical-snapshot · validated · Sep 17, 2026\n\t\nCodex CLI\n0.154.0-alpha.6.2\n\tLOW\nNative: low\n\t402,156\t343,296\t10,078\t82\nof output\n\t412,234\t7m 31s\t$1.44\nAPI est.\n\t\n↗",
+        "url": "http://127.0.0.1:4321/runs/rendered/openai-gpt-6-astra-low-codex-20260917/index.html",
+        "errors": [],
+        "checks": [
+          "showcase row opens standalone dashboard",
+          "snapshot disclosed",
+          "historical, flat, and custom controls",
+          "backtest and CSV export",
+          "invalid CSV recovery",
+          "reset",
+          "mobile overflow",
+          "no JavaScript errors"
+        ]
+      }
+    },
+    {
+      "name": "repository-validation",
+      "command": "npm run validate && npm test",
+      "result": "passed",
+      "output": "29 runs validated; 5 unit tests passed; 5 browser tests passed, 1 desktop-only-inapplicable test skipped."
+    },
+    {
+      "name": "state-disclosure",
+      "result": "passed",
+      "output": "Actual row shows historical-snapshot and validated. app.js runMeta renders data-source type, validated/failed, and repaired state. No repair or synthetic data is used by this run."
+    }
+  ],
+  "recoveredFailures": [
+    "Invoke-WebRequest FRED fetch failed; curl succeeded.",
+    "Full Chromium failed with spawn UNKNOWN; headless shell browser tests passed."
+  ],
+  "harnessWarnings": [
+    "Python/npm unavailable in benchmark process.",
+    "Post-completion rollout flush warning; task_complete and final cumulative token_count persisted and were recovered."
+  ],
+  "unresolvedFailures": [],
+  "pricing": {
+    "retrievedAt": "2026-09-17",
+    "source": "https://developers.openai.com/api/docs/models/gpt-6-astra",
+    "serviceTier": "standard",
+    "contextBand": "short (at most 272K input tokens per request)",
+    "inputUsd": 10,
+    "cachedInputUsd": 1,
+    "outputUsd": 50,
+    "unitTokens": 1000000,
+    "note": "API-equivalent estimate, not actual subscription billing. Cumulative input across turns is not a single-request context size. Cache-write count is zero.",
+    "maxObservedRequestInputTokens": 44450
+  },
+  "importNotes": [
+    "Initial Windows CRLF checkout broke historical evidence hashes; restored exact Git blob bytes and added .gitattributes to preserve evidence. No existing run records changed.",
+    "Installed locked npm dependencies and Chromium 1234 for importer tests; benchmark used existing Chromium headless shell 1243.",
+    "Importer CSV assertion initially raced asynchronous File.text(); review script now waits for the status message. Dashboard was not changed."
+  ]
+}

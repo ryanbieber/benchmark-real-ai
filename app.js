@@ -175,9 +175,9 @@ function renderTokenChart() {
     return;
   }
   const rates = Object.entries(pricing.models).map(([model, rate]) =>
-    `<span><strong>${escapeHtml(model)}</strong> input $${rate.inputUsd} · cached $${rate.cachedInputUsd} · output $${rate.outputUsd}</span>`
+    `<span><strong>${escapeHtml(model)}</strong> input $${rate.inputUsd} · cached $${rate.cachedInputUsd} · output $${rate.outputUsd}${rate.retrievedAt ? ` · verified ${escapeHtml(rate.retrievedAt)} (<a href="${escapeHtml(rate.source || pricing.source)}">source</a>)` : ''}</span>`
   ).join('');
-  $('#pricing-note').innerHTML = `<p>API-equivalent estimates, not actual Codex subscription charges. Standard short-context rates per 1M tokens, retrieved ${escapeHtml(pricing.retrievedAt)} from <a href="${escapeHtml(pricing.source)}">OpenAI pricing ↗</a>. Cached input is included in input; reasoning is included in output and is not charged twice.</p><div class="rate-list">${rates}</div>`;
+  $('#pricing-note').innerHTML = `<p>API-equivalent estimates, not actual Codex subscription charges. Standard short-context rates per 1M tokens, retrieved ${escapeHtml(pricing.retrievedAt)} from <a href="${escapeHtml(pricing.source)}">OpenAI pricing ↗</a> unless a model-specific verification date is shown below. Cached input is included in input; reasoning is included in output and is not charged twice.</p><div class="rate-list">${rates}</div>`;
 }
 
 const plotMetrics = {

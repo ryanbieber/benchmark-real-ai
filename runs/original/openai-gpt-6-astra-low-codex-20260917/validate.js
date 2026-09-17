@@ -1,0 +1,34 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),{pathToFileURL}=require('node:url'),M=require('./model');
+const data=M.parseCSV(fs.readFileSync('sp500.csv','utf8'));
+const flat=Array.from({length:1100},(_,i)=>({date:new Date(Date.UTC(2020,0,1+i)).toISOString().slice(0,10),value:100}));
+assert.equal(M.forecast(flat,252,'historical',7,252,1.96).points.at(-1).mid,100);
+assert.equal(M.forecast(flat,252,'historical',7,252,1.96).fit.sigma,0);
+assert.ok(Math.abs(M.forecast(flat,252,'custom',7,252,1.96).points.at(-1).mid-107)<1e-10);
+const f=M.forecast(data,756,'historical',7,126,1.645);assert.equal(f.points[0].mid,data.at(-1).value);
+assert.ok(f.points.every(p=>p.low<=p.mid&&p.mid<=p.high));
+const b=M.backtest(data,756,'historical',7,126,1.645),changed=data.map((r,i)=>({...r,value:i>756?r.value*2:r.value}));
+assert.equal(b.rows[0].mid,M.backtest(changed,756,'historical',7,126,1.645).rows[0].mid);
+assert.equal(M.backtest(data,756,'flat',7,126,1.645).mape,M.backtest(data,756,'flat',7,126,1.645).baseline);
+assert.throws(()=>M.parseCSV('Date,Close\n2024-02-30,100'));assert.throws(()=>M.parseCSV('Date,Close\n2024-01-01,-2'));
+assert.equal(M.backtest(data.slice(-300),252,'flat',7,252,1.645).n,0);
+console.log('Model tests passed',JSON.stringify({observations:data.length,last:data.at(-1),backtests:b.n,mape:b.mape,baseline:b.baseline,coverage:b.coverage}));
+(async()=>{
+ const {chromium}=require('C:/Users/leroy/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+ const browser=await chromium.launch({headless:true,executablePath:'C:/Users/leroy/AppData/Local/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-win64/chrome-headless-shell.exe'});
+ const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(pathToFileURL(require('node:path').resolve('index.html')).href);
+ await page.waitForSelector('#chart path');assert.equal(await page.locator('#last').textContent(),'7,552');
+ const target=await page.locator('#target').textContent();await page.selectOption('#model','flat');assert.equal(await page.locator('#target').textContent(),'7,552');
+ await page.selectOption('#model','custom');await page.fill('#annual','10');await page.locator('#horizon').evaluate(e=>{e.value='252';e.dispatchEvent(new Event('input'));});assert.equal(await page.locator('#target').textContent(),'8,307');
+ await page.selectOption('#confidence','1.959963985');assert.match(await page.locator('#rangeLabel').textContent(),/95%/);
+ await page.click('#backtestTab');assert.ok(await page.locator('#chart path').count()>0);
+ const download=page.waitForEvent('download');await page.click('#export');const file=await download;await file.saveAs('validated-export.csv');assert.match(fs.readFileSync('validated-export.csv','utf8'),/^origin,target_date/);
+ await page.setInputFiles('#upload',{name:'invalid.csv',mimeType:'text/csv',buffer:Buffer.from('bad,data\n1,2')});assert.match(await page.locator('#status').textContent(),/Use CSV/);
+ const small='Date,Close\n'+data.slice(-300).map(r=>r.date+','+r.value).join('\n');await page.setInputFiles('#upload',{name:'sample.csv',mimeType:'text/csv',buffer:Buffer.from(small)});assert.equal(await page.locator('#count').textContent(),'0');assert.match(await page.locator('#chart').textContent(),/Insufficient/);
+ await page.click('#reset');await page.selectOption('#model','historical');await page.selectOption('#window','756');await page.selectOption('#confidence','1.644853627');await page.locator('#horizon').evaluate(e=>{e.value='126';e.dispatchEvent(new Event('input'));});await page.click('#forecastTab');assert.equal(await page.locator('#target').textContent(),target);
+ await page.locator('#chart').hover();assert.match(await page.locator('#tooltip').textContent(),/Close|Median/);
+ await page.screenshot({path:'dashboard-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:'dashboard-mobile.png',fullPage:true});
+ assert.deepEqual(errors,[]);await browser.close();console.log('Browser tests passed: controls, chart, hover, backtest, CSV export/import/error recovery, reset, mobile overflow, no JS errors.');
+})().catch(e=>{console.error(e);process.exit(1)});
+

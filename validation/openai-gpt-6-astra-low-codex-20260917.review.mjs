@@ -1,0 +1,54 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+import { writeFileSync } from 'node:fs';
+
+const id = 'openai-gpt-6-astra-low-codex-20260917';
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
+const errors = [];
+page.on('pageerror', error => errors.push(error.message));
+try {
+  await page.goto('http://127.0.0.1:4321/');
+  assert.match(await page.locator('#pricing-note').innerText(), /verified 2026-09-17/);
+  await page.locator('#facet-panel summary').click();
+  await page.locator('#filter-search').fill('gpt-6-astra');
+  const row = page.locator('.run-row');
+  assert.equal(await row.count(), 1);
+  const rowText = await row.innerText();
+  await row.locator('.model-cell a').click();
+  assert.ok(page.url().endsWith(`/runs/rendered/${id}/index.html`));
+  await page.waitForSelector('#chart path');
+  assert.equal(await page.locator('#lastDate').textContent(), '2026-09-16');
+  assert.equal(await page.locator('#last').textContent(), '7,552');
+  assert.match(await page.locator('#dataInfo').textContent(), /Snapshot only/);
+  const originalTarget = await page.locator('#target').textContent();
+  await page.selectOption('#model', 'flat');
+  assert.equal(await page.locator('#target').textContent(), '7,552');
+  await page.selectOption('#model', 'custom');
+  await page.fill('#annual', '10');
+  await page.locator('#horizon').evaluate(e => { e.value = '252'; e.dispatchEvent(new Event('input')); });
+  assert.equal(await page.locator('#target').textContent(), '8,307');
+  await page.click('#backtestTab');
+  assert.ok(await page.locator('#chart path').count() > 0);
+  const download = page.waitForEvent('download');
+  await page.click('#export');
+  assert.equal((await download).suggestedFilename(), 'sp500-backtest.csv');
+  await page.setInputFiles('#upload', { name: 'invalid.csv', mimeType: 'text/csv', buffer: Buffer.from('wrong,headers\n1,2') });
+  await page.waitForFunction(() => document.querySelector('#status').textContent.includes('Use CSV'));
+  assert.match(await page.locator('#status').textContent(), /Use CSV/);
+  await page.click('#reset');
+  await page.selectOption('#model', 'historical');
+  await page.locator('#horizon').evaluate(e => { e.value = '126'; e.dispatchEvent(new Event('input')); });
+  await page.click('#forecastTab');
+  assert.equal(await page.locator('#target').textContent(), originalTarget);
+  await page.screenshot({ path: `validation/${id}-desktop.png`, fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  await page.screenshot({ path: `validation/${id}-mobile.png`, fullPage: true });
+  assert.deepEqual(errors, []);
+  const result = { passed: true, rowText, url: page.url(), errors, checks: ['showcase row opens standalone dashboard', 'snapshot disclosed', 'historical, flat, and custom controls', 'backtest and CSV export', 'invalid CSV recovery', 'reset', 'mobile overflow', 'no JavaScript errors'] };
+  writeFileSync(`validation/${id}.review.json`, JSON.stringify(result, null, 2) + '\n');
+  console.log(JSON.stringify(result));
+} finally {
+  await browser.close();
+}

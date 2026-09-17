@@ -12,7 +12,7 @@
       "max",
       "ultra"
     ],
-    "updatedAt": "2026-08-13T13:39:28.558Z",
+    "updatedAt": "2026-09-17T01:18:11.434Z",
     "pricing": {
       "currency": "USD",
       "unitTokens": 1000000,
@@ -20,7 +20,7 @@
       "contextBand": "short",
       "retrievedAt": "2026-08-13",
       "source": "https://developers.openai.com/api/docs/pricing/",
-      "notes": "API-equivalent estimates use standard short-context rates. Cached input is a subset of input. Reasoning output is a subset of output and is not charged twice.",
+      "notes": "API-equivalent estimates use standard short-context rates. Cached input is a subset of input. Reasoning output is a subset of output and is not charged twice. GPT-6 Astra rates were separately verified on 2026-09-17; see its model-specific source and retrieval date. Earlier model pricing snapshots are unchanged.",
       "models": {
         "gpt-5.4": {
           "inputUsd": 2.5,
@@ -51,6 +51,15 @@
           "inputUsd": 2,
           "cachedInputUsd": 0.2,
           "outputUsd": 12
+        },
+        "gpt-6-astra": {
+          "inputUsd": 10,
+          "cachedInputUsd": 1,
+          "outputUsd": 50,
+          "retrievedAt": "2026-09-17",
+          "source": "https://developers.openai.com/api/docs/models/gpt-6-astra",
+          "serviceTier": "standard",
+          "contextBand": "short; <=272K input tokens per request"
         }
       }
     }
@@ -3598,6 +3607,165 @@
         ]
       },
       "summary": "Codex CLI ran gpt-5.5 at native xhigh (extra high) reasoning in a fresh temporary workspace, built an interactive S&P 500 forecast dashboard backed by live FRED SP500 data through a generated same-origin Node proxy, browser-validated desktop and mobile behavior, and imported byte-identical original and displayed artifacts without an import repair."
+    },
+    {
+      "id": "openai-gpt-6-astra-low-codex-20260917",
+      "status": "benchmark",
+      "provider": "openai",
+      "model": {
+        "id": "gpt-6-astra",
+        "name": "gpt-6-astra",
+        "version": "gpt-6-astra"
+      },
+      "reasoning": {
+        "native": "low",
+        "normalized": "low"
+      },
+      "harness": {
+        "name": "Codex CLI",
+        "version": "0.154.0-alpha.6.2",
+        "interface": "exec",
+        "configuration": {
+          "cd": "C:/Users/leroy/AppData/Local/Temp/benchmark-astra-low-d1dae8279df443beb822a18cfb313889",
+          "ignoreUserConfig": true,
+          "skipGitRepoCheck": true,
+          "model": "gpt-6-astra",
+          "reasoningLevel": "low",
+          "sandbox": "danger-full-access",
+          "approvalPolicy": "never",
+          "webSearch": "live",
+          "jsonEvents": true,
+          "userPersonaInstructions": true,
+          "repositoryContext": false
+        },
+        "capabilities": [
+          "shell",
+          "file-editing",
+          "web-search",
+          "local-browser-validation"
+        ]
+      },
+      "timestamps": {
+        "startedAt": "2026-09-17T01:10:40.689Z",
+        "finishedAt": "2026-09-17T01:18:11.434Z",
+        "durationSeconds": 450.745
+      },
+      "run": {
+        "completedAt": "2026-09-17T01:18:11.434Z"
+      },
+      "usage": {
+        "inputTokens": 402156,
+        "cachedInputTokens": 343296,
+        "outputTokens": 10078,
+        "reasoningOutputTokens": 82,
+        "totalTokens": 412234,
+        "actualCostUsd": null,
+        "source": "Final cumulative token_count total_token_usage at 2026-09-17T01:18:11.403Z in validation/openai-gpt-6-astra-low-codex-20260917.session.jsonl; corroborated by CLI turn.completed.usage."
+      },
+      "dataSource": {
+        "type": "historical-snapshot",
+        "notes": "Embedded FRED SP500 CSV: 2,512 closing observations from 2016-09-19 through 2026-09-16; final close 7551.81. No runtime market fetch; user CSV import supported."
+      },
+      "summary": "Astra with low reasoning produced an offline standalone S&P 500 dashboard with historical, no-change and custom-growth models, uncertainty bands, rolling backtests, and CSV import/export. Original and displayed files are identical.",
+      "artifacts": {
+        "rawResponse": "responses/openai-gpt-6-astra-low-codex-20260917.md",
+        "originalHtml": "runs/original/openai-gpt-6-astra-low-codex-20260917/index.html",
+        "displayHtml": "runs/rendered/openai-gpt-6-astra-low-codex-20260917/index.html",
+        "validationEvidence": "validation/openai-gpt-6-astra-low-codex-20260917.json",
+        "eventStream": "validation/openai-gpt-6-astra-low-codex-20260917.session.jsonl",
+        "repaired": false,
+        "repairLog": null,
+        "sha256": {
+          "rawResponse": "f53e1d727a87ed2f0177075b5aa5cabf17254ecaf6488765f4f0677fc0900d76",
+          "originalHtml": "24adb2ce310009950b605a2f4e928acfb65e1bade9c1b227d28b6c7fe12df887",
+          "displayHtml": "24adb2ce310009950b605a2f4e928acfb65e1bade9c1b227d28b6c7fe12df887",
+          "validationEvidence": "14d9e07c558c13c3d6ce808ea262149638045af9f9bc6a502c246f4863694c67",
+          "eventStream": "1dab8a82cbb174a45096c48477b0b3cd9cb34f2f654333b24f3841c47e1d9d6e",
+          "reviewScript": "ffcb90a1cd9401b914f350e57e42a6c57022c560b00d6a233a15761683ea0e0d",
+          "reviewEvidence": "dc305e5f34ee28d9d53df1b26b82c93f23d6989839c9bf6feabeacf7b31a50e3",
+          "desktopScreenshot": "2f205df5987397bdbdbb04ce8bfbb70a478bd70e13c6cd05762b2498ba1d3035",
+          "mobileScreenshot": "fd36fba4ab7c26bbe8c0fbf1aba90a74542a086d8c392c3245e272768b6c5d24",
+          "benchmarkDesktopScreenshot": "3ab900f664a573b65bf3f06d6962f0c04eb76ddeeba7c9872cf09012380a2930",
+          "benchmarkMobileScreenshot": "489f14649b943bea1ecd9941376413afc9904e6d55939b41499791f599662814",
+          "benchmarkExport": "3802764066b1c7f1d5f7dfe8682925c9061f44c6f6e1dcbe6cb6076935130ce0"
+        },
+        "supportFiles": [
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/app.js",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/build.js",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/index.template.html",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/model.js",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/README.md",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/sp500.csv",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/validate.js",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/app.js",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/build.js",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/index.template.html",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/model.js",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/README.md",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/sp500.csv",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/validate.js"
+        ],
+        "supportFileSha256": {
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/app.js": "f385525a3fdd55669f9f679b86ce3b3bb438a0b50b9c11c8c1975a567045a8b5",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/build.js": "3a733e24e253c4bcad2e3e2b85fe9e06b09df17742b499e22c93b3dd37f423f4",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/index.template.html": "d4dc25f11d4156b794570f68d186cefc47b439974fcd1a1575ba268d9d537fba",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/model.js": "309c4920acdfbd4cd1bf8b1ab5d9152ab6ae94b0b0b1924b08f48d0c47b5c1a0",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/README.md": "ecba14f6937a44ec18eb587a09d9c0af64aca02478c230cec240e403783a66e0",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/sp500.csv": "a05c957ec824cd18b6646fa29f881f49c3f55c037b282a4711e984da10ce1255",
+          "runs/original/openai-gpt-6-astra-low-codex-20260917/validate.js": "3ff1508a5511fdcc15050fc51519ae72b083e3f3ec78cca2fc9116c4a0a697c5",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/app.js": "f385525a3fdd55669f9f679b86ce3b3bb438a0b50b9c11c8c1975a567045a8b5",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/build.js": "3a733e24e253c4bcad2e3e2b85fe9e06b09df17742b499e22c93b3dd37f423f4",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/index.template.html": "d4dc25f11d4156b794570f68d186cefc47b439974fcd1a1575ba268d9d537fba",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/model.js": "309c4920acdfbd4cd1bf8b1ab5d9152ab6ae94b0b0b1924b08f48d0c47b5c1a0",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/README.md": "ecba14f6937a44ec18eb587a09d9c0af64aca02478c230cec240e403783a66e0",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/sp500.csv": "a05c957ec824cd18b6646fa29f881f49c3f55c037b282a4711e984da10ce1255",
+          "runs/rendered/openai-gpt-6-astra-low-codex-20260917/validate.js": "3ff1508a5511fdcc15050fc51519ae72b083e3f3ec78cca2fc9116c4a0a697c5"
+        },
+        "reviewScript": "validation/openai-gpt-6-astra-low-codex-20260917.review.mjs",
+        "reviewEvidence": "validation/openai-gpt-6-astra-low-codex-20260917.review.json",
+        "desktopScreenshot": "validation/openai-gpt-6-astra-low-codex-20260917-desktop.png",
+        "mobileScreenshot": "validation/openai-gpt-6-astra-low-codex-20260917-mobile.png",
+        "benchmarkDesktopScreenshot": "validation/openai-gpt-6-astra-low-codex-20260917.benchmark-dashboard-desktop.png",
+        "benchmarkMobileScreenshot": "validation/openai-gpt-6-astra-low-codex-20260917.benchmark-dashboard-mobile.png",
+        "benchmarkExport": "validation/openai-gpt-6-astra-low-codex-20260917.benchmark-validated-export.csv"
+      },
+      "evaluation": {
+        "scores": {
+          "taskFulfillment": 5,
+          "interactivityUsability": 4,
+          "forecastingMethodology": 4,
+          "uncertaintyHonesty": 5,
+          "technicalRobustness": 4
+        },
+        "total": 22,
+        "reviewer": "Codex",
+        "notes": "The original standalone dashboard embeds 2,512 FRED S&P 500 closes through 2026-09-16. Historical log growth, no-change, and custom-growth scenarios expose horizon, training window, interval, backtest, and CSV controls. Rolling-origin evaluation is leakage-tested and compares against a no-change baseline. The lognormal model remains a simple constant-volatility baseline and omits parameter uncertainty and fat tails, explicitly disclosed in the dashboard. Imported CSVs are labeled as a snapshot but their provenance is user-supplied. Desktop/mobile checks passed after the benchmark switched from an unlaunchable full Chromium binary to its headless shell. No dashboard repair was made. The mobile SVG scales down its axis labels substantially, and the hidden file input has limited keyboard accessibility; these reduce usability. CSV parsing is intentionally basic and does not verify that dates represent consecutive trading sessions."
+      },
+      "validation": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "benchmark-validation",
+            "passed": true,
+            "details": "Model and desktop/mobile tests passed after browser launch recovery."
+          },
+          {
+            "name": "artifact-bytes",
+            "passed": true,
+            "details": "Original and displayed files copied byte-identically; no repair."
+          },
+          {
+            "name": "repository-checks",
+            "passed": true,
+            "details": "npm run validate and npm test passed: 29 runs, 5 unit tests, 5 browser tests, 1 expected skip."
+          },
+          {
+            "name": "independent-review",
+            "passed": true,
+            "details": "Showcase row opens artifact; model controls, CSV export/import recovery, mobile layout and JavaScript error checks passed."
+          }
+        ]
+      }
     }
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "rowText": "gpt-6-astra\nopenai · historical-snapshot · validated · Sep 17, 2026\n\t\nCodex CLI\n0.154.0-alpha.6.2\n\tLOW\nNative: low\n\t402,156\t343,296\t10,078\t82\nof output\n\t412,234\t7m 31s\t$1.44\nAPI est.\n\t\n↗",
+  "url": "http://127.0.0.1:4321/runs/rendered/openai-gpt-6-astra-low-codex-20260917/index.html",
+  "errors": [],
+  "checks": [
+    "showcase row opens standalone dashboard",
+    "snapshot disclosed",
+    "historical, flat, and custom controls",
+    "backtest and CSV export",
+    "invalid CSV recovery",
+    "reset",
+    "mobile overflow",
+    "no JavaScript errors"
+  ]
+}
