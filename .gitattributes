@@ -1,0 +1,5 @@
+# Benchmark artifacts and evidence are hashed; preserve their exact bytes.
+runs/** -text
+responses/** -text
+validation/** -text
+repairs/** -text
